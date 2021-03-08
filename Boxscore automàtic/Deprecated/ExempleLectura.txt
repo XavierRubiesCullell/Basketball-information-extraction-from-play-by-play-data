@@ -1,0 +1,8 @@
+def read_plays(f):
+    end = False
+    while not end:
+        line = f.readline().strip()
+        if line != '':
+            treat_line(line)
+        else:
+            end = True

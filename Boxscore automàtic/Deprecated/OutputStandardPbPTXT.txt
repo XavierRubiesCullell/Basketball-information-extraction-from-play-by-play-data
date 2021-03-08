@@ -1,0 +1,423 @@
+47:41, 2, C. Osman, S, 3, I, A, D. Dotson
+47:21, 1, K. Anderson, S, 2, O
+47:19, 2, A. Drummond, R, D
+47:00, 1, D. Brooks, St, A. Drummond
+46:56, 2, I. Okoro, F, D, D. Brooks
+46:56, 1, D. Brooks, S, 1, I
+46:56, 1, D. Brooks, S, 1, O
+46:53, 2, C. Osman, R, D
+46:38, 2, D. Dotson, S, 3, O
+46:35, 1, B. Clarke, R, D
+46:28, 1, D. Brooks, S, 3, O
+46:24, 2, A. Drummond, R, D
+46:18, 2, A. Drummond, S, 2, O
+46:16, 1, B. Clarke, R, D
+46:03, 1, B. Clarke, S, 2, O
+46:01, 2, A. Drummond, R, D
+45:49, 2, I. Okoro, S, 2, O
+45:47, 2, A. Drummond, R, O
+45:47, 2, A. Drummond, S, 2, O
+45:44, 1, B. Clarke, R, D
+45:34, 1, T. Jones, S, 2, I, A, K. Anderson
+45:07, 2, C. Osman, S, 2, I
+44:49, 1, D. Brooks, S, 2, O
+44:47, 2, A. Drummond, R, D
+44:43, 2, C. Osman, S, 3, O
+44:36, 1, D. Brooks, R, D
+44:32, 1, K. Anderson, S, 3, O
+44:28, 2, A. Drummond, R, D
+44:19, 2, C. Osman, S, 3, I, A, L. Nance
+44:19, 1, Timeout
+44:01, 1, J. Valančiūnas, T
+43:45, 2, A. Drummond, S, 2, O
+43:43, 1, J. Valančiūnas, R, D
+43:35, 2, A. Drummond, St, T. Jones
+43:26, 2, I. Okoro, S, 3, O
+43:24, 2, I. Okoro, R, O
+43:21, 2, D. Dotson, S, 3, O
+43:18, 1, B. Clarke, R, D
+43:07, 1, B. Clarke, S, 2, I, A, T. Jones
+42:55, 1, B. Clarke, F, D, L. Nance
+42:55, 2, D. Dotson, C, L. Stevens
+42:55, 1, D. Brooks, C, D. Bane
+42:42, 1, J. Valančiūnas, B, A. Drummond, 2
+42:39, 1, T. Jones, R, D
+42:36, 1, B. Clarke, S, 2, I, A, D. Bane
+42:12, 2, L. Nance, S, 3, I, A, A. Drummond
+41:59, 1, K. Anderson, S, 3, O
+41:59, 1, -, R, O
+41:59, 2, L. Stevens, F, D, D. Bane
+41:59, 1, B. Clarke, C, D. Melton
+41:59, 1, T. Jones, C, X. Tillman
+41:49, 1, X. Tillman, S, 2, O
+41:44, 1, J. Valančiūnas, R, O
+41:44, 1, J. Valančiūnas, S, 2, I
+41:33, 2, L. Stevens, S, 2, I
+41:16, 1, J. Valančiūnas, S, 2, O
+41:14, 2, C. Osman, R, D
+41:11, 1, J. Valančiūnas, F, D, A. Drummond
+41:11, 2, L. Nance, C, D. Wade
+41:04, 2, C. Osman, S, 3, O
+41:01, 1, D. Bane, R, D
+40:48, 1, K. Anderson, S, 2, I, A, J. Valančiūnas
+40:30, 1, D. Melton, St, I. Okoro
+40:21, 1, D. Bane, S, 3, I, A, J. Valančiūnas
+39:56, 2, A. Drummond, S, 2, I, A, D. Wade
+39:41, 1, K. Anderson, S, 3, O
+39:39, 1, J. Valančiūnas, R, O
+39:37, 1, J. Valančiūnas, S, 2, I
+39:29, 2, Timeout
+39:29, 2, A. Drummond, C, D. Dotson
+39:29, 2, I. Okoro, C, J. McGee
+39:29, 1, K. Anderson, C, G. Allen
+39:29, 1, J. Valančiūnas, C, G. Dieng
+39:28, 1, G. Allen, St, L. Stevens
+39:24, 1, G. Allen, S, 3, I
+39:04, 2, J. McGee, S, 2, O
+39:02, 1, D. Melton, R, D
+38:51, 1, D. Melton, S, 3, O
+38:48, 2, J. McGee, R, D
+38:40, 2, C. Osman, S, 2, O
+38:37, 2, C. Osman, R, O
+38:37, 2, C. Osman, S, 2, O
+38:37, 2, J. McGee, R, O
+38:32, 1, X. Tillman, St, C. Osman
+38:17, 1, D. Melton, S, 2, I, A, G. Dieng
+38:04, 2, D. Dotson, S, 3, O
+38:02, 1, D. Bane, R, D
+38:02, 2, C. Osman, C, L. Nance
+37:41, 2, D. Dotson, St, D. Melton
+37:35, 1, D. Bane, St, L. Stevens
+37:29, 1, X. Tillman, S, 2, O
+37:27, 2, J. McGee, R, D
+37:15, 2, J. McGee, S, 2, I
+36:57, 1, G. Allen, S, 3, O
+36:56, 1, G. Allen, R, O
+36:52, 1, G. Allen, S, 3, I, A, X. Tillman
+36:34, 2, D. Dotson, S, 2, I
+36:15, 1, G. Allen, S, 3, O
+36:13, 2, L. Nance, R, D
+36:03, 1, X. Tillman, F, D, D. Dotson
+36:03, 1, D. Bane, C, D. Brooks
+36:00, 2, D. Dotson, S, 2, O
+36:00, 1, -, R, D
+35:43, 1, G. Dieng, S, 3, I, A, D. Brooks
+35:22, 2, J. McGee, S, 3, I, A, L. Nance
+34:59, 1, G. Dieng, T
+34:47, 2, A. Drummond, S, 2, I
+34:37, 1, D. Brooks, S, 3, O
+34:34, 1, G. Dieng, R, O
+34:23, 2, D. Dotson, St, G. Allen
+34:18, 2, D. Wade, S, 3, I, A, D. Dotson
+34:17, 1, Timeout
+34:17, 2, D. Wade, C, I. Okoro
+34:17, 1, X. Tillman, C, B. Clarke
+34:02, 1, T. Jones, S, 2, I
+33:36, 1, G. Dieng, St, A. Drummond
+33:32, 1, G. Dieng, F, O, I. Okoro
+33:18, 1, G. Allen, St, D. Dotson
+33:14, 1, B. Clarke, S, 2, I, A, T. Jones
+33:04, 2, A. Drummond, T
+33:04, 2, D. Dotson, C, C. Osman
+32:58, 2, J. McGee, F, D, T. Jones
+32:47, 1, B. Clarke, S, 2, I, A, G. Dieng
+32:28, 2, L. Nance, S, 3, I, A, I. Okoro
+32:13, 1, T. Jones, S, 2, O
+32:11, 2, J. McGee, R, D
+31:55, 2, I. Okoro, S, 3, I
+31:37, 2, A. Drummond, St, D. Brooks
+31:29, 2, L. Nance, S, 2, I, A, C. Osman
+31:28, 1, Timeout
+31:28, 2, J. McGee, C, L. Stevens
+31:28, 1, G. Allen, C, K. Anderson
+31:28, 1, D. Brooks, C, D. Bane
+31:28, 1, G. Dieng, C, J. Valančiūnas
+31:15, 1, B. Clarke, S, 2, O
+31:13, 2, A. Drummond, R, D
+30:59, 2, C. Osman, S, 2, O
+30:55, 1, D. Bane, R, D
+30:39, 1, D. Bane, T
+30:39, 1, T. Jones, C, D. Melton
+30:17, 2, L. Stevens, S, 2, O
+30:14, 1, J. Valančiūnas, R, D
+30:00, 1, J. Valančiūnas, S, 2, O
+29:56, 2, A. Drummond, R, D
+29:46, 2, A. Drummond, S, 2, O
+29:43, 1, B. Clarke, R, D
+29:29, 1, D. Melton, S, 2, I
+29:12, 2, I. Okoro, S, 2, O
+29:08, 1, J. Valančiūnas, R, D
+29:08, 2, I. Okoro, St, J. Valančiūnas
+29:07, 1, J. Valančiūnas, F, D, I. Okoro
+29:07, 2, I. Okoro, S, 1, I
+29:07, 2, L. Nance, C, D. Dotson
+29:07, 2, C. Osman, C, T. Maker
+29:07, 2, I. Okoro, S, 1, O
+29:04, 1, K. Anderson, R, D
+28:49, 1, B. Clarke, S, 2, I, A, D. Bane
+28:32, 2, I. Okoro, S, 3, O
+28:30, 1, D. Bane, R, D
+28:20, 1, J. Valančiūnas, S, 3, O
+28:17, 2, L. Stevens, R, D
+28:03, 2, A. Drummond, S, 2, O
+28:01, 1, B. Clarke, R, D
+27:57, 1, D. Melton, S, 2, I
+27:40, 1, D. Melton, F, D, A. Drummond
+27:40, 2, A. Drummond, C, J. McGee
+27:40, 2, L. Stevens, C, C. Osman
+27:37, 2, C. Osman, S, 3, I, A, I. Okoro
+27:21, 1, B. Clarke, S, 2, I, A, D. Melton
+27:04, 2, D. Dotson, S, 3, O
+27:01, 1, K. Anderson, R, D
+27:00, 1, K. Anderson, T
+26:50, 2, C. Osman, S, 3, O
+26:48, 1, D. Bane, R, D
+26:45, 2, J. McGee, F, D, J. Valančiūnas
+26:45, 1, K. Anderson, C, D. Brooks
+26:45, 1, B. Clarke, C, X. Tillman
+26:34, 1, D. Brooks, S, 3, O
+26:32, 2, C. Osman, R, D
+26:28, 2, D. Dotson, S, 3, I, A, C. Osman
+26:16, 1, J. Valančiūnas, S, 2, I, A, D. Brooks
+25:57, 2, I. Okoro, S, 2, I, A, C. Osman
+25:32, 1, D. Brooks, S, 3, O
+25:31, 2, C. Osman, R, D
+25:21, 2, C. Osman, S, 2, I
+25:04, 1, J. Valančiūnas, S, 2, I, A, D. Melton
+24:42, 2, J. McGee, S, 2, O
+24:38, 2, I. Okoro, R, O
+24:37, 1, D. Melton, St, I. Okoro
+24:33, 1, X. Tillman, S, 2, O
+24:29, 2, J. McGee, R, D
+24:10, 2, D. Dotson, S, 3, O
+24:07, 1, J. Valančiūnas, R, D
+24:05, 2, C. Osman, F, D, D. Bane
+24:05, 2, T. Maker, C, L. Stevens
+24:05, 1, D. Melton, C, G. Allen
+24:05, 1, X. Tillman, C, T. Jones
+24:00, 1, G. Allen, S, 3, O
+24:00, 1, -, R, O
+23:36, 2, L. Nance, St, D. Brooks
+23:26, 2, A. Drummond, S, 2, I
+23:12, 1, J. Valančiūnas, S, 3, I, A, T. Jones
+22:54, 2, C. Osman, S, 3, O
+22:52, 1, B. Clarke, R, D
+22:38, 2, D. Dotson, St, D. Brooks
+22:32, 2, I. Okoro, S, 3, O
+22:28, 1, K. Anderson, R, D
+22:20, 1, K. Anderson, S, 3, O
+22:17, 1, D. Brooks, R, O
+22:12, 1, J. Valančiūnas, S, 2, I, A, B. Clarke
+21:46, 2, A. Drummond, S, 2, O
+21:44, 1, J. Valančiūnas, R, D
+21:39, 2, I. Okoro, F, D, B. Clarke
+21:33, 1, D. Brooks, S, 2, I, A, B. Clarke
+21:15, 1, B. Clarke, B, A. Drummond, 2
+21:15, 2, -, R, O
+21:06, 2, L. Nance, S, 3, I, A, C. Osman
+20:56, 1, D. Brooks, S, 3, I, A, T. Jones
+20:41, 2, A. Drummond, S, 2, I, A, D. Dotson
+20:41, 1, J. Valančiūnas, F, D, A. Drummond
+20:41, 2, A. Drummond, S, 1, O
+20:39, 1, -, R, D
+20:21, 1, D. Brooks, S, 2, I, A, K. Anderson
+19:58, 2, A. Drummond, S, 2, I
+19:48, 1, J. Valančiūnas, S, 2, O
+19:45, 1, K. Anderson, R, O
+19:45, 1, K. Anderson, S, 2, O
+19:45, 1, K. Anderson, R, O
+19:42, 2, L. Nance, St, K. Anderson
+19:35, 1, D. Brooks, St, L. Nance
+19:31, 1, B. Clarke, S, 2, I, A, D. Brooks
+19:24, 2, A. Drummond, S, 2, I, A, C. Osman
+19:24, 1, J. Valančiūnas, F, D, A. Drummond
+19:24, 2, D. Dotson, C, L. Stevens
+19:24, 1, J. Valančiūnas, C, G. Dieng
+19:24, 2, A. Drummond, S, 1, I
+19:06, 2, C. Osman, F, D, D. Brooks
+19:01, 1, T. Jones, S, 3, I, A, G. Dieng
+18:35, 2, C. Osman, S, 3, O
+18:32, 1, T. Jones, R, D
+18:26, 1, B. Clarke, S, 2, O
+18:24, 2, A. Drummond, R, D
+18:09, 1, D. Brooks, B, C. Osman, 2
+18:09, 1, K. Anderson, R, D
+18:00, 1, T. Jones, S, 3, O
+17:57, 2, L. Stevens, R, D
+17:57, 2, Timeout
+17:57, 1, K. Anderson, C, D. Bane
+17:57, 1, T. Jones, C, D. Melton
+17:35, 2, -, T
+17:18, 1, D. Brooks, S, 2, O
+17:16, 2, A. Drummond, R, D
+17:12, 1, D. Melton, B, L. Stevens, 2
+17:08, 1, B. Clarke, R, D
+16:55, 1, D. Melton, S, 2, O
+16:53, 2, -, R, D
+16:53, 1, B. Clarke, C, X. Tillman
+16:28, 1, X. Tillman, B, I. Okoro, 2
+16:26, 1, X. Tillman, R, D
+16:26, 2, C. Osman, C, D. Dotson
+16:11, 1, D. Brooks, S, 2, O
+16:09, 2, -, R, D
+15:59, 1, D. Melton, St, A. Drummond
+15:56, 1, D. Melton, S, 2, I
+15:56, 1, D. Brooks, C, G. Allen
+15:30, 1, G. Allen, St, A. Drummond
+15:30, 2, A. Drummond, F, D, D. Bane
+15:30, 2, A. Drummond, C, J. McGee
+15:30, 2, I. Okoro, C, C. Osman
+15:17, 1, G. Dieng, S, 3, O
+15:15, 2, L. Stevens, R, D
+15:09, 1, X. Tillman, F, D, C. Osman
+15:09, 2, C. Osman, S, 1, O
+15:09, 2, -, R, O
+15:09, 2, C. Osman, S, 1, O
+15:06, 1, D. Melton, R, D
+14:56, 1, D. Bane, S, 2, O
+14:54, 1, G. Dieng, R, O
+14:54, 1, G. Dieng, S, 2, O
+14:54, 2, J. McGee, R, D
+14:42, 2, J. McGee, S, 2, I, A, L. Nance
+14:36, 2, J. McGee, B, G. Dieng, 2
+14:36, 1, -, R, O
+14:36, 1, Timeout
+14:36, 2, D. Dotson, C, A. Drummond
+14:36, 2, J. McGee, C, I. Okoro
+14:36, 1, G. Allen, C, D. Brooks
+14:36, 1, X. Tillman, C, B. Clarke
+14:36, 1, Instant Replay
+14:36, 2, A. Drummond, C, D. Dotson
+14:36, 2, L. Nance, C, J. McGee
+14:36, 2, I. Okoro, C, D. Wade
+14:36, 1, D. Brooks, C, G. Allen
+14:36, 1, B. Clarke, C, X. Tillman
+14:21, 1, D. Bane, S, 2, O
+14:19, 1, D. Bane, R, O
+14:15, 1, D. Bane, S, 3, O
+14:10, 2, D. Dotson, R, D
+13:53, 1, G. Dieng, St, C. Osman
+13:39, 1, D. Bane, S, 3, I, A, D. Melton
+13:27, 1, G. Dieng, F, D, J. McGee
+13:27, 2, J. McGee, S, 1, I
+13:27, 2, J. McGee, S, 1, I
+13:10, 2, J. McGee, St, D. Melton
+13:05, 2, D. Wade, S, 3, I, A, C. Osman
+12:53, 2, J. McGee, F, D, G. Dieng
+12:53, 1, G. Dieng, S, 1, I
+12:53, 1, G. Dieng, S, 1, I
+12:47, 2, J. McGee, S, 2, I
+12:24, 1, D. Melton, S, 2, O
+12:21, 2, D. Wade, R, D
+12:01, 2, C. Osman, S, 3, O
+12:01, 1, G. Dieng, R, D
+11:46, 2, J. McGee, S, 2, I, A, A. Drummond
+11:31, 1, J. Valančiūnas, S, 2, O
+11:28, 2, A. Drummond, R, D
+11:19, 2, A. Drummond, S, 2, I, A, D. Dotson
+11:03, 1, K. Anderson, S, 3, I, A, T. Jones
+10:39, 2, D. Dotson, S, 3, O
+10:37, 1, J. Valančiūnas, R, D
+10:32, 1, K. Anderson, S, 3, O
+10:28, 2, A. Drummond, R, D
+10:07, 1, J. Valančiūnas, St, A. Drummond
+09:51, 2, J. McGee, F, D, J. Valančiūnas
+09:51, 1, J. Valančiūnas, S, 1, I
+09:51, 2, J. McGee, C, L. Nance
+09:51, 1, J. Valančiūnas, S, 1, I
+09:35, 1, K. Anderson, B, A. Drummond, 2
+09:33, 2, -, R, O
+09:29, 2, A. Drummond, S, 2, I, A, C. Osman
+09:06, 1, K. Anderson, S, 2, I, A, J. Valančiūnas
+08:46, 1, J. Valančiūnas, F, D, A. Drummond
+08:46, 2, A. Drummond, S, 1, I
+08:46, 2, D. Dotson, C, L. Stevens
+08:46, 1, J. Valančiūnas, C, X. Tillman
+08:46, 2, A. Drummond, S, 1, I
+08:37, 1, T. Jones, S, 2, I
+08:16, 2, L. Nance, S, 2, I
+07:56, 1, K. Anderson, S, 3, I, A, X. Tillman
+07:42, 2, C. Osman, S, 2, O
+07:40, 1, G. Allen, R, D
+07:35, 2, C. Osman, F, D, K. Anderson
+07:35, 1, G. Allen, C, D. Brooks
+07:24, 1, B. Clarke, S, 2, O
+07:22, 2, L. Nance, R, D
+07:14, 2, L. Nance, T
+06:56, 1, X. Tillman, S, 2, I, A, T. Jones
+06:26, 1, X. Tillman, F, D, A. Drummond
+06:26, 1, Timeout
+06:26, 2, C. Osman, C, D. Dotson
+06:26, 2, L. Stevens, C, D. Wade
+06:26, 1, K. Anderson, C, D. Bane
+06:26, 1, B. Clarke, C, G. Dieng
+06:26, 1, T. Jones, C, D. Melton
+06:26, 2, A. Drummond, S, 1, O
+06:26, 2, -, R, O
+06:26, 2, A. Drummond, S, 1, I
+06:11, 1, D. Brooks, S, 2, O
+06:09, 2, A. Drummond, R, D
+05:54, 2, L. Nance, S, 3, I, A, D. Wade
+05:48, 2, D. Wade, F, D, D. Bane
+05:30, 2, L. Nance, St, D. Melton
+05:28, 2, D. Dotson, S, 2, I, A, L. Nance
+05:11, 1, D. Brooks, S, 3, I
+04:50, 1, D. Brooks, F, D, D. Dotson
+04:50, 2, D. Dotson, S, 1, I
+04:50, 2, D. Dotson, S, 1, O
+04:47, 1, G. Dieng, R, D
+04:37, 1, G. Dieng, S, 2, I, A, D. Brooks
+04:15, 2, D. Dotson, S, 3, O
+04:12, 2, A. Drummond, R, O
+04:11, 2, A. Drummond, S, 2, O
+04:08, 2, A. Drummond, R, O
+04:08, 2, A. Drummond, S, 2, O
+04:08, 1, D. Melton, R, D
+04:08, 2, L. Nance, F, D, D. Melton
+04:08, 1, X. Tillman, C, B. Clarke
+03:51, 1, D. Brooks, S, 3, O
+03:51, 2, -, R, D
+03:43, 1, D. Melton, F, D, D. Dotson
+03:43, 2, D. Wade, C, C. Osman
+03:43, 1, G. Dieng, C, T. Jones
+03:43, 1, D. Melton, C, J. Valančiūnas
+03:37, 2, L. Nance, S, 2, I, A, D. Dotson
+03:17, 1, D. Brooks, F, O, C. Osman
+03:17, 1, D. Bane, C, K. Anderson
+03:00, 2, A. Drummond, S, 2, I, A, D. Dotson
+02:51, 1, B. Clarke, F, O, D. Dotson
+02:51, 2, Timeout
+02:27, 2, C. Osman, S, 3, I
+02:17, 1, T. Jones, S, 2, O
+02:15, 2, L. Nance, R, D
+01:53, 2, C. Osman, S, 3, O
+01:50, 1, T. Jones, R, D
+01:33, 2, I. Okoro, B, K. Anderson, 2
+01:30, 1, T. Jones, R, O
+01:30, 1, T. Jones, S, 3, O
+01:30, 1, J. Valančiūnas, R, O
+01:30, 2, A. Drummond, F, D, J. Valančiūnas
+01:30, 1, J. Valančiūnas, S, 1, I
+01:30, 1, J. Valančiūnas, S, 1, I
+01:16, 2, D. Dotson, S, 2, O
+01:12, 1, J. Valančiūnas, R, D
+01:00, 2, C. Osman, St, T. Jones
+00:35, 2, C. Osman, S, 2, O
+00:33, 1, K. Anderson, R, D
+00:33, 2, I. Okoro, B, T. Jones, 2
+00:33, 2, -, R, D
+00:33, 2, Timeout
+00:33, 2, Instant Replay
+00:10, 2, I. Okoro, S, 2, I, A, A. Drummond
+00:10, 1, Timeout
+00:10, 1, B. Clarke, C, D. Bane
+00:03, 1, D. Bane, S, 3, O
+00:01, 2, D. Dotson, R, D
+00:00, 1, K. Anderson, F, D, D. Dotson
+00:00, 2, Instant Replay
+00:00, 2, D. Dotson, S, 1, I
+00:00, 2, D. Dotson, S, 1, O
+00:00, 1, K. Anderson, R, D
+00:00, 1, Timeout
+00:00, 1, T. Jones, C, G. Allen
+00:00, 1, Instant Replay

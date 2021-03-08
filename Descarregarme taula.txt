@@ -1,0 +1,16 @@
+https://www.convertcsv.com/html-table-to-csv.htm
+
+Entrar al play-by-play
+F12
+Posar-se sobre el segment de table
+Copiar
+Enganxar al quadre de text del web
+
+
+A partir d'HTML
+https://stackoverflow.com/questions/54668618/converting-a-html-table-to-a-csv-in-python
+https://www.geeksforgeeks.org/convert-html-table-into-csv-file-in-python/
+https://www.thepythoncode.com/article/convert-html-tables-into-csv-files-in-python
+https://stackoverflow.com/questions/46242664/python-web-scraping-html-table-and-printing-to-csv
+
+https://www.crummy.com/software/BeautifulSoup/bs4/doc/
