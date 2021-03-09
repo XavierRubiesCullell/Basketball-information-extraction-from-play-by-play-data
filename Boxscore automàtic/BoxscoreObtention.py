@@ -4,6 +4,12 @@ import datetime
 import os
 
 
+def computeinterval(time1, time2):
+    aux_time1 = datetime.datetime.combine(my_date, time1)
+    aux_time2 = datetime.datetime.combine(my_date, time2)
+    return aux_time1 - aux_time2
+
+
 def timefromstring(clock):
     clock = clock.split(":")
     return datetime.time(0, int(clock[0]), int(clock[1]))
@@ -14,6 +20,7 @@ def check_player(team, player):
         new_row = [datetime.timedelta()] + [0]*(len(categories)-1) #new_row = ["48:00"] + [0]*(len(categories)-1)
         new_row = pd.Series(new_row, index=categories, name=player)
         globals()["table"+team] = globals()["table"+team].append(new_row)
+
 
 def check_oncourt(team, player, Q):
     if player != '-' and player not in globals()["oncourt"+team]:
@@ -79,14 +86,13 @@ def steal(action, Q, start, end):
     clock, team, player, op_player = action[0], action[1], action[2], action[4]
     check_player(team, player)
     check_oncourt(team, player, Q)
+    op_team = str((int(team)*5)%3)  # team = 1 -> op_team = 2, team = 2 -> op_team = 1
+    check_player(op_team, op_player)
+    check_oncourt(op_team, op_player, Q)
 
     clock = timefromstring(clock)
     if start >= clock and clock >= end:
         globals()["table"+team].loc[player,"St"] += 1
-    op_team = str((int(team)*5)%3)  # team = 1 -> op_team = 2, team = 2 -> op_team = 1
-    check_player(op_team, op_player)
-    check_oncourt(op_team, op_player, Q)
-    if start >= clock and clock >= end:
         globals()["table"+str(op_team)].loc[op_player,"To"] += 1
 
 
@@ -94,14 +100,14 @@ def block(action, Q, start, end):
     clock, team, player, op_player, points = action[0], action[1], action[2], action[4], action[5]
     check_player(team, player)
     check_oncourt(team, player, Q)
-
-    clock = timefromstring(clock)
-    if start >= clock and clock >= end:
-        globals()["table"+team].loc[player,"Bl"] += 1
+        
     op_team = str((int(team)*5)%3)  # team = 1 -> op_team = 2, team = 2 -> op_team = 1
     check_player(op_team, op_player)
     check_oncourt(op_team, op_player, Q)
+    
+    clock = timefromstring(clock)
     if start >= clock and clock >= end:
+        globals()["table"+team].loc[player,"Bl"] += 1
         globals()["table"+op_team].loc[op_player,points+"ptA"] += 1
 
 
@@ -132,10 +138,7 @@ def change(action, Q, start, end):
     check_player(team, playerIn)
 
     clock1 = timefromstring(clock)
-    #interval = globals()["oncourt"+team][playerOut] - clock
-    aux_oncourt = datetime.datetime.combine(my_date, globals()["oncourt"+team][playerOut])
-    aux_clock = datetime.datetime.combine(my_date, clock1)
-    interval = aux_oncourt - aux_clock
+    interval = computeinterval(globals()["oncourt"+team][playerOut], clock1)
     globals()["table"+team].loc[playerOut,'Mins'] += interval
     if playerOut not in globals()["playintervals"+team].keys():
         globals()["playintervals"+team][playerOut] = []
@@ -146,8 +149,7 @@ def change(action, Q, start, end):
 
 def quarter_end(Q):
     for player in oncourt1:
-        #table1.loc[pl,'Mins'] += oncourt1[pl]
-        interval = datetime.datetime.combine(my_date, oncourt1[player]) - datetime.datetime.combine(my_date, datetime.time(0, 12*(4-Q), 0))
+        interval = computeinterval(oncourt1[player], datetime.time(0, 12*(4-Q), 0))
         table1.loc[player,'Mins'] += interval
 
         if player not in playintervals1.keys():
@@ -155,8 +157,7 @@ def quarter_end(Q):
         playintervals1[player].append((oncourt1[player].strftime("%M:%S"), str(12*(4-Q))+":00"))
 
     for player in oncourt2:
-        #table2.loc[pl,'Mins'] += oncourt2[pl]
-        interval = datetime.datetime.combine(my_date, oncourt2[player]) - datetime.datetime.combine(my_date, datetime.time(0, 12*(4-Q), 0))
+        interval = computeinterval(oncourt2[player], datetime.time(0, 12*(4-Q), 0))
         table2.loc[player,'Mins'] += interval
 
         if player not in playintervals2.keys():
