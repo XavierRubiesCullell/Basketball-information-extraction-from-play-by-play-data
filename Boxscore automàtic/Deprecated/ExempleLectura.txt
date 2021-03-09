@@ -6,3 +6,11 @@ def read_plays(f):
             treat_line(line)
         else:
             end = True
+
+# f = open('./Prova.txt', 'r')
+# print(f.read())
+    # for line in f:
+    #     # reading each word         
+    #     for word in line.split(): 
+    #         # displaying the action            
+    #         print(word)
