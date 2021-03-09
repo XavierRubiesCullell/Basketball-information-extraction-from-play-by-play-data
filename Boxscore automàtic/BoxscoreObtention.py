@@ -1,15 +1,12 @@
-# f = open('./Prova.txt', 'r')
-# print(f.read())
-    # for line in f:
-    #     # reading each word         
-    #     for word in line.split(): 
-    #         # displaying the action            
-    #         print(word)
-
 import numpy as np
 import pandas as pd
 import datetime
 import os
+
+
+def timefromstring(clock):
+    clock = clock.split(":")
+    return datetime.time(0, int(clock[0]), int(clock[1]))
 
 
 def check_player(team, player):
@@ -25,120 +22,146 @@ def check_oncourt(team, player, Q):
         globals()["table"+team].loc[player,"+/-"] += globals()["plusminus"+team]
 
 
-def shoot(action, Q):
+def shoot(action, Q, start, end):
     # clock team player points [dist] result [A assistant]
     clock, team, player, points = action[0], action[1], action[2], action[4]
     op_team = str((int(team)*5)%3)  # team = 1 -> op_team = 2, team = 2 -> op_team = 1
     check_player(team, player)
     check_oncourt(team, player, Q)
 
-    globals()["table"+team].loc[player,points+"ptA"] += 1
+    clock = timefromstring(clock)
+    if start >= clock and clock >= end:
+        globals()["table"+team].loc[player,points+"ptA"] += 1
     dist_given = action[5] != 'I' and action[5] != 'O' # true if it is not I or O, so it is the number expressing the distance
     result = action[5 + dist_given]
 
     if result == 'I':
-        globals()["table"+team].loc[player,points+"ptI"] += 1
-        globals()["table"+team].loc[player,"Pts"] += int(points)
-        globals()["plusminus"+team] += int(points)
-        for pl in globals()["oncourt"+team]:
-            globals()["table"+team].loc[pl,"+/-"] += int(points)
-        globals()["plusminus"+op_team] -= int(points)
-        for pl in globals()["oncourt"+op_team]:
-            globals()["table"+op_team].loc[pl,"+/-"] -= int(points)
+        if start >= clock and clock >= end:
+            globals()["table"+team].loc[player,points+"ptI"] += 1
+            globals()["table"+team].loc[player,"Pts"] += int(points)
+            globals()["plusminus"+team] += int(points)
+            for pl in globals()["oncourt"+team]:
+                globals()["table"+team].loc[pl,"+/-"] += int(points)
+            globals()["plusminus"+op_team] -= int(points)
+            for pl in globals()["oncourt"+op_team]:
+                globals()["table"+op_team].loc[pl,"+/-"] -= int(points)
 
         if len(action) == 8+dist_given and action[6+dist_given] == 'A': # there is an assist
             assistant = action[7+dist_given]
             check_player(team, assistant)
             check_oncourt(team, assistant, Q)
-            globals()["table"+team].loc[assistant,"Ast"] += 1
+            if start >= clock and clock >= end:
+                globals()["table"+team].loc[assistant,"Ast"] += 1
 
 
-def rebound(action, Q):
+def rebound(action, Q, start, end):
     clock, team, player, kind = action[0], action[1], action[2], action[4]
     check_player(team, player)
     check_oncourt(team, player, Q)
 
-    globals()["table"+team].loc[player,"Reb"] += 1
-    globals()["table"+team].loc[player,kind+"R"] += 1
+    clock = timefromstring(clock)
+    if start >= clock and clock >= end:
+        globals()["table"+team].loc[player,"Reb"] += 1
+        globals()["table"+team].loc[player,kind+"R"] += 1
 
 
-def turnover(action, Q):
+def turnover(action, Q, start, end):
     clock, team, player = action[0], action[1], action[2]
     check_player(team, player)
     check_oncourt(team, player, Q)
 
-    globals()["table"+team].loc[player,"To"] += 1
+    clock = timefromstring(clock)
+    if start >= clock and clock >= end:
+        globals()["table"+team].loc[player,"To"] += 1
 
 
-def steal(action, Q):
+def steal(action, Q, start, end):
     clock, team, player, op_player = action[0], action[1], action[2], action[4]
     check_player(team, player)
     check_oncourt(team, player, Q)
 
-    globals()["table"+team].loc[player,"St"] += 1
+    clock = timefromstring(clock)
+    if start >= clock and clock >= end:
+        globals()["table"+team].loc[player,"St"] += 1
     op_team = str((int(team)*5)%3)  # team = 1 -> op_team = 2, team = 2 -> op_team = 1
     check_player(op_team, op_player)
     check_oncourt(op_team, op_player, Q)
-    globals()["table"+str(op_team)].loc[op_player,"To"] += 1
+    if start >= clock and clock >= end:
+        globals()["table"+str(op_team)].loc[op_player,"To"] += 1
 
 
-def block(action, Q):
+def block(action, Q, start, end):
     clock, team, player, op_player, points = action[0], action[1], action[2], action[4], action[5]
     check_player(team, player)
     check_oncourt(team, player, Q)
 
-    globals()["table"+team].loc[player,"Bl"] += 1
+    clock = timefromstring(clock)
+    if start >= clock and clock >= end:
+        globals()["table"+team].loc[player,"Bl"] += 1
     op_team = str((int(team)*5)%3)  # team = 1 -> op_team = 2, team = 2 -> op_team = 1
     check_player(op_team, op_player)
     check_oncourt(op_team, op_player, Q)
-    globals()["table"+op_team].loc[op_player,points+"ptA"] += 1
+    if start >= clock and clock >= end:
+        globals()["table"+op_team].loc[op_player,points+"ptA"] += 1
 
 
-def foul(action, Q):
+def foul(action, Q, start, end):
     clock, team, player, kind = action[0], action[1], action[2], action[4]
     check_player(team, player)
     check_oncourt(team, player, Q)
     
-    globals()["table"+team].loc[player,"FM"] += 1
-    if kind == 'O':
-        globals()["table"+team].loc[player,"To"] += 1
+    clock = timefromstring(clock)
+    if start >= clock and clock >= end:
+        globals()["table"+team].loc[player,"FM"] += 1
+        if kind == 'O':
+            globals()["table"+team].loc[player,"To"] += 1
 
     if len(action) == 6:
         op_player = action[5]
         op_team = str((int(team)*5)%3)
         check_player(op_team, op_player)
         check_oncourt(op_team, op_player, Q)
-        globals()["table"+op_team].loc[op_player,"FR"] += 1
+        if start >= clock and clock >= end:
+            globals()["table"+op_team].loc[op_player,"FR"] += 1
 
 
-def change(action, Q):
+def change(action, Q, start, end):
     clock, team, playerOut, playerIn = action[0], action[1], action[2], action[4]
     check_player(team, playerOut)
     check_oncourt(team, playerOut, Q)
     check_player(team, playerIn)
 
-    clock = clock.split(":")
-    #clock = datetime.timedelta(minutes = int(clock[0]), seconds = int(clock[1]))
-    clock = datetime.time(0, int(clock[0]), int(clock[1]))
+    clock1 = timefromstring(clock)
     #interval = globals()["oncourt"+team][playerOut] - clock
     aux_oncourt = datetime.datetime.combine(my_date, globals()["oncourt"+team][playerOut])
-    aux_clock = datetime.datetime.combine(my_date, clock)
+    aux_clock = datetime.datetime.combine(my_date, clock1)
     interval = aux_oncourt - aux_clock
     globals()["table"+team].loc[playerOut,'Mins'] += interval
+    if playerOut not in globals()["playintervals"+team].keys():
+        globals()["playintervals"+team][playerOut] = []
+    globals()["playintervals"+team][playerOut].append((globals()["oncourt"+team][playerOut].strftime("%M:%S"), clock))
     del globals()["oncourt"+team][playerOut]
-    globals()["oncourt"+team][playerIn] = clock
+    globals()["oncourt"+team][playerIn] = clock1
 
 
 def quarter_end(Q):
-    for pl in oncourt1:
+    for player in oncourt1:
         #table1.loc[pl,'Mins'] += oncourt1[pl]
-        interval = datetime.datetime.combine(my_date, oncourt1[pl]) - datetime.datetime.combine(my_date, datetime.time(0, 12*(4-Q), 0))
-        table1.loc[pl,'Mins'] += interval
+        interval = datetime.datetime.combine(my_date, oncourt1[player]) - datetime.datetime.combine(my_date, datetime.time(0, 12*(4-Q), 0))
+        table1.loc[player,'Mins'] += interval
 
-    for pl in oncourt2:
+        if player not in playintervals1.keys():
+            playintervals1[player] = []
+        playintervals1[player].append((oncourt1[player].strftime("%M:%S"), str(12*(4-Q))+":00"))
+
+    for player in oncourt2:
         #table2.loc[pl,'Mins'] += oncourt2[pl]
-        interval = datetime.datetime.combine(my_date, oncourt2[pl]) - datetime.datetime.combine(my_date, datetime.time(0, 12*(4-Q), 0))
-        table2.loc[pl,'Mins'] += interval
+        interval = datetime.datetime.combine(my_date, oncourt2[player]) - datetime.datetime.combine(my_date, datetime.time(0, 12*(4-Q), 0))
+        table2.loc[player,'Mins'] += interval
+
+        if player not in playintervals2.keys():
+            playintervals2[player] = []
+        playintervals2[player].append((oncourt2[player].strftime("%M:%S"), str(12*(4-Q))+":00"))
 
     global plusminus1, plusminus2
     plusminus1 = 0
@@ -147,13 +170,12 @@ def quarter_end(Q):
     oncourt2.clear()
 
 
-def treat_line(line, prev_Q):
+def treat_line(line, prev_Q, start, end):
     action = line.split(", ")
     
     #we need to check whether there was a change of quarter
     clock = action[0]
-    clock = clock.split(":")
-    clock = datetime.time(0, int(clock[0]), int(clock[1]))
+    clock = timefromstring(clock)
     Q = (4-int(clock.minute/12))
     if prev_Q != Q:
         quarter_end(prev_Q)
@@ -161,19 +183,19 @@ def treat_line(line, prev_Q):
     #print(action)
     #if Q >= 3:
     if len(action) > 3 and action[3] == "S":
-        shoot(action, Q)
+        shoot(action, Q, start, end)
     elif len(action) > 3 and action[3] == "R":
-        rebound(action, Q)
+        rebound(action, Q, start, end)
     elif len(action) > 3 and action[3] == "T":
-        turnover(action, Q)
+        turnover(action, Q, start, end)
     elif len(action) > 3 and action[3] == "St":
-        steal(action, Q)
+        steal(action, Q, start, end)
     elif len(action) > 3 and action[3] == "B":
-        block(action, Q)
+        block(action, Q, start, end)
     elif len(action) > 3 and action[3] == "F":
-        foul(action, Q)
+        foul(action, Q, start, end)
     elif len(action) > 3 and action[3] == "C":
-        change(action, Q)
+        change(action, Q, start, end)
     else:
         others.append(action)
     
@@ -205,6 +227,10 @@ def initalise():
     oncourt1 = {}
     oncourt2 = {}
 
+    global playintervals1, playintervals2
+    playintervals1 = {}
+    playintervals2 = {}
+
     global my_date
     my_date = datetime.date(1, 1, 1)
 
@@ -212,11 +238,11 @@ def initalise():
     others = []
 
 
-def read_plays(f):
+def read_plays(f, start, end):
     Q = 1
     for i, line in enumerate(f):
         line = line.strip()
-        Q = treat_line(line, Q)
+        Q = treat_line(line, Q, start, end)
 
 
 def print_results():
@@ -224,18 +250,29 @@ def print_results():
     print(table1)
     print("\nAway team table")
     print(table2)
+    print()
+    for player in playintervals1.items():
+        print(player)
+    print()
+    for player in playintervals2.items():
+        print(player)
     print("\nOther actions:")
     for el in others:
         print(el)
 
 
-def BoxscoreObtentionMain(in_file, pkl1, pkl2):
+def BoxscoreObtentionMain(in_file, pkl1, pkl2, start="48:00", end="0:00"):
     os.chdir(os.path.dirname(__file__))
 
     initalise()
 
+    start = start.split(":")
+    start = datetime.time(0, int(start[0]), int(start[1]))
+    end = end.split(":")
+    end = datetime.time(0, int(end[0]), int(end[1]))
+
     with open("Files/" + in_file, encoding="utf-8") as f:
-        read_plays(f)
+        read_plays(f, start, end)
 
     quarter_end(4)
     global table1, table2
