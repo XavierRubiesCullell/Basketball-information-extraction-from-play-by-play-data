@@ -5,6 +5,7 @@ import os
 
 
 def computeinterval(time1, time2):
+    my_date = datetime.date(1, 1, 1)
     aux_time1 = datetime.datetime.combine(my_date, time1)
     aux_time2 = datetime.datetime.combine(my_date, time2)
     return aux_time1 - aux_time2
@@ -232,9 +233,6 @@ def initalise():
     playintervals1 = {}
     playintervals2 = {}
 
-    global my_date
-    my_date = datetime.date(1, 1, 1)
-
     global others
     others = []
 
@@ -267,10 +265,8 @@ def BoxscoreObtentionMain(in_file, pkl1, pkl2, start="48:00", end="0:00"):
 
     initalise()
 
-    start = start.split(":")
-    start = datetime.time(0, int(start[0]), int(start[1]))
-    end = end.split(":")
-    end = datetime.time(0, int(end[0]), int(end[1]))
+    start = timefromstring(start)
+    end = timefromstring(end)
 
     with open("Files/" + in_file, encoding="utf-8") as f:
         read_plays(f, start, end)
