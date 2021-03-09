@@ -204,6 +204,6 @@ def StandardPbPObtentionMain(webpage, out_file):
 
     #print_results()    
 
-    with open("Files/" + out_file, "x", encoding="utf8") as out:
+    with open("Files/" + out_file, "w", encoding="utf8") as out:
         for action in actions:
             out.write(", ".join(action) + '\n')
