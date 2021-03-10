@@ -272,9 +272,7 @@ def BoxscoreObtentionMain(in_file, pkl1, pkl2, start="48:00", end="0:00"):
         read_plays(f, start, end)
 
     quarter_end(4)
-    global table1, table2
-    # globals()["table1"] = globals()["table1"].reindex(["I.Okoro", "C.Osman", "A.Drummond", "D.Dotson", "L.Nance", "L.Stevens", "J.McGee", "D.Wade", "T.Maker", "-"])
-    # globals()["table2"] = globals()["table2"].reindex(["B.Clarke", "D.Brooks", "K.Anderson", "J.Valančiūnas", "T.Jones", "D.Bane", "D.Melton", "X.Tillman", "G.Dieng", "G.Allen", "-"])
+    # global table1, table2
     # table1 = table1.reindex(["I. Okoro", "C. Osman", "A. Drummond", "D. Dotson", "L. Nance", "L. Stevens", "J. McGee", "D. Wade", "T. Maker", "-"])
     # table2 = table2.reindex(["B. Clarke", "D. Brooks", "K. Anderson", "J. Valančiūnas", "T. Jones", "D. Bane", "D. Melton", "X. Tillman", "G. Dieng", "G. Allen", "-"])
 
