@@ -4,11 +4,18 @@ import datetime
 import os
 
 
-def computeinterval(time1, time2):
+def computeinterval(in_time, out_time, start, end):
     my_date = datetime.date(1, 1, 1)
-    aux_time1 = datetime.datetime.combine(my_date, time1)
-    aux_time2 = datetime.datetime.combine(my_date, time2)
-    return aux_time1 - aux_time2
+    # aux_in_time = datetime.datetime.combine(my_date, in_time)
+    # aux_out_time = datetime.datetime.combine(my_date, out_time)
+    # return aux_in_time - aux_out_time
+
+    int_start = min(in_time, start)
+    int_end = max(out_time, end)
+    int_start = datetime.datetime.combine(my_date, int_start)
+    int_end = datetime.datetime.combine(my_date, int_end)
+    null = datetime.timedelta() # in case the interval is negative
+    return max(int_start - int_end, null)
 
 
 def timefromstring(clock):
@@ -139,7 +146,7 @@ def change(action, Q, start, end):
     check_player(team, playerIn)
 
     clock1 = timefromstring(clock)
-    interval = computeinterval(globals()["oncourt"+team][playerOut], clock1)
+    interval = computeinterval(globals()["oncourt"+team][playerOut], clock1, start, end)
     globals()["table"+team].loc[playerOut,'Mins'] += interval
     if playerOut not in globals()["playintervals"+team].keys():
         globals()["playintervals"+team][playerOut] = []
@@ -148,9 +155,9 @@ def change(action, Q, start, end):
     globals()["oncourt"+team][playerIn] = clock1
 
 
-def quarter_end(Q):
+def quarter_end(Q, start, end):
     for player in oncourt1:
-        interval = computeinterval(oncourt1[player], datetime.time(0, 12*(4-Q), 0))
+        interval = computeinterval(oncourt1[player], datetime.time(0, 12*(4-Q), 0), start, end)
         table1.loc[player,'Mins'] += interval
 
         if player not in playintervals1.keys():
@@ -158,7 +165,7 @@ def quarter_end(Q):
         playintervals1[player].append((oncourt1[player].strftime("%M:%S"), str(12*(4-Q))+":00"))
 
     for player in oncourt2:
-        interval = computeinterval(oncourt2[player], datetime.time(0, 12*(4-Q), 0))
+        interval = computeinterval(oncourt2[player], datetime.time(0, 12*(4-Q), 0), start, end)
         table2.loc[player,'Mins'] += interval
 
         if player not in playintervals2.keys():
@@ -180,7 +187,7 @@ def treat_line(line, prev_Q, start, end):
     clock = timefromstring(clock)
     Q = (4-int(clock.minute/12))
     if prev_Q != Q:
-        quarter_end(prev_Q)
+        quarter_end(prev_Q, start, end)
 
     #print(action)
     #if Q >= 3:
@@ -271,7 +278,7 @@ def BoxscoreObtentionMain(in_file, pkl1, pkl2, start="48:00", end="0:00"):
     with open("Files/" + in_file, encoding="utf-8") as f:
         read_plays(f, start, end)
 
-    quarter_end(4)
+    quarter_end(4, start, end)
     # global table1, table2
     # table1 = table1.reindex(["I. Okoro", "C. Osman", "A. Drummond", "D. Dotson", "L. Nance", "L. Stevens", "J. McGee", "D. Wade", "T. Maker", "-"])
     # table2 = table2.reindex(["B. Clarke", "D. Brooks", "K. Anderson", "J. Valančiūnas", "T. Jones", "D. Bane", "D. Melton", "X. Tillman", "G. Dieng", "G. Allen", "-"])
