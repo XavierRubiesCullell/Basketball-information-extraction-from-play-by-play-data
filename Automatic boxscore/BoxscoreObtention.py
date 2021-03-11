@@ -12,10 +12,10 @@ def computeinterval(in_time, out_time, start, end):
 
     int_start = min(in_time, start)
     int_end = max(out_time, end)
-    int_start = datetime.datetime.combine(my_date, int_start)
-    int_end = datetime.datetime.combine(my_date, int_end)
+    date_int_start = datetime.datetime.combine(my_date, int_start)
+    date_int_end = datetime.datetime.combine(my_date, int_end)
     null = datetime.timedelta() # in case the interval is negative
-    return max(int_start - int_end, null)
+    return max(date_int_start - date_int_end, null), int_start, int_end
 
 
 def timefromstring(clock):
@@ -146,31 +146,32 @@ def change(action, Q, start, end):
     check_player(team, playerIn)
 
     clock1 = timefromstring(clock)
-    interval = computeinterval(globals()["oncourt"+team][playerOut], clock1, start, end)
+    interval, int_min, int_max = computeinterval(globals()["oncourt"+team][playerOut], clock1, start, end)
     globals()["table"+team].loc[playerOut,'Mins'] += interval
-    if playerOut not in globals()["playintervals"+team].keys():
-        globals()["playintervals"+team][playerOut] = []
-    globals()["playintervals"+team][playerOut].append((globals()["oncourt"+team][playerOut].strftime("%M:%S"), clock))
+    if interval != datetime.timedelta():
+        if playerOut not in globals()["playintervals"+team].keys():
+            globals()["playintervals"+team][playerOut] = []
+        globals()["playintervals"+team][playerOut].append((int_min.strftime("%M:%S"), int_max.strftime("%M:%S")))
     del globals()["oncourt"+team][playerOut]
     globals()["oncourt"+team][playerIn] = clock1
 
 
 def quarter_end(Q, start, end):
     for player in oncourt1:
-        interval = computeinterval(oncourt1[player], datetime.time(0, 12*(4-Q), 0), start, end)
+        interval, int_min, int_max = computeinterval(oncourt1[player], datetime.time(0, 12*(4-Q), 0), start, end)
         table1.loc[player,'Mins'] += interval
-
-        if player not in playintervals1.keys():
-            playintervals1[player] = []
-        playintervals1[player].append((oncourt1[player].strftime("%M:%S"), str(12*(4-Q))+":00"))
+        if interval != datetime.timedelta():
+            if player not in playintervals1.keys():
+                playintervals1[player] = []
+            playintervals1[player].append((int_min.strftime("%M:%S"), int_max.strftime("%M:%S")))
 
     for player in oncourt2:
-        interval = computeinterval(oncourt2[player], datetime.time(0, 12*(4-Q), 0), start, end)
+        interval, int_min, int_max = computeinterval(oncourt2[player], datetime.time(0, 12*(4-Q), 0), start, end)
         table2.loc[player,'Mins'] += interval
-
-        if player not in playintervals2.keys():
-            playintervals2[player] = []
-        playintervals2[player].append((oncourt2[player].strftime("%M:%S"), str(12*(4-Q))+":00"))
+        if interval != datetime.timedelta():
+            if player not in playintervals2.keys():
+                playintervals2[player] = []
+            playintervals2[player].append((int_min.strftime("%M:%S"), int_max.strftime("%M:%S")))
 
     global plusminus1, plusminus2
     plusminus1 = 0
