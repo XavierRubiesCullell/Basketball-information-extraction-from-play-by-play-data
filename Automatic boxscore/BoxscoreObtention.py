@@ -37,7 +37,7 @@ def check_oncourt(team, player, Q):
         globals()["table"+team].loc[player,"+/-"] += globals()["plusminus"+team]
 
 
-def shoot(action, Q, start, end):
+def shoot(i, action, Q, start, end):
     # clock team player points [dist] result [A assistant]
     clock, team, player, points = action[0], action[1], action[2], action[4]
     op_team = str((int(team)*5)%3)  # team = 1 -> op_team = 2, team = 2 -> op_team = 1
@@ -180,7 +180,7 @@ def quarter_end(Q, start, end):
     oncourt2.clear()
 
 
-def treat_line(line, prev_Q, start, end):
+def treat_line(i, line, prev_Q, start, end):
     action = line.split(", ")
     
     #we need to check whether there was a change of quarter
@@ -193,7 +193,7 @@ def treat_line(line, prev_Q, start, end):
     #print(action)
     #if Q >= 3:
     if len(action) > 3 and action[3] == "S":
-        shoot(action, Q, start, end)
+        shoot(i, action, Q, start, end)
     elif len(action) > 3 and action[3] == "R":
         rebound(action, Q, start, end)
     elif len(action) > 3 and action[3] == "T":
@@ -207,7 +207,8 @@ def treat_line(line, prev_Q, start, end):
     elif len(action) > 3 and action[3] == "C":
         change(action, Q, start, end)
     else:
-        others.append(action)
+        if start >= clock and clock >= end:
+            others.append(action)
     
     # if Q == 3 and len(action) > 3 and action[3] == "S":
     #     print(action)
@@ -249,7 +250,7 @@ def read_plays(f, start, end):
     Q = 1
     for i, line in enumerate(f):
         line = line.strip()
-        Q = treat_line(line, Q, start, end)
+        Q = treat_line(i, line, Q, start, end)
 
 
 def print_results():
