@@ -6,9 +6,6 @@ import os
 
 def computeinterval(in_time, out_time, start, end):
     my_date = datetime.date(1, 1, 1)
-    # aux_in_time = datetime.datetime.combine(my_date, in_time)
-    # aux_out_time = datetime.datetime.combine(my_date, out_time)
-    # return aux_in_time - aux_out_time
 
     int_start = min(in_time, start)
     int_end = max(out_time, end)
@@ -25,130 +22,154 @@ def timefromstring(clock):
 
 def check_player(team, player):
     if player not in set(globals()["table"+team].index):
-        new_row = [datetime.timedelta()] + [0]*(len(categories)-1) #new_row = ["48:00"] + [0]*(len(categories)-1)
+        new_row = [datetime.timedelta()] + [0]*(len(categories)-1)
         new_row = pd.Series(new_row, index=categories, name=player)
         globals()["table"+team] = globals()["table"+team].append(new_row)
 
 
-def check_oncourt(team, player, Q):
+def check_oncourt(team, player, Q, clock, start, end):
     if player != '-' and player not in globals()["oncourt"+team]:
-        #globals()["oncourt"+team][player] = datetime.timedelta(minutes = 48)
         globals()["oncourt"+team][player] = datetime.time(0, (5-Q)*12, 0)
-        globals()["table"+team].loc[player,"+/-"] += globals()["plusminus"+team]
+        if start >= clock and clock >= end:
+            check_player(team, player)
+            modify_table(team, player, '+/-', globals()["plusminus"+team])
+
+
+def modify_table(team, player, variable, value):
+    if player == "C. Elleby" and variable == '+/-':
+        print(value)
+    globals()["table"+team].loc[player,variable] += value
+
+
+def correct_plusminus(i):
+    ft_action = lines[i].strip().split(", ")
+    j = i - 1
+    action = lines[j].strip().split(", ")
+    while not (len(action) > 3 and action[3] == "F"): # we determine whether the action is a foul
+        if len(action) > 3 and action[3] == "C": # we determine whether the action is a change
+            team, playerOut, playerIn = action[1], action[2], action[4]
+            points = 2*(team==ft_action[1]) - 1  #true -> 1, false -> -1
+            modify_table(team, playerOut, '+/-', points)
+            modify_table(team, playerIn, '+/-', -points)
+        j -= 1
+        action = lines[j].strip().split(", ")
 
 
 def shoot(i, action, Q, start, end):
     # clock team player points [dist] result [A assistant]
     clock, team, player, points = action[0], action[1], action[2], action[4]
-    op_team = str((int(team)*5)%3)  # team = 1 -> op_team = 2, team = 2 -> op_team = 1
-    check_player(team, player)
-    check_oncourt(team, player, Q)
-
     clock = timefromstring(clock)
+    op_team = str((int(team)*5)%3)  # team = 1 -> op_team = 2, team = 2 -> op_team = 1
+    check_oncourt(team, player, Q, clock, start, end)
+
     if start >= clock and clock >= end:
-        globals()["table"+team].loc[player,points+"ptA"] += 1
-    dist_given = action[5] != 'I' and action[5] != 'O' # true if it is not I or O, so it is the number expressing the distance
+        check_player(team, player)
+        modify_table(team, player, points+"ptA", 1)
+    dist_given = action[5] != "I" and action[5] != "O" # true if it is not I or O, so it is the number expressing the distance
     result = action[5 + dist_given]
 
-    if result == 'I':
+    if result == "I":
         if start >= clock and clock >= end:
-            globals()["table"+team].loc[player,points+"ptI"] += 1
-            globals()["table"+team].loc[player,"Pts"] += int(points)
+            modify_table(team, player, points+"ptI", 1)
+            modify_table(team, player, 'Pts', int(points))
             globals()["plusminus"+team] += int(points)
             for pl in globals()["oncourt"+team]:
-                globals()["table"+team].loc[pl,"+/-"] += int(points)
+                modify_table(team, pl, '+/-', int(points))
             globals()["plusminus"+op_team] -= int(points)
             for pl in globals()["oncourt"+op_team]:
-                globals()["table"+op_team].loc[pl,"+/-"] -= int(points)
+                modify_table(op_team, pl, '+/-', -int(points))
+            
+            if points == "1":
+                correct_plusminus(i)
 
-        if len(action) == 8+dist_given and action[6+dist_given] == 'A': # there is an assist
+        if len(action) == 8+dist_given and action[6+dist_given] == "A": # there is an assist
             assistant = action[7+dist_given]
-            check_player(team, assistant)
-            check_oncourt(team, assistant, Q)
+            check_oncourt(team, assistant, Q, clock, start, end)
             if start >= clock and clock >= end:
-                globals()["table"+team].loc[assistant,"Ast"] += 1
+                check_player(team, assistant)
+                modify_table(team, assistant, 'Ast', 1)
 
 
 def rebound(action, Q, start, end):
     clock, team, player, kind = action[0], action[1], action[2], action[4]
-    check_player(team, player)
-    check_oncourt(team, player, Q)
-
     clock = timefromstring(clock)
+    check_oncourt(team, player, Q, clock, start, end)
+
     if start >= clock and clock >= end:
-        globals()["table"+team].loc[player,"Reb"] += 1
-        globals()["table"+team].loc[player,kind+"R"] += 1
+        check_player(team, player)
+        modify_table(team, player, 'Reb', 1)
+        modify_table(team, player, kind+"R", 1)
 
 
 def turnover(action, Q, start, end):
     clock, team, player = action[0], action[1], action[2]
-    check_player(team, player)
-    check_oncourt(team, player, Q)
-
     clock = timefromstring(clock)
+    check_oncourt(team, player, Q, clock, start, end)
+
     if start >= clock and clock >= end:
-        globals()["table"+team].loc[player,"To"] += 1
+        check_player(team, player)
+        modify_table(team, player, 'To', 1)
 
 
 def steal(action, Q, start, end):
     clock, team, player, op_player = action[0], action[1], action[2], action[4]
-    check_player(team, player)
-    check_oncourt(team, player, Q)
-    op_team = str((int(team)*5)%3)  # team = 1 -> op_team = 2, team = 2 -> op_team = 1
-    check_player(op_team, op_player)
-    check_oncourt(op_team, op_player, Q)
-
     clock = timefromstring(clock)
+    check_oncourt(team, player, Q, clock, start, end)
+    op_team = str((int(team)*5)%3)  # team = 1 -> op_team = 2, team = 2 -> op_team = 1
+    check_oncourt(op_team, op_player, Q, clock, start, end)
+
     if start >= clock and clock >= end:
-        globals()["table"+team].loc[player,"St"] += 1
-        globals()["table"+str(op_team)].loc[op_player,"To"] += 1
+        check_player(team, player)
+        modify_table(team, player, 'St', 1)
+        check_player(op_team, op_player)
+        modify_table(op_team, op_player, 'To', 1)
 
 
 def block(action, Q, start, end):
     clock, team, player, op_player, points = action[0], action[1], action[2], action[4], action[5]
-    check_player(team, player)
-    check_oncourt(team, player, Q)
-        
-    op_team = str((int(team)*5)%3)  # team = 1 -> op_team = 2, team = 2 -> op_team = 1
-    check_player(op_team, op_player)
-    check_oncourt(op_team, op_player, Q)
-    
     clock = timefromstring(clock)
+    check_oncourt(team, player, Q, clock, start, end)
+    
+    op_team = str((int(team)*5)%3)  # team == 1 -> op_team = 2,  team == 2 -> op_team = 1
+    check_oncourt(op_team, op_player, Q, clock, start, end)
+    
     if start >= clock and clock >= end:
-        globals()["table"+team].loc[player,"Bl"] += 1
-        globals()["table"+op_team].loc[op_player,points+"ptA"] += 1
+        check_player(team, player)
+        modify_table(team, player, 'Bl', 1)
+        check_player(op_team, op_player)
+        modify_table(op_team, op_player, points+"ptA", 1)
 
 
 def foul(action, Q, start, end):
     clock, team, player, kind = action[0], action[1], action[2], action[4]
-    check_player(team, player)
-    check_oncourt(team, player, Q)
-    
     clock = timefromstring(clock)
+    check_oncourt(team, player, Q, clock, start, end)
+    
     if start >= clock and clock >= end:
-        globals()["table"+team].loc[player,"FM"] += 1
-        if kind == 'O':
-            globals()["table"+team].loc[player,"To"] += 1
+        check_player(team, player)
+        modify_table(team, player, 'FM', 1)
+        if kind == "O":
+            modify_table(team, player, 'To', 1)
 
     if len(action) == 6:
         op_player = action[5]
         op_team = str((int(team)*5)%3)
-        check_player(op_team, op_player)
-        check_oncourt(op_team, op_player, Q)
+        check_oncourt(op_team, op_player, Q, clock, start, end)
         if start >= clock and clock >= end:
+            check_player(op_team, op_player)
             globals()["table"+op_team].loc[op_player,"FR"] += 1
 
 
 def change(action, Q, start, end):
     clock, team, playerOut, playerIn = action[0], action[1], action[2], action[4]
-    check_player(team, playerOut)
-    check_oncourt(team, playerOut, Q)
-    check_player(team, playerIn)
+    check_oncourt(team, playerOut, Q, clock, start, end)
 
     clock1 = timefromstring(clock)
     interval, int_min, int_max = computeinterval(globals()["oncourt"+team][playerOut], clock1, start, end)
-    globals()["table"+team].loc[playerOut,'Mins'] += interval
-    if interval != datetime.timedelta():
+    if interval != datetime.timedelta(): # if it is equal, the interval is null (there is no overlap)
+        check_player(team, playerOut)
+        modify_table(team, playerOut, 'Mins', interval)
+        check_player(team, playerIn)
         if playerOut not in globals()["playintervals"+team].keys():
             globals()["playintervals"+team][playerOut] = []
         globals()["playintervals"+team][playerOut].append((int_min.strftime("%M:%S"), int_max.strftime("%M:%S")))
@@ -159,16 +180,18 @@ def change(action, Q, start, end):
 def quarter_end(Q, start, end):
     for player in oncourt1:
         interval, int_min, int_max = computeinterval(oncourt1[player], datetime.time(0, 12*(4-Q), 0), start, end)
-        table1.loc[player,'Mins'] += interval
         if interval != datetime.timedelta():
+            check_player("1", player)
+            table1.loc[player,'Mins'] += interval
             if player not in playintervals1.keys():
                 playintervals1[player] = []
             playintervals1[player].append((int_min.strftime("%M:%S"), int_max.strftime("%M:%S")))
 
     for player in oncourt2:
         interval, int_min, int_max = computeinterval(oncourt2[player], datetime.time(0, 12*(4-Q), 0), start, end)
-        table2.loc[player,'Mins'] += interval
         if interval != datetime.timedelta():
+            check_player("2", player)
+            table2.loc[player,'Mins'] += interval
             if player not in playintervals2.keys():
                 playintervals2[player] = []
             playintervals2[player].append((int_min.strftime("%M:%S"), int_max.strftime("%M:%S")))
@@ -190,8 +213,6 @@ def treat_line(i, line, prev_Q, start, end):
     if prev_Q != Q:
         quarter_end(prev_Q, start, end)
 
-    #print(action)
-    #if Q >= 3:
     if len(action) > 3 and action[3] == "S":
         shoot(i, action, Q, start, end)
     elif len(action) > 3 and action[3] == "R":
@@ -209,20 +230,13 @@ def treat_line(i, line, prev_Q, start, end):
     else:
         if start >= clock and clock >= end:
             others.append(action)
-    
-    # if Q == 3 and len(action) > 3 and action[3] == "S":
-    #     print(action)
-    #     print(oncourt1.keys())
-    #     print(table1['+/-'])
-    #     print(plusminus1)
-    #     print()
 
     return Q
 
 
 def initalise():
     global categories
-    categories = ['Mins', '+/-', 'Pts', '2ptI', '2ptA', '3ptI', '3ptA', '1ptI', '1ptA', 'OR', 'DR', 'Reb', 'Ast', 'Bl', 'St', 'To', 'FM', 'FR']
+    categories = ['Mins', '2ptI', '2ptA', '3ptI', '3ptA', '1ptI', '1ptA', 'OR', 'DR', 'Reb', 'Ast', 'Bl', 'St', 'To', 'FM', 'FR', 'Pts', '+/-']
     
     global table1, table2
     table1 = pd.DataFrame(columns = categories)
@@ -248,7 +262,9 @@ def initalise():
 
 def read_plays(f, start, end):
     Q = 1
-    for i, line in enumerate(f):
+    global lines
+    lines = f.readlines()
+    for i, line in enumerate(lines):
         line = line.strip()
         Q = treat_line(i, line, Q, start, end)
 
@@ -291,4 +307,3 @@ def BoxscoreObtentionMain(in_file, pkl1, pkl2, start="48:00", end="0:00"):
     table1.to_pickle("Files/" + pkl1)
     table2.to_pickle("Files/" + pkl2)
     print_results()
-    
