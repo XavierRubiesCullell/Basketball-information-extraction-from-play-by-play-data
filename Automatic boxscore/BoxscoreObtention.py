@@ -72,9 +72,11 @@ def shoot(i, action, Q, start, end):
             modify_table(team, player, 'Pts', int(points))
             globals()["plusminus"+team] += int(points)
             for pl in globals()["oncourt"+team]:
+                check_player(team, pl)
                 modify_table(team, pl, '+/-', int(points))
             globals()["plusminus"+op_team] -= int(points)
             for pl in globals()["oncourt"+op_team]:
+                check_player(op_team, pl)
                 modify_table(op_team, pl, '+/-', -int(points))
             
             if points == "1":
@@ -160,10 +162,10 @@ def foul(action, Q, start, end):
 
 def change(action, Q, start, end):
     clock, team, playerOut, playerIn = action[0], action[1], action[2], action[4]
+    clock = timefromstring(clock)
     check_oncourt(team, playerOut, Q, clock, start, end)
 
-    clock1 = timefromstring(clock)
-    interval, int_min, int_max = computeinterval(globals()["oncourt"+team][playerOut], clock1, start, end)
+    interval, int_min, int_max = computeinterval(globals()["oncourt"+team][playerOut], clock, start, end)
     if interval != datetime.timedelta(): # if it is equal, the interval is null (there is no overlap)
         check_player(team, playerOut)
         modify_table(team, playerOut, 'Mins', interval)
@@ -172,7 +174,7 @@ def change(action, Q, start, end):
             globals()["playintervals"+team][playerOut] = []
         globals()["playintervals"+team][playerOut].append((int_min.strftime("%M:%S"), int_max.strftime("%M:%S")))
     del globals()["oncourt"+team][playerOut]
-    globals()["oncourt"+team][playerIn] = clock1
+    globals()["oncourt"+team][playerIn] = clock
 
 
 def quarter_end(Q, start, end):
