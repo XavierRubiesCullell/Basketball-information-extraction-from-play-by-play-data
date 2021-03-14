@@ -36,8 +36,6 @@ def check_oncourt(team, player, Q, clock, start, end):
 
 
 def modify_table(team, player, variable, value):
-    if player == "C. Elleby" and variable == '+/-':
-        print(value)
     globals()["table"+team].loc[player,variable] += value
 
 
