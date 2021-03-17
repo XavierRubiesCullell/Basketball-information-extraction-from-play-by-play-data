@@ -27,4 +27,18 @@ class Match():
         self.boxscore.table1.to_pickle(folder + pkl1)
         self.boxscore.table2.to_pickle(folder + pkl2)
 
+    def top_players(self, var, top, team):
+        if not "boxscore" in vars(self):
+            self.box_score_obtention()
+        if team == "1" or team == "home" or team == self.home:
+            table = self.boxscore.table1
+        elif team == "2" or team == "away" or team == self.away:
+            table = self.boxscore.table2
+        else:
+            table = self.boxscore.table1.append(self.boxscore.table2)
+        table = table[var]
+        table = table.drop(["-", "TOTAL"])
+        table = table.sort_values(ascending=False)
+        table = table[:top]
 
+        print(table)

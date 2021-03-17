@@ -19,3 +19,6 @@ for pl in game.boxscore.playintervals2:
 
 print()
 print(vars(game.boxscore).keys())
+
+print()
+game.top_players('Pts', 33, 'both')
