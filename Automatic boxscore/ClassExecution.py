@@ -5,7 +5,7 @@ away = "Cleveland"
 date = "20210107"
 game = Match(home, away, date)
 
-game.box_score_obtention("40:00", "36:00")
+game.box_score_obtention("48:00", "0:00")
 game.box_score_save()
 print("\nHome team boxscore")
 print(game.boxscore.get_tables()[0])
@@ -22,4 +22,7 @@ print()
 print(vars(game.boxscore).keys())
 
 print()
-print(game.top_players('Pts', 5, 'both'))
+print(game.top_players(5, 'both', 'Pts'))
+
+print()
+print(game.filter('both', [('Pts',5), ('+/-',5)]))
