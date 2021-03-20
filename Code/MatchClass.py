@@ -13,6 +13,7 @@ class Match():
             PbPfile = home+away+date+"_StandardPbP.txt"
         self.PbPfile = PbPfile
         StandardPbPObtentionMain('https://www.basketball-reference.com/boxscores/pbp/'+date+'0'+home[:3].upper()+'.html', out_file = self.PbPfile)
+        # self.boxscore
 
     def box_score_obtention(self, start="48:00", end="0:00"):
         '''

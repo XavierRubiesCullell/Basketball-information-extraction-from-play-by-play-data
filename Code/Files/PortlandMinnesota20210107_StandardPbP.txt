@@ -1,0 +1,463 @@
+47:43, 1, D. Lillard, S, 2, 14, O
+47:41, 2, J. Hernangómez, R, D
+47:24, 2, D. Russell, S, 2, 18, I
+47:01, 1, D. Lillard, S, 2, 2, I
+46:44, 2, E. Davis, S, 2, 2, O
+46:42, 1, R. Covington, R, D
+46:32, 1, D. Lillard, S, 3, 28, O
+46:30, 2, E. Davis, R, D
+46:21, 2, D. Russell, S, 3, 24, I, A, J. Culver
+46:09, 1, C. McCollum, S, 3, 25, O
+46:07, 2, J. Hernangómez, R, D
+46:02, 2, M. Beasley, S, 2, 3, O
+45:59, 1, D. Jones, R, D
+45:57, 1, R. Covington, F, O, D. Russell
+45:45, 2, M. Beasley, S, 2, 18, O
+45:43, 1, D. Lillard, R, D
+45:35, 2, D. Russell, F, D, D. Lillard
+45:30, 2, J. Hernangómez, F, D, D. Lillard
+45:30, 1, D. Lillard, S, 1, I
+45:30, 1, D. Lillard, S, 1, I
+45:23, 2, M. Beasley, T
+45:13, 1, D. Jones, S, 3, 25, O
+45:11, 2, J. Culver, R, D
+44:58, 2, J. Hernangómez, S, 3, 25, O
+44:56, 1, D. Lillard, R, D
+44:48, 1, C. McCollum, S, 2, 14, O
+44:48, 1, -, R, O
+44:43, 1, C. McCollum, S, 3, 23, O
+44:41, 2, J. Hernangómez, R, D
+44:29, 2, J. Culver, S, 3, 26, I, A, D. Russell
+44:09, 2, M. Beasley, F, D, C. McCollum
+44:09, 1, C. McCollum, S, 1, I
+44:09, 1, C. McCollum, S, 1, I
+43:56, 2, D. Russell, S, 2, 19, I
+43:45, 1, R. Covington, T
+43:36, 1, NOT TREATED
+43:27, 1, D. Jones, F, D, M. Beasley
+43:27, 2, M. Beasley, S, 1, I
+43:27, 2, M. Beasley, S, 1, I
+43:13, 1, D. Lillard, S, 2, 20, I
+43:04, 2, J. Hernangómez, T
+42:53, 1, R. Covington, S, 3, 26, O
+42:50, 2, J. Culver, R, D
+42:46, 2, J. Culver, F, O, R. Covington
+42:46, 1, Timeout
+42:35, 1, C. McCollum, S, 2, 16, I
+42:13, 2, D. Russell, S, 2, 20, I
+42:13, 2, J. Culver, C, A. Edwards
+42:13, 2, D. Russell, C, R. Rubio
+42:13, 1, D. Jones, C, C. Anthony
+42:00, 2, R. Rubio, St, J. Nurkić
+41:54, 2, M. Beasley, S, 3, 25, O
+41:50, 1, J. Nurkić, R, D
+41:40, 1, D. Lillard, S, 2, 1, O
+41:39, 1, J. Nurkić, R, O
+41:39, 2, E. Davis, F, D, J. Nurkić
+41:39, 1, J. Nurkić, S, 1, O
+41:39, 1, -, R, O
+41:39, 2, E. Davis, C, N. Reid
+41:39, 1, J. Nurkić, S, 1, I
+41:23, 2, J. Hernangómez, S, 3, 25, O
+41:20, 1, C. McCollum, R, D
+41:14, 1, C. McCollum, S, 2, 20, O
+41:09, 2, A. Edwards, R, D
+41:05, 2, A. Edwards, S, 3, 27, O
+41:02, 1, R. Covington, R, D
+40:54, 2, A. Edwards, F, D, D. Lillard
+40:54, 1, D. Lillard, S, 1, I
+40:54, 1, D. Lillard, S, 1, O
+40:51, 2, N. Reid, R, D
+40:42, 2, J. Hernangómez, S, 2, 2, O
+40:42, 2, -, R, O
+40:41, 1, D. Lillard, St, A. Edwards
+40:38, 1, D. Lillard, S, 2, 1, I
+40:28, 2, M. Beasley, S, 3, 23, I, A, N. Reid
+40:12, 1, J. Nurkić, S, 2, 4, I, A, C. McCollum
+39:58, 2, M. Beasley, S, 3, 25, I, A, R. Rubio
+39:41, 1, D. Lillard, S, 3, 26, I, A, J. Nurkić
+39:27, 2, R. Rubio, S, 2, 10, O
+39:27, 1, C. Anthony, R, D
+39:15, 1, J. Nurkić, S, 2, 1, I, A, C. McCollum
+39:15, 2, Timeout
+39:15, 2, M. Beasley, C, J. Layman
+39:15, 2, J. Hernangómez, C, D. Russell
+39:15, 1, R. Covington, C, R. Hood
+39:15, 1, C. McCollum, C, E. Kanter
+39:15, 1, J. Nurkić, C, G. Trent
+39:01, 2, A. Edwards, S, 3, 25, O
+38:57, 1, G. Trent, R, D
+38:49, 1, C. Anthony, S, 3, 23, O
+38:46, 2, D. Russell, R, D
+38:41, 2, A. Edwards, S, 2, I
+38:29, 2, R. Rubio, St, G. Trent
+38:23, 2, J. Layman, S, 2, 1, I, A, D. Russell
+38:05, 1, C. Anthony, S, 2, 9, I
+37:47, 2, D. Russell, S, 2, I, A, R. Rubio
+37:31, 1, C. Anthony, S, 2, 11, O
+37:28, 2, A. Edwards, R, D
+37:19, 2, R. Rubio, S, 3, 24, O
+37:17, 1, E. Kanter, R, D
+37:09, 1, D. Lillard, S, 2, 2, I
+37:09, 2, N. Reid, F, D, D. Lillard
+37:09, 1, D. Lillard, S, 1, I
+37:02, 2, D. Russell, S, 3, 24, O
+36:59, 1, D. Lillard, R, D
+36:54, 1, G. Trent, S, 3, 23, O
+36:51, 2, D. Russell, R, D
+36:44, 2, A. Edwards, S, 3, 26, I, A, R. Rubio
+36:32, 1, D. Lillard, S, 3, 24, O
+36:30, 2, N. Reid, R, D
+36:10, 2, J. Layman, S, 3, 23, O
+36:07, 1, D. Lillard, R, D
+36:01, 1, C. Anthony, S, 2, 1, I, A, D. Lillard
+36:00, 2, A. Edwards, S, 3, 49, O
+36:00, 2, -, R, O
+35:48, 1, E. Kanter, St, A. Edwards
+35:36, 1, C. Anthony, S, 2, 21, O
+35:33, 1, E. Kanter, R, O
+35:32, 2, M. Beasley, St, E. Kanter
+35:27, 2, M. Beasley, S, 2, 2, O
+35:24, 1, R. Hood, R, D
+35:20, 1, R. Hood, S, 2, 2, I
+35:08, 2, M. Beasley, S, 2, 7, O
+35:06, 1, C. McCollum, R, D
+35:00, 1, C. Anthony, S, 3, 22, I, A, R. Hood
+34:40, 1, R. Hood, B, A. Edwards, 2
+34:38, 1, C. Anthony, R, D
+34:33, 1, C. McCollum, S, 3, 26, I, A, C. Anthony
+34:12, 1, E. Kanter, F, D, M. Beasley
+34:12, 2, M. Beasley, S, 1, O
+34:12, 2, -, R, O
+34:12, 2, M. Beasley, S, 1, I
+34:03, 1, C. McCollum, S, 2, 15, O
+34:00, 1, C. Anthony, R, O
+33:54, 1, G. Trent, S, 3, 24, O
+33:51, 2, R. Rubio, R, D
+33:42, 2, A. Edwards, S, 2, 1, I
+33:25, 2, N. Reid, F, D, G. Trent
+33:25, 1, G. Trent, S, 1, O
+33:25, 1, -, R, O
+33:25, 2, N. Reid, C, J. Vanderbilt
+33:25, 1, G. Trent, S, 1, I
+33:13, 2, J. Vanderbilt, S, 2, I, A, R. Rubio
+32:58, 1, E. Kanter, S, 2, 1, I
+32:42, 1, E. Kanter, B, R. Rubio, 2
+32:42, 2, -, R, O
+32:39, 2, J. Layman, S, 2, 2, I, A, R. Rubio
+32:17, 1, E. Kanter, S, 2, 1, I
+32:03, 2, J. Layman, S, 3, 23, O
+32:00, 1, E. Kanter, R, D
+31:51, 2, J. Layman, B, R. Hood, 2
+31:48, 1, E. Kanter, R, O
+31:47, 1, E. Kanter, S, 2, 2, I
+31:32, 1, E. Kanter, St, R. Rubio
+31:26, 1, G. Trent, S, 3, 24, I, A, C. Anthony
+31:25, 2, Timeout
+31:25, 2, J. Layman, C, J. Culver
+31:25, 1, R. Hood, C, D. Jones
+31:12, 1, E. Kanter, B, A. Edwards, 2
+31:10, 1, D. Jones, R, D
+30:59, 2, R. Rubio, F, D, C. Anthony
+30:59, 2, R. Rubio, C, D. Russell
+30:54, 2, J. Vanderbilt, St, C. McCollum
+30:51, 2, M. Beasley, S, 2, O
+30:49, 1, E. Kanter, R, D
+30:42, 1, C. McCollum, S, 3, 28, I, A, C. Anthony
+30:21, 2, J. Culver, S, 3, 22, O
+30:18, 2, J. Vanderbilt, R, O
+30:15, 2, J. Vanderbilt, S, 2, 2, O
+30:13, 1, C. McCollum, R, D
+30:10, 2, A. Edwards, F, D, C. McCollum
+30:10, 1, C. McCollum, S, 1, I
+30:10, 1, C. Anthony, C, R. Covington
+30:10, 1, E. Kanter, C, J. Nurkić
+30:10, 1, C. McCollum, S, 1, I
+29:59, 1, J. Nurkić, St, A. Edwards
+29:51, 1, R. Covington, S, 3, 26, I, A, C. McCollum
+29:50, 2, Timeout
+29:50, 2, A. Edwards, C, J. Hernangómez
+29:38, 2, M. Beasley, S, 3, 25, O
+29:35, 2, J. Culver, R, O
+29:33, 2, J. Hernangómez, S, 3, 23, O
+29:31, 2, J. Culver, R, O
+29:29, 2, J. Culver, S, 2, 3, O
+29:29, 1, R. Covington, R, D
+29:24, 2, J. Vanderbilt, F, D, J. Nurkić
+29:11, 1, G. Trent, S, 2, 15, O
+29:08, 2, D. Russell, R, D
+29:08, 1, C. McCollum, C, D. Lillard
+28:53, 2, D. Russell, S, 3, 30, I, A, J. Culver
+28:42, 1, J. Nurkić, S, 2, I, A, D. Lillard
+28:20, 2, D. Russell, S, 3, 25, I
+28:03, 1, J. Nurkić, S, 2, 1, I, A, D. Lillard
+27:50, 2, J. Hernangómez, S, 3, 24, I, A, M. Beasley
+27:37, 1, J. Nurkić, S, 2, 3, I, A, D. Lillard
+27:20, 1, D. Lillard, St, D. Russell
+27:15, 1, D. Lillard, S, 3, 26, I, A, R. Covington
+27:04, 2, J. Vanderbilt, S, 2, 1, I, A, M. Beasley
+26:46, 1, D. Lillard, S, 3, 29, O
+26:44, 2, M. Beasley, R, D
+26:39, 2, M. Beasley, S, 2, 1, O
+26:38, 1, J. Nurkić, R, D
+26:26, 1, D. Lillard, S, 3, 25, I, A, J. Nurkić
+26:15, 2, Timeout
+26:15, 2, M. Beasley, C, E. Davis
+26:15, 2, J. Vanderbilt, C, R. Rubio
+26:07, 2, D. Russell, S, 3, 25, O
+26:04, 1, J. Nurkić, R, D
+25:56, 1, D. Lillard, S, 2, 1, I
+25:39, 1, D. Jones, F, D, J. Culver
+25:37, 1, D. Jones, F, D, D. Russell
+25:37, 2, D. Russell, S, 1, I
+25:37, 1, D. Jones, C, C. McCollum
+25:37, 2, D. Russell, S, 1, I
+25:23, 2, J. Hernangómez, St, J. Nurkić
+25:16, 2, J. Hernangómez, S, 3, 24, I, A, R. Rubio
+24:59, 1, J. Nurkić, S, 2, 16, I
+24:46, 1, G. Trent, F, D, R. Rubio
+24:46, 2, R. Rubio, S, 1, I
+24:46, 2, R. Rubio, S, 1, I
+24:28, 1, J. Nurkić, S, 2, 1, I, A, D. Lillard
+24:09, 2, J. Culver, S, 2, 1, I, A, D. Russell
+24:01, 1, D. Lillard, S, 3, 28, I
+23:52, 2, Timeout
+23:47, 1, J. Nurkić, F, D, J. Culver
+23:47, 2, M. Beasley, T
+23:35, 1, C. McCollum, S, 2, 16, I, A, D. Jones
+23:19, 2, D. Russell, S, 3, 25, O
+23:13, 2, J. Hernangómez, R, O
+23:13, 2, J. Hernangómez, S, 2, I
+23:04, 2, D. Russell, B, C. McCollum, 3
+23:01, 2, M. Beasley, R, D
+22:57, 1, C. McCollum, F, D, J. Hernangómez
+22:57, 2, J. Hernangómez, S, 1, I
+22:57, 2, J. Hernangómez, S, 1, I
+22:41, 2, E. Davis, B, J. Nurkić, 2
+22:41, 1, -, R, O
+22:37, 1, R. Covington, S, 2, 9, O
+22:35, 2, M. Beasley, R, D
+22:14, 1, D. Jones, St, M. Beasley
+22:13, 2, D. Russell, F, D, D. Jones
+22:13, 1, D. Jones, S, 1, I
+22:13, 1, D. Jones, S, 1, I
+22:02, 1, R. Covington, F, D, D. Russell
+22:02, 2, D. Russell, S, 1, O
+22:02, 2, -, R, O
+22:02, 2, D. Russell, S, 1, I
+21:50, 1, D. Jones, S, 3, 23, I, A, C. McCollum
+21:37, 2, D. Russell, S, 2, 13, O
+21:34, 1, R. Covington, R, D
+21:29, 1, C. McCollum, S, 3, 25, O
+21:25, 2, J. Hernangómez, R, D
+21:15, 2, M. Beasley, S, 2, 18, O
+21:12, 1, D. Lillard, R, D
+20:59, 1, C. McCollum, S, 3, 25, I, A, R. Covington
+20:52, 1, R. Covington, F, D, D. Russell
+20:41, 2, J. Culver, S, 2, 12, I
+20:21, 1, J. Nurkić, S, 2, 1, O
+20:21, 2, J. Hernangómez, R, D
+20:21, 1, J. Nurkić, F, D, J. Hernangómez
+20:21, 1, Timeout
+20:21, 2, J. Hernangómez, S, 1, I
+20:21, 2, J. Hernangómez, S, 1, I
+19:56, 1, C. McCollum, S, 3, 25, I, A, D. Lillard
+19:34, 2, M. Beasley, S, 3, 22, O
+19:31, 1, J. Nurkić, R, D
+19:15, 1, D. Jones, S, 2, 11, I
+19:15, 2, M. Beasley, C, A. Edwards
+19:15, 2, E. Davis, C, J. Vanderbilt
+18:50, 2, J. Culver, S, 3, 23, O
+18:45, 2, J. Culver, R, O
+18:41, 2, D. Russell, S, 3, 28, O
+18:38, 1, D. Lillard, R, D
+18:35, 1, D. Jones, S, 2, I, A, D. Lillard
+18:09, 1, C. McCollum, B, J. Hernangómez, 2
+18:06, 1, D. Jones, R, D
+18:02, 1, D. Lillard, S, 3, 33, I, A, R. Covington
+17:45, 1, D. Jones, F, D, D. Russell
+17:45, 2, D. Russell, S, 1, I
+17:45, 2, J. Culver, C, R. Rubio
+17:45, 2, D. Russell, S, 1, I
+17:26, 1, R. Covington, S, 3, 26, O
+17:23, 2, J. Vanderbilt, R, D
+17:15, 1, D. Lillard, St, D. Russell
+17:12, 1, C. McCollum, S, 3, 25, O
+17:06, 1, J. Nurkić, R, O
+17:06, 1, J. Nurkić, S, 2, I
+16:54, 2, D. Russell, T
+16:54, 2, J. Hernangómez, C, J. Layman
+16:54, 1, D. Jones, C, C. Anthony
+16:41, 2, J. Vanderbilt, F, D, D. Lillard
+16:41, 1, D. Lillard, S, 1, I
+16:41, 1, D. Lillard, S, 1, I
+16:24, 1, R. Covington, St, J. Layman
+16:17, 1, D. Lillard, S, 3, 25, O
+16:14, 2, J. Vanderbilt, R, D
+16:01, 2, D. Russell, S, 2, 6, O
+15:57, 1, J. Nurkić, R, D
+15:53, 2, R. Rubio, F, D, J. Nurkić
+15:53, 1, C. McCollum, C, E. Kanter
+15:53, 1, J. Nurkić, C, G. Trent
+15:45, 1, E. Kanter, T
+15:35, 2, A. Edwards, S, 3, 26, O
+15:32, 2, A. Edwards, R, O
+15:31, 1, E. Kanter, F, D, A. Edwards
+15:31, 2, A. Edwards, S, 1, I
+15:31, 1, R. Covington, C, R. Hood
+15:31, 2, A. Edwards, S, 1, I
+15:14, 1, C. Anthony, S, 2, 14, I
+14:58, 2, J. Vanderbilt, S, 2, I, A, R. Rubio
+14:50, 1, D. Lillard, S, 2, 1, O
+14:47, 2, J. Vanderbilt, R, D
+14:45, 2, D. Russell, S, 2, 2, I, A, J. Vanderbilt
+14:33, 1, C. Anthony, S, 3, 26, O
+14:30, 2, J. Vanderbilt, R, D
+14:23, 2, D. Russell, S, 2, 14, I
+14:08, 2, A. Edwards, St, D. Lillard
+14:05, 1, R. Hood, F, D, A. Edwards
+14:05, 2, A. Edwards, S, 1, I
+14:05, 2, A. Edwards, S, 1, I
+13:50, 1, D. Lillard, S, 2, 1, I
+13:39, 2, A. Edwards, S, 3, 27, I, A, R. Rubio
+13:13, 1, D. Lillard, S, 3, 26, I, A, R. Hood
+13:01, 2, D. Russell, S, 2, 14, O
+12:58, 1, D. Lillard, R, D
+12:58, 2, D. Russell, F, D, D. Lillard
+12:44, 1, D. Lillard, S, 3, 30, I, A, E. Kanter
+12:30, 2, A. Edwards, S, 3, 26, O
+12:25, 1, E. Kanter, R, D
+12:02, 1, D. Lillard, S, 3, 26, O
+12:01, 1, E. Kanter, R, O
+12:01, 1, E. Kanter, S, 2, 1, I
+11:43, 1, E. Kanter, S, 2, 2, I
+11:26, 2, A. Edwards, S, 2, 10, I
+11:15, 1, A. Simons, S, 3, 25, O
+11:12, 2, J. McDaniels, R, D
+11:04, 1, A. Simons, F, D, J. Vanderbilt
+11:04, 1, E. Kanter, C, H. Giles
+10:53, 2, J. McDaniels, S, 3, 26, O
+10:51, 2, J. Vanderbilt, R, O
+10:51, 2, J. Vanderbilt, S, 2, 2, I
+10:51, 1, H. Giles, F, D, J. Vanderbilt
+10:51, 2, J. Vanderbilt, S, 1, I
+10:38, 1, R. Hood, S, 2, 20, O
+10:32, 2, J. Vanderbilt, R, D
+10:26, 1, H. Giles, St, J. McDaniels
+10:17, 2, J. McDaniels, F, D, G. Trent
+10:17, 1, G. Trent, S, 1, I
+10:17, 1, G. Trent, S, 1, I
+10:02, 1, C. Anthony, St, A. Edwards
+09:55, 2, J. McDaniels, F, D, H. Giles
+09:47, 2, J. Vanderbilt, St, G. Trent
+09:33, 2, A. Edwards, S, 3, 25, I, A, R. Rubio
+09:17, 1, R. Hood, S, 3, 23, O
+09:14, 2, J. Vanderbilt, R, D
+09:05, 2, A. Edwards, S, 2, 1, O
+09:02, 2, J. Vanderbilt, R, O
+09:02, 2, J. Vanderbilt, S, 2, O
+09:01, 1, A. Simons, R, D
+08:56, 1, C. Anthony, S, 3, 23, O
+08:51, 2, M. Beasley, R, D
+08:37, 2, A. Edwards, S, 3, 26, O
+08:34, 1, A. Simons, R, D
+08:28, 1, R. Hood, S, 3, 23, O
+08:24, 2, R. Rubio, R, D
+08:18, 2, M. Beasley, S, 3, 22, I, A, J. McDaniels
+08:16, 2, NOT TREATED
+07:56, 1, R. Hood, S, 3, 25, O
+07:53, 2, J. Vanderbilt, R, D
+07:53, 2, M. Beasley, C, J. Nowell
+07:53, 2, J. Vanderbilt, C, N. Reid
+07:53, 1, C. Anthony, C, N. Little
+07:43, 2, N. Reid, S, 2, 6, I
+07:43, 1, H. Giles, F, D, N. Reid
+07:43, 2, N. Reid, S, 1, O
+07:41, 1, H. Giles, R, D
+07:31, 1, A. Simons, S, 2, 18, O
+07:27, 2, N. Reid, R, D
+07:20, 1, N. Little, F, D, N. Reid
+07:20, 1, Timeout
+07:20, 1, R. Hood, C, C. Elleby
+07:20, 2, N. Reid, S, 1, I
+07:20, 2, N. Reid, S, 1, I
+07:08, 1, G. Trent, S, 3, 25, O
+07:05, 2, J. McDaniels, R, D
+06:51, 2, A. Edwards, S, 2, 3, O
+06:50, 2, N. Reid, R, O
+06:49, 2, N. Reid, S, 2, 2, I
+06:34, 2, N. Reid, F, D, A. Simons
+06:34, 1, A. Simons, S, 1, O
+06:34, 1, -, R, O
+06:34, 1, A. Simons, S, 1, I
+06:24, 1, G. Trent, F, D, A. Edwards
+06:24, 2, A. Edwards, S, 1, O
+06:24, 2, -, R, O
+06:24, 2, A. Edwards, S, 1, I
+06:14, 2, R. Rubio, St, H. Giles
+06:10, 2, A. Edwards, S, 2, 2, I, A, R. Rubio
+05:55, 1, A. Simons, S, 2, 16, I
+05:42, 1, C. Elleby, B, R. Rubio, 2
+05:40, 1, A. Simons, R, D
+05:35, 1, G. Trent, S, 3, 25, I, A, A. Simons
+05:13, 2, J. Nowell, S, 2, 3, I, A, A. Edwards
+04:52, 1, H. Giles, S, 2, 20, O
+04:50, 2, R. Rubio, R, D
+04:46, 1, H. Giles, F, D, N. Reid
+04:46, 2, N. Reid, S, 1, I
+04:46, 2, N. Reid, S, 1, O
+04:43, 1, N. Little, R, D
+04:34, 1, N. Little, S, 2, 16, I
+04:19, 2, A. Edwards, S, 2, 1, I
+04:07, 2, R. Rubio, St, H. Giles
+04:06, 2, R. Rubio, T
+03:57, 2, N. Reid, B, G. Trent, 2
+03:57, 1, -, R, O
+03:45, 1, A. Simons, S, 2, 20, I
+03:44, 2, Timeout
+03:44, 1, G. Trent, C, K. Blevins
+03:34, 2, N. Reid, S, 2, 2, O
+03:32, 2, R. Rubio, R, O
+03:30, 2, J. Nowell, S, 3, 27, O
+03:26, 1, A. Simons, R, D
+03:20, 2, R. Rubio, St, A. Simons
+03:17, 2, A. Edwards, S, 2, 3, I
+03:17, 1, K. Blevins, F, D, A. Edwards
+03:17, 2, A. Edwards, S, 1, O
+03:13, 1, H. Giles, R, D
+03:01, 1, H. Giles, S, 2, 13, O
+02:58, 2, R. Rubio, R, D
+02:49, 2, A. Edwards, S, 2, 11, O
+02:45, 2, J. McDaniels, R, O
+02:44, 2, N. Reid, S, 2, 1, I, A, J. McDaniels
+02:33, 2, N. Reid, F, D, C. Elleby
+02:33, 1, C. Elleby, S, 1, I
+02:33, 2, R. Rubio, C, J. Vanderbilt
+02:33, 1, C. Elleby, S, 1, I
+02:17, 2, N. Reid, S, 3, 23, O
+02:11, 2, J. McDaniels, R, O
+02:10, 2, A. Edwards, S, 3, 26, O
+02:07, 1, A. Simons, R, D
+02:05, 1, A. Simons, T
+01:54, 2, J. Nowell, S, 2, 17, O
+01:52, 1, -, R, D
+01:30, 1, H. Giles, S, 3, 23, I, A, K. Blevins
+01:17, 2, N. Reid, S, 3, 26, I, A, J. McDaniels
+01:02, 1, A. Simons, S, 3, 25, I
+00:50, 2, N. Reid, S, 3, 29, O
+00:47, 2, J. Nowell, R, O
+00:45, 2, J. McDaniels, S, 3, 25, I, A, J. Nowell
+00:35, 1, C. Elleby, S, 2, 2, I
+00:22, 2, J. McDaniels, S, 3, 23, O
+00:19, 2, A. Edwards, R, O
+00:19, 1, H. Giles, F, D, J. Vanderbilt
+00:19, 2, J. Vanderbilt, S, 1, O
+00:19, 2, -, R, O
+00:19, 2, J. Vanderbilt, S, 1, I
+00:08, 2, A. Edwards, St, N. Little
+00:01, 1, N. Little, B, J. Vanderbilt, 2
+00:00, 2, N. Reid, R, O
+00:00, 1, H. Giles, F, D, N. Reid
+00:00, 2, N. Reid, S, 1, I
+00:00, 2, N. Reid, S, 1, O
+00:00, 2, -, R, O
