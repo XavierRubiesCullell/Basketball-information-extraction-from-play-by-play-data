@@ -1,4 +1,4 @@
-from MatchClass import Match
+from MatchClass import *
 
 home = "Memphis"
 away = "Cleveland"
@@ -24,5 +24,12 @@ print(vars(game.boxscore).keys())
 print()
 print(game.top_players(5, 'both', 'Pts'))
 
-print()
-print(game.filter('both', [('Pts',5), ('+/-',5)]))
+table = game.boxscore.get_tables()[0]
+
+print(table)
+
+print(filter_by_players(table,["G. Dieng", "G. Allen"]))
+
+print(filter_by_categories(table,["2ptI", "2ptA"]))
+
+print(filter_by_value(table,[("2ptI", 2), ("2ptA", 5)]))
