@@ -30,6 +30,15 @@ class BoxScore():
     categories = ['Mins', '2ptI', '2ptA', '3ptI', '3ptA', '1ptI', '1ptA', 'OR', 'DR', 'Reb', 'Ast', 'Bl', 'St', 'To', 'FM', 'FR', 'Pts', '+/-']
 
     def __init__(self, home, away, date, in_folder="Files/", in_file=None, start="48:00", end="0:00"):
+        '''
+        - home: name of the home team (string)
+        - away: name of the visiting team (string)
+        - date: date of the match (string)
+        - in_folder: folder where the PbP file is (string)
+        - in_file: name of the PbP file (string)
+        - start: starting time of the boxscore compution interval (string)
+        - end: ending time of the boxscore compution interval (string)
+        '''
         self.home = home
         self.away = away
         self.date = date
@@ -38,19 +47,24 @@ class BoxScore():
         self.file = in_folder + in_file
         self.start = start
         self.end = end
-
+        
+        # tables where the boxscore of the local and visiting team will be computed respectively
         self.table1 = pd.DataFrame(columns = BoxScore.categories).astype({'Mins': 'datetime64[ns]'})
         self.table2 = pd.DataFrame(columns = BoxScore.categories).astype({'Mins': 'datetime64[ns]'})
 
+        # integers where the plusminus of the local and visiting team will be stored
         self.__plusminus1 = 0
         self.__plusminus2 = 0
 
+        # dictionaries that will hold the local and visiting players respectively at a specific time
         self.__oncourt1 = {}
         self.__oncourt2 = {}
 
+        # dictionaries that will hold the playing intervals of the local and visiting players respectively
         self.playerintervals1 = {}
         self.playerintervals2 = {}
 
+        # list that will store the plays not used for the boxscore computation
         self.__others = []
 
         self.compute_box_score()
@@ -96,6 +110,9 @@ class BoxScore():
     def __read_plays(self, f, start, end):
         '''
         This function launches the sequential analysis of sentences
+        - f: file object with the PbP in the standard format
+        - start: starting time of the boxscore compution interval (string)
+        - end: ending time of the boxscore compution interval (string)
         '''
         self.__Q = 1
         self.__lines = f.readlines()
@@ -107,6 +124,10 @@ class BoxScore():
     def __treat_line(self, i, line, start, end):
         '''
         This function is launched to detect the type of play an action is
+        - i: index of the studied line. It will be useful in plays such as free throws (int)
+        - line: studied line (string)
+        - start: starting time of the boxscore compution interval (string)
+        - end: ending time of the boxscore compution interval (string)
         '''
         action = line.split(", ")
         
@@ -117,7 +138,8 @@ class BoxScore():
         self.__Q = (4-int(clock.minute/12))
         if prev_Q != self.__Q:
             self.__quarter_end(prev_Q, start, end)
-
+        
+        # classification of the action
         if len(action) > 3 and action[3] == "S":
             self.__shoot(i, action, start, end)
         elif len(action) > 3 and action[3] == "R":
@@ -140,6 +162,9 @@ class BoxScore():
     def __quarter_end(self, Q, start, end):
         '''
         This function is launched every time a quarter end is detected
+        - Q: quarter that has just ended (int)
+        - start: starting time of the boxscore compution interval (string)
+        - end: ending time of the boxscore compution interval (string)
         '''
         # we add the minutes of the players that end the quarter (as it is usually done when they are changed)
         for player in self.__oncourt1:
@@ -168,7 +193,14 @@ class BoxScore():
 
 
     def __shoot(self, i, action, start, end):
-        # clock team player points [dist] result [A assistant]
+        '''
+        Treatment of an action that was detected as a shot. It will have the following structure:
+         clock team player points [dist] result [A assistant]
+        - i: index of the studied line. It will be useful in plays such as free throws (int)
+        - action: studied play (list)
+        - start: starting time of the boxscore compution interval (string)
+        - end: ending time of the boxscore compution interval (string)
+        '''
         clock, team, player, points = action[0], action[1], action[2], action[4]
         clock = time_from_string(clock)
         op_team = str((int(team)*5)%3)  # team = 1 -> op_team = 2, team = 2 -> op_team = 1
@@ -177,19 +209,19 @@ class BoxScore():
         if start >= clock and clock >= end:
             self.__check_player(team, player)
             self.__modify_table(team, player, points+"ptA", 1)
-        dist_given = action[5] != "I" and action[5] != "O" # true if it is not I or O, so it is the number expressing the distance
+        dist_given = action[5] != "I" and action[5] != "O" # true if it is not I or O, so in this position we have the distance
+        
         result = action[5 + dist_given]
-
-        if result == "I":
+        if result == "I": # the shot was in
             if start >= clock and clock >= end:
                 self.__modify_table(team, player, points+"ptI", 1)
                 self.__modify_table(team, player, 'Pts', int(points))
                 vars(self)["_BoxScore__plusminus"+team] += int(points)
-                for pl in vars(self)["_BoxScore__oncourt"+team]:
+                for pl in vars(self)["_BoxScore__oncourt"+team]: #modificacion of the +/- of the scoring team
                     self.__check_player(team, pl)
                     self.__modify_table(team, pl, '+/-', int(points))
                 vars(self)["_BoxScore__plusminus"+op_team] -= int(points)
-                for pl in vars(self)["_BoxScore__oncourt"+op_team]:
+                for pl in vars(self)["_BoxScore__oncourt"+op_team]: #modificacion of the +/- of the opposite team
                     self.__check_player(op_team, pl)
                     self.__modify_table(op_team, pl, '+/-', -int(points))
                 
@@ -205,6 +237,13 @@ class BoxScore():
 
 
     def __rebound(self, action, start, end):
+        '''
+        Treatment of an action that was detected as a rebound. It will have the following structure:
+         clock team player kind
+        - action: studied play (list)
+        - start: starting time of the boxscore compution interval (string)
+        - end: ending time of the boxscore compution interval (string)
+        '''
         clock, team, player, kind = action[0], action[1], action[2], action[4]
         clock = time_from_string(clock)
         self.__check_oncourt(team, player, clock, start, end)
@@ -216,6 +255,13 @@ class BoxScore():
 
 
     def __turnover(self, action, start, end):
+        '''
+        Treatment of an action that was detected as a simple turnover. It will have the following structure:
+         clock team player
+        - action: studied play (list)
+        - start: starting time of the boxscore compution interval (string)
+        - end: ending time of the boxscore compution interval (string)
+        '''
         clock, team, player = action[0], action[1], action[2]
         clock = time_from_string(clock)
         self.__check_oncourt(team, player, clock, start, end)
@@ -226,6 +272,13 @@ class BoxScore():
 
 
     def __steal(self, action, start, end):
+        '''
+        Treatment of an action that was detected as a steal. It will have the following structure:
+         clock team player receiver
+        - action: studied play (list)
+        - start: starting time of the boxscore compution interval (string)
+        - end: ending time of the boxscore compution interval (string)
+        '''
         clock, team, player, op_player = action[0], action[1], action[2], action[4]
         clock = time_from_string(clock)
         self.__check_oncourt(team, player, clock, start, end)
@@ -240,6 +293,13 @@ class BoxScore():
 
 
     def __block(self, action, start, end):
+        '''
+        Treatment of an action that was detected as a block. It will have the following structure:
+         clock team player
+        - action: studied play (list)
+        - start: starting time of the boxscore compution interval (string)
+        - end: ending time of the boxscore compution interval (string)
+        '''
         clock, team, player, op_player, points = action[0], action[1], action[2], action[4], action[5]
         clock = time_from_string(clock)
         self.__check_oncourt(team, player, clock, start, end)
@@ -255,6 +315,13 @@ class BoxScore():
 
 
     def __foul(self, action, start, end):
+        '''
+        Treatment of an action that was detected as a foul. It will have the following structure:
+         clock team player kind [receiver]
+        - action: studied play (list)
+        - start: starting time of the boxscore compution interval (string)
+        - end: ending time of the boxscore compution interval (string)
+        '''
         clock, team, player, kind = action[0], action[1], action[2], action[4]
         clock = time_from_string(clock)
         self.__check_oncourt(team, player, clock, start, end)
@@ -275,6 +342,13 @@ class BoxScore():
 
 
     def __change(self, action, start, end):
+        '''
+        Treatment of an action that was detected as a change. It will have the following structure:
+         clock team player playerOut playerIn
+        - action: studied play (list)
+        - start: starting time of the boxscore compution interval (string)
+        - end: ending time of the boxscore compution interval (string)
+        '''
         clock, team, playerOut, playerIn = action[0], action[1], action[2], action[4]
         clock = time_from_string(clock)
         self.__check_oncourt(team, playerOut, clock, start, end)
@@ -296,7 +370,7 @@ class BoxScore():
         This function is launched when there is a scored free throw to check
         whether there was a change after the corresponding foul. In case there was any change,
         it corrects the +/- of the involving players
-        - i: the index of the free throw action
+        - i: the index of the free throw action (int)
         '''
         ft_action = self.__lines[i].strip().split(", ")
         j = i - 1
@@ -314,6 +388,8 @@ class BoxScore():
     def __check_player(self, team, player):
         '''
         This function is launched to avoid an error due to a missing key (player) in a boxscore table
+        - team: team of the player, either 1 or 2 (string)
+        - player: name of the player (string)
         '''
         if player not in set(vars(self)["table"+team].index):
             new_row = [datetime.timedelta()] + [0]*(len(BoxScore.categories)-1)
@@ -325,6 +401,11 @@ class BoxScore():
         '''
         This function is launched to check whether the presence of the player was already detected. In
         case it was not, it adds it to the players on court and adds the player +/- missing
+        - team: team of the player, either 1 or 2 (string)
+        - player: name of the player (string)
+        - clock: time of a specific moment (string)
+        - start: starting time of the boxscore compution interval (string)
+        - end: ending time of the boxscore compution interval (string)
         '''
         if player != "-" and player not in vars(self)["_BoxScore__oncourt"+team]:
             vars(self)["_BoxScore__oncourt"+team][player] = datetime.time(0, (5-self.__Q)*12, 0)
@@ -334,4 +415,7 @@ class BoxScore():
 
 
     def __modify_table(self, team, player, variable, value):
+        '''
+        This function is launched to modify the boxscore values
+        '''
         vars(self)["table"+team].loc[player,variable] += value
