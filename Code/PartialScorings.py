@@ -3,29 +3,50 @@ import datetime
 import pandas as pd
 import numpy as np
 
-def time_from_string(clock):
+from Functions import *
+
+
+def define_index(scores):
     '''
-    This function returns a datetime type value from a time represented as a string
-    - clock: time represented in MM:SS format (string)
+    This function returns the index of the quarter that is going to be written
+    - scores: scoring table (dataframe)
     '''
-    clock = clock.split(":")
-    return datetime.time(0, int(clock[0]), int(clock[1]))
+    ncols = len(scores.columns)
+    if ncols < 4:
+        return "Q" + str(ncols+1)
+    else:
+        return "OT" + ncols-3
 
 
 def quarter_check(action, prev_Q, scores, Q_scores):
+    '''
+    This function is launched to detect a change of quarter
+    - action: play that we are going to study (list)
+    - prev_Q: quarter from the previous play (integer)
+    - scores: scoring table (dataframe)
+    - Q_scores: temporary quarter scoring (list)
+    '''
     clock = action[0]
     clock = time_from_string(clock)
     Q = (4-int(clock.minute/12))
     if prev_Q != Q:
-        scores.loc["Home", "Q"+str(prev_Q)] = Q_scores[0]
-        scores.loc["Away", "Q"+str(prev_Q)] = Q_scores[1]
+        index = define_index(scores)
+        scores[index] = Q_scores
         Q_scores[0] = 0
         Q_scores[1] = 0
     return Q
 
 
 def treat_line(line, scores, Q_scores, prev_Q):
+    '''
+    This function is launched to detect the type of play an action is and treat it in case it is a shot
+    - line: action that we are going to study (string)
+    - scores: scoring table (dataframe)
+    - Q_scores: temporary quarter scoring (list)
+    - prev_Q: quarter from the previous play (integer)
+    '''
     action = line.split(", ")
+
     Q = quarter_check(action, prev_Q, scores, Q_scores)
 
     if len(action) > 3 and action[3] == "S":
@@ -38,10 +59,16 @@ def treat_line(line, scores, Q_scores, prev_Q):
     return Q
 
 
-def PartialScoringsMain(file):
+def PartialScoringsMain(file, home, away):
+    '''
+    This function returns the partial scorings scoreboard
+    - file: play-by-play input file (string)
+    - home: local team (string)
+    - away: visiting team (string)
+    '''
     os.chdir(os.path.dirname(__file__))
 
-    scores = pd.DataFrame(index=["Home", "Away"], columns=["Q1", "Q2", "Q3", "Q4"])
+    scores = pd.DataFrame(index=[home, away])
     Q_scores = [0, 0]
 
     with open(file, encoding="utf-8") as f:
@@ -50,7 +77,8 @@ def PartialScoringsMain(file):
         for line in lines:
             line = line.strip()
             Q = treat_line(line, scores, Q_scores, Q)
-    scores.loc["Home", "Q4"] = Q_scores[0]
-    scores.loc["Away", "Q4"] = Q_scores[1]
+
+    index = define_index(scores)
+    scores[index] = Q_scores
     scores["T"] = scores.apply(np.sum, axis=1)
     return scores

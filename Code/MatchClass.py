@@ -110,4 +110,4 @@ class Match():
         return table
 
     def partial_scoring(self):
-        return PartialScoringsMain("Files/"+self.PbPfile)
+        return PartialScoringsMain("Files/"+self.PbPfile, self.home, self.away)

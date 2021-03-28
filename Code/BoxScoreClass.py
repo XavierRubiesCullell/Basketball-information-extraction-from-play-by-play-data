@@ -7,7 +7,7 @@ from Functions import *
 
 
 class BoxScore():
-    categories = ['Mins', '2ptI', '2ptA', '3ptI', '3ptA', '1ptI', '1ptA', 'OR', 'DR', 'Reb', 'Ast', 'Bl', 'St', 'To', 'FM', 'FR', 'Pts', '+/-']
+    categories = ['Mins', '2PtI', '2PtA', '2Pt%', '3PtI', '3PtA', '3Pt%', 'FG%', '1PtI', '1PtA', '1Pt%', 'OR', 'DR', 'TR', '2PtAst', '3PtAst', 'Ast', 'Bl', 'St', 'To', 'FM', 'FR', 'AstPts', 'Pts', '+/-']
 
     def __init__(self, home, away, date, in_folder="Files/", in_file=None, start="48:00", end="0:00"):
         '''
@@ -29,8 +29,8 @@ class BoxScore():
         self.end = end
         
         # tables where the boxscore of the local and visiting team will be computed respectively
-        self.table1 = pd.DataFrame(columns = BoxScore.categories).astype({'Mins': 'datetime64[ns]'})
-        self.table2 = pd.DataFrame(columns = BoxScore.categories).astype({'Mins': 'datetime64[ns]'})
+        self.table1 = pd.DataFrame(columns = BoxScore.categories).astype({'Mins': 'datetime64[ns]', '2Pt%': 'float'})
+        self.table2 = pd.DataFrame(columns = BoxScore.categories).astype({'Mins': 'datetime64[ns]', '2Pt%': 'float'})
 
         # integers where the plusminus of the local and visiting team will be stored
         self.__plusminus1 = 0
@@ -82,9 +82,8 @@ class BoxScore():
             self.__read_plays(f, start, end)
 
         self.__quarter_end(4, start, end)
-        
-        self.table1.loc["TOTAL"] = self.table1.apply(np.sum)
-        self.table2.loc["TOTAL"] = self.table2.apply(np.sum)
+
+        self.__final_computations()
 
 
     def __read_plays(self, f, start, end):
@@ -172,6 +171,31 @@ class BoxScore():
         self.__oncourt2.clear()
 
 
+    def __final_computations(self):
+        '''
+        This function computes the cumulative value for every category and computes the dependent categories
+        '''
+        # computation of the cumulative values:
+        self.table1.loc["TOTAL"] = self.table1.apply(np.sum)
+        self.table2.loc["TOTAL"] = self.table2.apply(np.sum)
+
+        # computation of the dependent categories:
+        for pl, row in self.table1.iterrows():
+            # computation of 1Pt%, 2Pt% and 3Pt%:
+            for i in range(1,4):
+                if row[str(i)+'PtA'] != 0:
+                    perc = row[str(i)+'PtI']/row[str(i)+'PtA'] * 100
+                    self.table1.loc[pl,str(i)+'Pt%'] = round(perc, 2)
+                else:
+                    self.table1.loc[pl,str(i)+'Pt%'] = "-"
+            # computation of field goal percentage (FG%):
+            if row['2PtA'] + row['3PtA'] != 0:
+                perc = (row['2PtI'] + row['3PtI'])/(row['2PtA'] + row['3PtA']) * 100
+                self.table1.loc[pl,str(i)+'FG%'] = round(perc, 2)
+            else:
+                self.table1.loc[pl,'FG%'] = "-"
+
+
     def __shoot(self, i, action, start, end):
         '''
         Treatment of an action that was detected as a shot. It will have the following structure:
@@ -188,13 +212,13 @@ class BoxScore():
 
         if start >= clock and clock >= end:
             self.__check_player(team, player)
-            self.__modify_table(team, player, points+"ptA", 1)
+            self.__modify_table(team, player, points+"PtA", 1)
         dist_given = action[5] != "I" and action[5] != "O" # true if it is not I or O, so in this position we have the distance
         
         result = action[5 + dist_given]
         if result == "I": # the shot was in
             if start >= clock and clock >= end:
-                self.__modify_table(team, player, points+"ptI", 1)
+                self.__modify_table(team, player, points+"PtI", 1)
                 self.__modify_table(team, player, 'Pts', int(points))
                 vars(self)["_BoxScore__plusminus"+team] += int(points)
                 for pl in vars(self)["_BoxScore__oncourt"+team]: #modificacion of the +/- of the scoring team
@@ -214,6 +238,8 @@ class BoxScore():
                 if start >= clock and clock >= end:
                     self.__check_player(team, assistant)
                     self.__modify_table(team, assistant, 'Ast', 1)
+                    self.__modify_table(team, assistant, points+'PtAst', 1)
+                    self.__modify_table(team, player, 'AstPts', int(points))
 
 
     def __rebound(self, action, start, end):
@@ -230,7 +256,7 @@ class BoxScore():
 
         if start >= clock and clock >= end:
             self.__check_player(team, player)
-            self.__modify_table(team, player, 'Reb', 1)
+            self.__modify_table(team, player, 'TR', 1)
             self.__modify_table(team, player, kind+"R", 1)
 
 
@@ -291,7 +317,7 @@ class BoxScore():
             self.__check_player(team, player)
             self.__modify_table(team, player, 'Bl', 1)
             self.__check_player(op_team, op_player)
-            self.__modify_table(op_team, op_player, points+"ptA", 1)
+            self.__modify_table(op_team, op_player, points+"PtA", 1)
 
 
     def __foul(self, action, start, end):
