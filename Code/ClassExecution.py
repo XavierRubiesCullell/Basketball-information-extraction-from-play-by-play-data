@@ -33,3 +33,6 @@ print(filter_by_players(table,["G. Dieng", "G. Allen"]))
 print(filter_by_categories(table,["2ptI", "2ptA"]))
 
 print(filter_by_value(table,[("2ptI", 2), ("2ptA", 5)]))
+
+print()
+print(game.partial_scoring())

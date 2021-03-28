@@ -1,4 +1,5 @@
 from StandardPbPObtention import StandardPbPObtentionMain
+from PartialScorings import PartialScoringsMain
 from BoxScoreClass import BoxScore
 
 import os
@@ -107,3 +108,6 @@ class Match():
         table = table.sort_values(ascending=max)
         table = table[:n]
         return table
+
+    def partial_scoring(self):
+        return PartialScoringsMain("Files/"+self.PbPfile)
