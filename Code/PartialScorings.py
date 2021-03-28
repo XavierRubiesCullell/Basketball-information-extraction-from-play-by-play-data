@@ -15,7 +15,7 @@ def define_index(scores):
     if ncols < 4:
         return "Q" + str(ncols+1)
     else:
-        return "OT" + ncols-3
+        return "OT" + str(ncols-3)
 
 
 def quarter_check(action, prev_Q, scores, Q_scores):
