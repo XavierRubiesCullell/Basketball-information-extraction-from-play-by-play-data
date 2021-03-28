@@ -1,8 +1,9 @@
 import os
 
 from StandardPbPObtention import StandardPbPObtentionMain
-from PartialScorings import PartialScoringsMain
 from BoxScoreClass import BoxScore
+from PartialScorings import PartialScoringsMain
+from LongestDrought import LongestDroughtMain
 
 
 def filter_by_players(table, players):
@@ -111,3 +112,6 @@ class Match():
 
     def partial_scoring(self):
         return PartialScoringsMain("Files/"+self.PbPfile, self.home, self.away)
+
+    def longest_drought(self):
+        return LongestDroughtMain("Files/"+self.PbPfile)

@@ -1,7 +1,7 @@
 from MatchClass import *
 
-home = "Denver"
-away = "Dallas"
+home = "Memphis"
+away = "Cleveland"
 date = "20210107"
 game = Match(home, away, date)
 
@@ -36,3 +36,6 @@ print(filter_by_value(table,[("2PtI", 2), ("2PtA", 5)]))
 
 print()
 print(game.partial_scoring())
+
+print()
+print(game.longest_drought())
