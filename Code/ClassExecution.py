@@ -1,7 +1,7 @@
 from MatchClass import *
 
-home = "Memphis"
-away = "Cleveland"
+home = "Denver"
+away = "Dallas"
 date = "20210107"
 game = Match(home, away, date)
 
@@ -28,7 +28,7 @@ table = game.boxscore.get_tables()[0]
 
 print(table)
 
-print(filter_by_players(table,["G. Dieng", "G. Allen"]))
+#print(filter_by_players(table,["G. Dieng", "G. Allen"]))
 
 print(filter_by_categories(table,["2ptI", "2ptA"]))
 

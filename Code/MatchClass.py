@@ -1,8 +1,8 @@
+import os
+
 from StandardPbPObtention import StandardPbPObtentionMain
 from PartialScorings import PartialScoringsMain
 from BoxScoreClass import BoxScore
-
-import os
 
 
 def filter_by_players(table, players):

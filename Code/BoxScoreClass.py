@@ -3,27 +3,7 @@ import datetime
 import os
 import numpy as np
 
-
-def time_from_string(clock):
-    '''
-    This function returns a datetime type value from a time represented as a string
-    '''
-    clock = clock.split(":")
-    return datetime.time(0, int(clock[0]), int(clock[1]))
-
-
-def compute_interval(in_time, out_time, start, end):
-    '''
-    This function computes the interval in common between a playing interval and the desired interval
-    '''
-    my_date = datetime.date(1, 1, 1)
-
-    int_start = min(in_time, start)
-    int_end = max(out_time, end)
-    date_int_start = datetime.datetime.combine(my_date, int_start)
-    date_int_end = datetime.datetime.combine(my_date, int_end)
-    null = datetime.timedelta() # in case the interval is negative
-    return max(date_int_start - date_int_end, null), int_start, int_end
+from Functions import *
 
 
 class BoxScore():
