@@ -6,13 +6,12 @@ import numpy as np
 from Functions import *
 
 
-def treat_line(line, time, max_time):
+def treat_line(line, last_time, max_length):
     '''
     This function is launched to detect the type of play an action is and treat it in case it is a shot
     - line: action that we are going to study (string)
-    - scores: scoring table (dataframe)
-    - Q_scores: temporary quarter scoring (list)
-    - prev_Q: quarter from the previous play (integer)
+    - last_time: last time each team scored (list of datetime.time)
+    - max_length: temporary maximum interval length without scoring for each team (list of datetime.timedelta)
     '''
     action = line.split(", ")
 
@@ -22,34 +21,31 @@ def treat_line(line, time, max_time):
         if result == "I": # the shot was in
             clock = time_from_string(action[0])
             team = int(action[1])
-            if time[team-1] is not None:
-                diff, _, _ = compute_interval(time[team-1], clock)
-                if max_time[team-1] is None or diff > max_time[team-1]:
-                    max_time[team-1] = diff
-            time[team-1] = clock
-
-    return time, max_time
+            if last_time[team-1] is not None:
+                diff, _, _ = compute_interval(last_time[team-1], clock)
+                if max_length[team-1] is None or diff > max_length[team-1]:
+                    max_length[team-1] = diff
+            last_time[team-1] = clock
 
 
 def LongestDroughtMain(file):
     '''
-    This function returns the partial scorings scoreboard
+    This function returns the longest time for every team without scoring
     - file: play-by-play input file (string)
     '''
     os.chdir(os.path.dirname(__file__))
 
-    time = [None, None]
-    max_time = [None, None]
+    last_time = [None, None]
+    max_length = [None, None]
 
     with open(file, encoding="utf-8") as f:
         lines = f.readlines()
-        Q = 1
         for line in lines:
             line = line.strip()
-            time, max_time = treat_line(line, time, max_time)
+            treat_line(line, last_time, max_length)
         
         for team in range(1,3):
-            diff, _, _ = compute_interval(time[team-1], time_from_string("00:00"))
-            if diff > max_time[team-1]:
-                max_time[team-1] = diff
-    return tuple(map(str, max_time))
+            diff, _, _ = compute_interval(last_time[team-1], time_from_string("00:00"))
+            if diff > max_length[team-1]:
+                max_length[team-1] = diff
+    return tuple(map(str, max_length))

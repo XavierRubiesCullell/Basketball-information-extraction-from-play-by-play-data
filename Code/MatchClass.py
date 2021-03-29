@@ -4,6 +4,7 @@ from StandardPbPObtention import StandardPbPObtentionMain
 from BoxScoreClass import BoxScore
 from PartialScorings import PartialScoringsMain
 from LongestDrought import LongestDroughtMain
+from GreatestStreak import GreatestStreakMain
 
 
 def filter_by_players(table, players):
@@ -115,3 +116,6 @@ class Match():
 
     def longest_drought(self):
         return LongestDroughtMain("Files/"+self.PbPfile)
+
+    def greatest_streak(self):
+        return GreatestStreakMain("Files/"+self.PbPfile)

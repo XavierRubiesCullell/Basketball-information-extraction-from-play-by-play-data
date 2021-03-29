@@ -1,7 +1,7 @@
 from MatchClass import *
 
-home = "Memphis"
-away = "Cleveland"
+home = "Denver"
+away = "Dallas"
 date = "20210107"
 game = Match(home, away, date)
 
@@ -39,3 +39,6 @@ print(game.partial_scoring())
 
 print()
 print(game.longest_drought())
+
+print()
+print(game.greatest_streak())
