@@ -11,8 +11,8 @@ def time_from_string(clock):
 def compute_interval(in_time, out_time, start=datetime.time(0, 48, 0), end=datetime.time(0, 0, 0)):
     '''
     This function computes the interval in common between a playing interval and the desired interval
-    - in_time-out_time: playing interval of a player (datetime)
-    - start-end: interval of the match we are interested in (datetime)
+    - in_time-out_time: playing interval of a player (datetime.time)
+    - start-end: interval of the match we are interested in (datetime.time)
     '''
     my_date = datetime.date(1, 1, 1)
     
