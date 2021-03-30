@@ -6,6 +6,18 @@ import seaborn
 import matplotlib.pyplot as plt
 
 
+def check_player(player, ast):
+    '''
+    This function makes sure a player is in the team's assist matrix
+    - player: player that is verified. In case it is not already present, it is added. (string)
+    - ast: player's team assist matrix (pandas.dataframe)
+    '''
+    if player not in ast.columns:
+        ast[player] = [0]*len(ast.index)
+        row = [0]*len(ast.columns)
+        ast.loc[player] = row
+
+
 def treat_line(line, assists):
     '''
     This function is launched to detect the type of play an action is and treat it in case it is a shot
@@ -22,32 +34,18 @@ def treat_line(line, assists):
         if result == "I": # the shot was in
             if len(action) == 8+dist_given and action[6+dist_given] == "A": # there is an assist
                 team = int(action[1])
-                player = action[2]
+                scorer = action[2]
                 assistant = action[7+dist_given]
 
-                # if player not in assists[team-1].columns:
-                #     assists[team-1][player] = [0]*len(assists[team-1].index)
-                # if assistant not in assists[team-1].index:
-                #     row = [0]*len(assists[team-1].columns)
-                #     assists[team-1].loc[assistant] = row
-
-                if player not in assists[team-1].columns:
-                    assists[team-1][player] = [0]*len(assists[team-1].index)
-                    row = [0]*len(assists[team-1].columns)
-                    assists[team-1].loc[player] = row
-                if assistant not in assists[team-1].columns:
-                    assists[team-1][assistant] = [0]*len(assists[team-1].index)
-                    row = [0]*len(assists[team-1].columns)
-                    assists[team-1].loc[assistant] = row
-                assists[team-1].loc[assistant, player] += 1
-
-                # if team == 1:
-                #     print(assists[team-1])
+                check_player(scorer, assists[team-1])
+                check_player(assistant, assists[team-1])
+                assists[team-1].loc[assistant, scorer] += 1
 
 
 def AssistMapMain(file):
     '''
     This function draws the assists between each team members
+    ast[i][j] indicates the number of assists from player i to player j
     - file: play-by-play input file (string)
     '''
     os.chdir(os.path.dirname(__file__))
@@ -59,17 +57,19 @@ def AssistMapMain(file):
         for line in lines:
             line = line.strip()
             treat_line(line, assists)
-    assists[0] = assists[0].astype({assists[0].columns[0]: 'int'})
-    assists[1] = assists[1].astype({assists[1].columns[0]: 'int'})
 
     for i in range(2):
+        # correction of automatic .0 at 1st column:
+        assists[i] = assists[i].astype({assists[i].columns[0]: 'int'})
+        # sorting according to players' name:
         assists[i].sort_index(0, inplace=True)
         assists[i].sort_index(1, inplace=True)
-        # assists[i]["TOTAL"] = assists[0].apply(np.sum, axis=1)
-        # assists[i].loc["TOTAL"] = assists[0].apply(np.sum)
+        # marginal values computation:
+        assists[i]["TOTAL"] = assists[i].apply(np.sum, axis=1)
+        assists[i].loc["TOTAL"] = assists[i].apply(np.sum)
 
-    print(seaborn.heatmap(assists[0]))
-    plt.imshow(assists[0])
-    plt.show()
+    # print(seaborn.heatmap(assists[0]))
+    # plt.imshow(assists[0])
+    # plt.show()
 
     return assists

@@ -191,7 +191,7 @@ class BoxScore():
             # computation of field goal percentage (FG%):
             if row['2PtA'] + row['3PtA'] != 0:
                 perc = (row['2PtI'] + row['3PtI'])/(row['2PtA'] + row['3PtA']) * 100
-                self.table1.loc[pl,str(i)+'FG%'] = round(perc, 2)
+                self.table1.loc[pl,'FG%'] = round(perc, 2)
             else:
                 self.table1.loc[pl,'FG%'] = "-"
 

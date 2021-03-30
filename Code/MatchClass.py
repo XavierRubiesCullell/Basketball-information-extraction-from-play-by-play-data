@@ -8,45 +8,6 @@ from GreatestStreak import GreatestStreakMain
 from AssistMap import AssistMapMain
 
 
-def filter_by_players(table, players):
-    '''
-    This function filters the box score values of a list of players
-    Input:
-    - table: dataframe from self.boxscore.get_tables()[i] or a variation (added or filtered)
-    - players: list of players as they are represented on the table (name)
-    Output: Box score filtered by the list of players
-    '''
-    return table.loc[players,]
-
-
-def filter_by_categories(table, categories):
-    '''
-    This function filters the box score values of a list of categories
-    Input:
-    - table: dataframe from self.boxscore.get_tables()[i] or a variation (added or filtered)
-    - categories: list of categories
-    Output: Box score filtered by the list of categories
-    '''
-    return table[categories]
-
-
-def filter_by_value(table, vars):
-    '''
-    This function filters the box score of the players surpassing the minimum values introduced
-    Input:
-    - table: dataframe from a self.boxscore.get_tables()[i] or a variation (added or filtered)
-    - vars: list of lists having the form (category, value)
-    Output: Box score filtered by the values of the categories introduced
-    '''
-    if "TOTAL" in table.index:
-        table = table.drop(index = ["TOTAL"])
-    if "-" in table.index:
-        table = table.drop(index = ["-"])
-    for (cat, val) in vars:
-        table = table.loc[table[cat] >= val]
-    return table
-
-
 class Match():
     def __init__(self, home, away, date, PbPfile=None):
         os.chdir(os.path.dirname(__file__))
@@ -63,7 +24,7 @@ class Match():
         '''
         It returns self.boxscore (after creating it if needed)
         Input:
-        - start, end: time interval where we want the box score to be computed
+        - start, end: time interval where we want the box score to be computed (string)
         Output: It returns the instance boxscore of class BoxScore
         '''
         if "boxscore" not in vars(self):
@@ -74,9 +35,9 @@ class Match():
         '''
         This functions saves the box scores in self.boxscore (after creating it if needed)
         Input:
-        - folder: relative path to the folder where the box scores will be saved
-        - pkl1: name of the home file
-        - pkl2: name of the away file
+        - folder: relative path to the folder where the box scores will be saved (string)
+        - pkl1: name of the home file (string)
+        - pkl2: name of the away file (string)
         '''
         if pkl1 is None:
             pkl1 = self.home+self.away+self.date+"_BS_"+self.home+".pkl"
@@ -89,13 +50,64 @@ class Match():
         table1.to_pickle(folder + pkl1)
         table2.to_pickle(folder + pkl2)
 
+    def filter_by_players(self, players, table=None):
+        '''
+        This function filters the box score values of a list of players
+        Input:
+        - table: dataframe from self.boxscore.get_tables()[i] or a variation (added or filtered)
+        - players: list of players as they are represented on the table (name)
+        Output: Box score filtered by the list of players
+        '''
+        if table is None:
+            self.box_score_obtention()
+            table = self.boxscore.get_tables()[0].append(self.boxscore.get_tables()[1])
+        return table.loc[players,]
+
+    def filter_by_categories(self, categories, table=None):
+        '''
+        This function filters the box score values of a list of categories
+        Input:
+        - table: dataframe from self.boxscore.get_tables()[i] or a variation (added or filtered)
+        - categories: list of categories or type of categories (list of strings or string)
+        Output: Box score filtered by the list of categories
+        '''
+        if table is None:
+            self.box_score_obtention()
+            table = self.boxscore.get_tables()[0].append(self.boxscore.get_tables()[1])
+        if categories == "shooting":
+            categories = ['2PtI', '2PtA', '2Pt%', '3PtI', '3PtA', '3Pt%', 'FG%', '1PtI', '1PtA', '1Pt%', 'AstPts', 'Pts']
+        elif categories == "rebounding":
+            categories = ['OR', 'DR', 'TR']
+        elif categories == "simple":
+            categories = ['Mins', 'Pts', 'TR', 'Ast', 'Bl', 'St', 'To', 'FM', '+/-']
+        return table[categories]
+
+    def filter_by_value(self, vars, table=None):
+        '''
+        This function filters the box score of the players surpassing the minimum values introduced
+        Input:
+        - table: dataframe from a self.boxscore.get_tables()[i] or a variation (added or filtered)
+        - vars: list of lists having the form (category, value)
+        Output: Box score filtered by the values of the categories introduced
+        '''
+        if table is None:
+            self.box_score_obtention()
+            table = self.boxscore.get_tables()[0].append(self.boxscore.get_tables()[1])
+        if "TOTAL" in table.index:
+            table = table.drop(index = ["TOTAL"])
+        if "-" in table.index:
+            table = table.drop(index = ["-"])
+        for (cat, val) in vars:
+            table = table.loc[table[cat] >= val]
+        return table
+
     def top_players(self, n, team, var, max=False):
         '''
         This function returns the top n players having the maximum/minimum value in var
         Input:
-        - n: integer
-        - team: either home team, away team or both
-        - var: category
+        - n: number of players (integer)
+        - team: either home team, away team or both (string)
+        - var: category we are interested in (string)
         - max: bool stating if we want the maximum values (true) or the minimum ones (false)
         Output: Table (series) with the players and the category value
         '''
@@ -114,7 +126,7 @@ class Match():
 
     def partial_scoring(self):
         '''
-        This function returns
+        This function returns the scoring at every quarter end
         '''
         return PartialScoringsMain("Files/"+self.PbPfile, self.home, self.away)
 
@@ -133,5 +145,7 @@ class Match():
     def assist_map(self):
         '''
         This function draws the assists between each team members
+        M[i][j] indicates the number of assists from player i to player j
+        - file: play-by-play input file (string)
         '''
         return AssistMapMain("Files/"+self.PbPfile)
