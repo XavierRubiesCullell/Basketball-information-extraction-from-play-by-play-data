@@ -55,26 +55,35 @@ class Match():
         '''
         This function filters the box score values of a list of players
         Input:
-        - table: dataframe from self.boxscore.get_tables()[i] or a variation (added or filtered)
-        - players: list of players as they are represented on the table (name)
+        - players: list of players as they are represented on the table (list of strings)
+        - table: box score or a variation (pandas dataframe) or a reference to a box score (string)
         Output: Box score filtered by the list of players
         '''
         if table is None:
-            self.box_score_obtention()
-            table = self.boxscore.get_tables()[0].append(self.boxscore.get_tables()[1])
+            table = self.box_score_obtention().get_tables()[0].append(self.box_score_obtention().get_tables()[1])
+        elif isinstance(table, str):
+            if table == self.home:
+                table = self.box_score_obtention().get_tables()[0]
+            elif table == self.away:
+                table = self.box_score_obtention().get_tables()[1]
         return table.loc[players,]
 
     def filter_by_categories(self, categories, table=None):
         '''
         This function filters the box score values of a list of categories
         Input:
-        - table: dataframe from self.boxscore.get_tables()[i] or a variation (added or filtered)
         - categories: list of categories or type of categories (list of strings or string)
+        - table: box score or a variation (pandas dataframe) or a reference to a box score (string)
         Output: Box score filtered by the list of categories
         '''
         if table is None:
-            self.box_score_obtention()
-            table = self.boxscore.get_tables()[0].append(self.boxscore.get_tables()[1])
+            table = self.box_score_obtention().get_tables()[0].append(self.box_score_obtention().get_tables()[1])
+        elif isinstance(table, str):
+            if table == self.home:
+                table = self.box_score_obtention().get_tables()[0]
+            elif table == self.away:
+                table = self.box_score_obtention().get_tables()[1]
+
         if categories == "shooting":
             categories = ['2PtI', '2PtA', '2Pt%', '3PtI', '3PtA', '3Pt%', 'FG%', '1PtI', '1PtA', '1Pt%', 'AstPts', 'Pts']
         elif categories == "rebounding":
@@ -87,13 +96,18 @@ class Match():
         '''
         This function filters the box score of the players surpassing the minimum values introduced
         Input:
-        - table: dataframe from a self.boxscore.get_tables()[i] or a variation (added or filtered)
         - vars: list of lists having the form (category, value)
+        - table: box score or a variation (pandas dataframe) or a reference to a box score (string)
         Output: Box score filtered by the values of the categories introduced
         '''
         if table is None:
-            self.box_score_obtention()
-            table = self.boxscore.get_tables()[0].append(self.boxscore.get_tables()[1])
+            table = self.box_score_obtention().get_tables()[0].append(self.box_score_obtention().get_tables()[1])
+        elif isinstance(table, str):
+            if table == self.home:
+                table = self.box_score_obtention().get_tables()[0]
+            elif table == self.away:
+                table = self.box_score_obtention().get_tables()[1]
+
         if "TOTAL" in table.index:
             table = table.drop(index = ["TOTAL"])
         if "-" in table.index:
@@ -102,23 +116,24 @@ class Match():
             table = table.loc[table[cat] >= val]
         return table
 
-    def top_players(self, team, var, n=None, max=False):
+    def top_players(self, var, n=None, table=None, max=False):
         '''
         This function returns the top n players having the maximum/minimum value in var
         Input:
-        - n: number of players (integer)
-        - team: either home team, away team or both (string)
         - var: category(ies) we are interested in (string)
+        - n: number of players (integer)
+        - table: box score or a variation (pandas dataframe) or a reference to a box score (string)
         - max: bool stating if we want the maximum values (true) or the minimum ones (false)
         Output: Table (series) with the players and the category(ies) value
         '''
-        self.box_score_obtention()
-        if team == "1" or team == "home" or team == self.home:
-            table = self.boxscore.get_tables()[0]
-        elif team == "2" or team == "away" or team == self.away:
-            table = self.boxscore.get_tables()[1]
-        else:
-            table = self.boxscore.get_tables()[0].append(self.boxscore.get_tables()[1])
+        if table is None:
+            table = self.box_score_obtention().get_tables()[0].append(self.box_score_obtention().get_tables()[1])
+        elif isinstance(table, str):
+            if table == self.home:
+                table = self.box_score_obtention().get_tables()[0]
+            elif table == self.away:
+                table = self.box_score_obtention().get_tables()[1]
+
         table = table[var]
         table = table.drop(["-", "TOTAL"])
         table = table.sort_values(by=var, ascending=max)

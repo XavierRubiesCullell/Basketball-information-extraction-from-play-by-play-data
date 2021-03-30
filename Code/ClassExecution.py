@@ -20,20 +20,20 @@ for i in range(2):
 print()
 print(vars(game.boxscore).keys())
 
-print()
-print(game.top_players('both', ['Pts', 'TR'], 5))
-
 table = game.boxscore.get_tables()[0]
 
 print(table)
 
-print(game.filter_by_players(["J. Murray", "N. Jokić"], table))
+players = table.index[:2]
+print(game.filter_by_players(players, table))
 
 print(game.filter_by_categories(["2PtI", "2PtA"], table))
-
 print(game.filter_by_categories("simple", table))
 
 print(game.filter_by_value([("2PtI", 2), ("2PtA", 5)], table))
+
+print()
+print(game.top_players(['Pts', 'TR'], n=5))
 
 print()
 print(game.partial_scoring())
