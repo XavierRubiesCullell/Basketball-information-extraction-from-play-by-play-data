@@ -199,7 +199,7 @@ class BoxScore():
     def __shoot(self, i, action, start, end):
         '''
         Treatment of an action that was detected as a shot. It will have the following structure:
-         clock team player points [dist] result [A assistant]
+         clock team player "S" points [dist] result [A assistant]
         - i: index of the studied line. It will be useful in plays such as free throws (int)
         - action: studied play (list)
         - start: starting time of the boxscore compution interval (string)
@@ -245,7 +245,7 @@ class BoxScore():
     def __rebound(self, action, start, end):
         '''
         Treatment of an action that was detected as a rebound. It will have the following structure:
-         clock team player kind
+         clock team player "R" kind
         - action: studied play (list)
         - start: starting time of the boxscore compution interval (string)
         - end: ending time of the boxscore compution interval (string)
@@ -263,7 +263,7 @@ class BoxScore():
     def __turnover(self, action, start, end):
         '''
         Treatment of an action that was detected as a simple turnover. It will have the following structure:
-         clock team player
+         clock team player "T"
         - action: studied play (list)
         - start: starting time of the boxscore compution interval (string)
         - end: ending time of the boxscore compution interval (string)
@@ -280,7 +280,7 @@ class BoxScore():
     def __steal(self, action, start, end):
         '''
         Treatment of an action that was detected as a steal. It will have the following structure:
-         clock team player receiver
+         clock team player "St" receiver
         - action: studied play (list)
         - start: starting time of the boxscore compution interval (string)
         - end: ending time of the boxscore compution interval (string)
@@ -301,7 +301,7 @@ class BoxScore():
     def __block(self, action, start, end):
         '''
         Treatment of an action that was detected as a block. It will have the following structure:
-         clock team player
+         clock team player "B" receiver points
         - action: studied play (list)
         - start: starting time of the boxscore compution interval (string)
         - end: ending time of the boxscore compution interval (string)
@@ -323,7 +323,7 @@ class BoxScore():
     def __foul(self, action, start, end):
         '''
         Treatment of an action that was detected as a foul. It will have the following structure:
-         clock team player kind [receiver]
+         clock team player "F" kind [receiver]
         - action: studied play (list)
         - start: starting time of the boxscore compution interval (string)
         - end: ending time of the boxscore compution interval (string)
@@ -350,7 +350,7 @@ class BoxScore():
     def __change(self, action, start, end):
         '''
         Treatment of an action that was detected as a change. It will have the following structure:
-         clock team player playerOut playerIn
+         clock team playerOut "C" playerIn
         - action: studied play (list)
         - start: starting time of the boxscore compution interval (string)
         - end: ending time of the boxscore compution interval (string)
@@ -373,9 +373,9 @@ class BoxScore():
 
     def __correct_plusminus(self, i):
         '''
-        This function is launched when there is a scored free throw to check
-        whether there was a change after the corresponding foul. In case there was any change,
-        it corrects the +/- of the involving players
+        This function is launched when there is a scored free throw,
+        to check whether there was a change after the corresponding foul.
+        In case there was any change, it corrects the +/- of the involving players
         - i: the index of the free throw action (int)
         '''
         ft_action = self.__lines[i].strip().split(", ")
