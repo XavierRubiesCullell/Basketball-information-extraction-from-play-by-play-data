@@ -8,6 +8,7 @@ from GreatestStreak import GreatestStreakMain
 from AssistMap import AssistMapMain
 
 
+
 class Match():
     def __init__(self, home, away, date, PbPfile=None):
         os.chdir(os.path.dirname(__file__))
@@ -101,15 +102,15 @@ class Match():
             table = table.loc[table[cat] >= val]
         return table
 
-    def top_players(self, n, team, var, max=False):
+    def top_players(self, team, var, n=None, max=False):
         '''
         This function returns the top n players having the maximum/minimum value in var
         Input:
         - n: number of players (integer)
         - team: either home team, away team or both (string)
-        - var: category we are interested in (string)
+        - var: category(ies) we are interested in (string)
         - max: bool stating if we want the maximum values (true) or the minimum ones (false)
-        Output: Table (series) with the players and the category value
+        Output: Table (series) with the players and the category(ies) value
         '''
         self.box_score_obtention()
         if team == "1" or team == "home" or team == self.home:
@@ -120,8 +121,9 @@ class Match():
             table = self.boxscore.get_tables()[0].append(self.boxscore.get_tables()[1])
         table = table[var]
         table = table.drop(["-", "TOTAL"])
-        table = table.sort_values(ascending=max)
-        table = table[:n]
+        table = table.sort_values(by=var, ascending=max)
+        if n is not None:
+            table = table[:n]
         return table
 
     def partial_scoring(self):
@@ -146,6 +148,7 @@ class Match():
         '''
         This function draws the assists between each team members
         M[i][j] indicates the number of assists from player i to player j
-        - file: play-by-play input file (string)
         '''
         return AssistMapMain("Files/"+self.PbPfile)
+
+    

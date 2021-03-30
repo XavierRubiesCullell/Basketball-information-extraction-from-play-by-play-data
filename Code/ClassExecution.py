@@ -12,17 +12,16 @@ print(game.boxscore.get_tables()[0])
 print("\nAway team boxscore")
 print(game.boxscore.get_tables()[1])
 print("\nPlay intervals")
-for pl in game.boxscore.get_playerintervals()[0]:
-    print(pl, ":   ", game.boxscore.get_playerintervals()[0][pl], sep="")
 print()
-for pl in game.boxscore.get_playerintervals()[1]:
-    print(pl, ":   ", game.boxscore.get_playerintervals()[1][pl], sep="")
+for i in range(2):
+    for pl in game.boxscore.get_playerintervals()[i]:
+        print(pl, ":   ", game.boxscore.get_playerintervals()[i][pl], sep="")
 
 print()
 print(vars(game.boxscore).keys())
 
 print()
-print(game.top_players(5, 'both', 'Pts'))
+print(game.top_players('both', ['Pts', 'TR'], 5))
 
 table = game.boxscore.get_tables()[0]
 
