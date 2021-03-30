@@ -3,8 +3,6 @@ import datetime
 import pandas as pd
 import numpy as np
 
-from Functions import *
-
 
 def treat_line(line, streak, max_streak, last_team):
     '''
@@ -29,7 +27,6 @@ def treat_line(line, streak, max_streak, last_team):
                     max_streak[last_team-1] = streak
                 last_team = team
                 streak = points
-            
 
     return streak, last_team
 

@@ -5,6 +5,7 @@ from BoxScoreClass import BoxScore
 from PartialScorings import PartialScoringsMain
 from LongestDrought import LongestDroughtMain
 from GreatestStreak import GreatestStreakMain
+from AssistMap import AssistMapMain
 
 
 def filter_by_players(table, players):
@@ -112,10 +113,25 @@ class Match():
         return table
 
     def partial_scoring(self):
+        '''
+        This function returns
+        '''
         return PartialScoringsMain("Files/"+self.PbPfile, self.home, self.away)
 
     def longest_drought(self):
+        '''
+        This function returns the longest time for every team without scoring
+        '''
         return LongestDroughtMain("Files/"+self.PbPfile)
 
     def greatest_streak(self):
+        '''
+        This function returns the greatest scoring streak for every team
+        '''
         return GreatestStreakMain("Files/"+self.PbPfile)
+
+    def assist_map(self):
+        '''
+        This function draws the assists between each team members
+        '''
+        return AssistMapMain("Files/"+self.PbPfile)
