@@ -141,11 +141,11 @@ class Match():
             table = table[:n]
         return table
 
-    def partial_scoring(self):
+    def partial_scoring(self, end="00:00"):
         '''
         This function returns the scoring at every quarter end
         '''
-        return PartialScoringsMain("Files/"+self.PbPfile, self.home, self.away)
+        return PartialScoringsMain("Files/"+self.PbPfile, self.home, self.away, end)
 
     def longest_drought(self):
         '''
