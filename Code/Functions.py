@@ -8,10 +8,16 @@ def other_team(team):
 
 def time_from_string(clock):
     '''
-    This function returns a datetime type value from a time represented as a string
+    This function returns a datetime.time type value from a time represented as a string
     '''
     clock = clock.split(":")
     return datetime.time(0, int(clock[0]), int(clock[1]))
+
+def string_from_time(clock):
+    '''
+    This function returns a MM:SS string from a time in datetime.time
+    '''
+    return clock.strftime("%M:%S")
 
 def compute_interval(in_time, out_time, start=datetime.time(0, 48, 0), end=datetime.time(0, 0, 0)):
     '''

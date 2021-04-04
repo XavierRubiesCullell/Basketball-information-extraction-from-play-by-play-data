@@ -1,8 +1,8 @@
 from MatchClass import *
 
-home = "Memphis"
-away = "Cleveland"
-date = "20210107"
+home = "Utah"
+away = "Clippers"
+date = "20210101"
 game = Match(home, away, date)
 
 game.box_score_obtention("48:00", "0:00")
@@ -48,3 +48,16 @@ print()
 assists = game.assist_map()
 print(assists[0])
 print(assists[1])
+
+
+playerintervals, oncourtintervals = game.playing_intervals()
+for team in range(1,3):
+    print("\nTEAM", team)
+    for pl in playerintervals[team-1]:
+        print(pl, ":   ", playerintervals[team-1][pl], sep="")
+
+    print()
+
+    for interval in oncourtintervals[team-1]:
+        print(interval, ":   ", oncourtintervals[team-1][interval], sep="")
+    print()

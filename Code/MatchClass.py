@@ -6,6 +6,7 @@ from PartialScorings import PartialScoringsMain
 from LongestDrought import LongestDroughtMain
 from GreatestStreak import GreatestStreakMain
 from AssistMap import AssistMapMain
+from PlayingIntervals import PlayingIntervalsMain
 
 
 
@@ -166,4 +167,12 @@ class Match():
         '''
         return AssistMapMain("Files/"+self.PbPfile)
 
-    
+  
+    def playing_intervals(self):
+        '''
+        This function returns the playing intervals for every player and the 5 on court for each interval
+        Output:
+        - playersintervals: playing intervals for every team member (dictionary of string: list of tuples)
+        - oncourtintervals: players on court for each interval without changes (dictionary of tuple: set of strings)
+        '''
+        return PlayingIntervalsMain("Files/" + self.PbPfile)
