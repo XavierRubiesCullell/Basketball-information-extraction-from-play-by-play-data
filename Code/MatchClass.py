@@ -7,6 +7,7 @@ from LongestDrought import LongestDroughtMain
 from GreatestStreak import GreatestStreakMain
 from AssistMap import AssistMapMain
 from PlayingIntervals import PlayingIntervalsMain
+from FiveOnCourt import FiveOnCourtMain
 
 
 
@@ -176,3 +177,12 @@ class Match():
         - oncourtintervals: players on court for each interval without changes (dictionary of tuple: set of strings)
         '''
         return PlayingIntervalsMain("Files/" + self.PbPfile)
+
+    
+    def five_on_court(self, clock):
+        '''
+        This function returns the players on court at a given time
+        Input:
+        - clock: time (string)
+        '''
+        return FiveOnCourtMain(self.playing_intervals()[1], clock)
