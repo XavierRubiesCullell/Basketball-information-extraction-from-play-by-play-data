@@ -69,3 +69,8 @@ for team in range(1,3):
         print(fives[team-1])
     else:
         print(f'There was a change at that time. The previous team is {fives[team-1][0]} and the next one is {fives[team-1][1]}')
+
+
+print()
+five = list(oncourtintervals[1].values())[0]
+print(game.fives_intervals(1, five))

@@ -8,7 +8,7 @@ from GreatestStreak import GreatestStreakMain
 from AssistMap import AssistMapMain
 from PlayingIntervals import PlayingIntervalsMain
 from FiveOnCourt import FiveOnCourtMain
-
+from FivesIntervals import FivesIntervalsMain
 
 
 class Match():
@@ -167,7 +167,6 @@ class Match():
         M[i][j] indicates the number of assists from player i to player j
         '''
         return AssistMapMain("Files/"+self.PbPfile)
-
   
     def playing_intervals(self):
         '''
@@ -177,7 +176,6 @@ class Match():
         - oncourtintervals: players on court for each interval without changes (dictionary of tuple: set of strings)
         '''
         return PlayingIntervalsMain("Files/" + self.PbPfile)
-
     
     def five_on_court(self, clock):
         '''
@@ -186,3 +184,12 @@ class Match():
         - clock: time (string)
         '''
         return FiveOnCourtMain(self.playing_intervals()[1], clock)
+    
+    def fives_intervals(self, team, five):
+        '''
+        This function returns the intervals an introduced five played
+        Input:
+        - team: players' team (integer)
+        - five: list of players (list)
+        '''
+        return FivesIntervalsMain(self.playing_intervals()[1][team], five)
