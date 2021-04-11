@@ -9,6 +9,7 @@ from AssistMap import AssistMapMain
 from PlayingIntervals import PlayingIntervalsMain
 from FiveOnCourt import FiveOnCourtMain
 from FivesIntervals import FivesIntervalsMain
+from StreakWithoutMissing import StreakWithoutMissingMain
 
 
 class Match():
@@ -160,6 +161,12 @@ class Match():
         This function returns the greatest scoring streak for every team
         '''
         return GreatestStreakMain("Files/"+self.PbPfile)
+    
+    def streak_without_missing(self):
+        '''
+        This function returns the maximum amount of consecutive points without missing for every team
+        '''
+        return StreakWithoutMissingMain("Files/"+self.PbPfile)
 
     def assist_map(self):
         '''

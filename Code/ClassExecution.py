@@ -38,11 +38,14 @@ game = Match(home, away, date)
 # print()
 # print(game.partial_scoring(end="12:01"))
 
-# print()
-# print(game.longest_drought())
+print()
+print(game.longest_drought())
 
-# print()
-# print(game.greatest_streak())
+print()
+print(game.greatest_streak())
+
+print()
+print(game.streak_without_missing())
 
 # print()
 # assists = game.assist_map()
@@ -50,27 +53,27 @@ game = Match(home, away, date)
 # print(assists[1])
 
 
-playerintervals, oncourtintervals = game.playing_intervals()
-for team in range(1,3):
+# playerintervals, oncourtintervals = game.playing_intervals()
+# for team in range(1,3):
     # print("\nTEAM", team)
     # for pl in playerintervals[team-1]:
     #     print(pl, ":   ", playerintervals[team-1][pl], sep="")
 
-    print()
+#     print()
 
-    for interval in oncourtintervals[team-1]:
-        print(interval, ":   ", oncourtintervals[team-1][interval], sep="")
-    print()
-
-
-fives = game.five_on_court("3:53")
-for team in range(1,3):
-    if len(fives[team-1]) == 5:
-        print(fives[team-1])
-    else:
-        print(f'There was a change at that time. The previous team is {fives[team-1][0]} and the next one is {fives[team-1][1]}')
+#     for interval in oncourtintervals[team-1]:
+#         print(interval, ":   ", oncourtintervals[team-1][interval], sep="")
+#     print()
 
 
-print()
-five = list(oncourtintervals[1].values())[0]
-print(game.fives_intervals(1, five))
+# fives = game.five_on_court("3:53")
+# for team in range(1,3):
+#     if len(fives[team-1]) == 5:
+#         print(fives[team-1])
+#     else:
+#         print(f'There was a change at that time. The previous team is {fives[team-1][0]} and the next one is {fives[team-1][1]}')
+
+
+# print()
+# five = list(oncourtintervals[1].values())[0]
+# print(game.fives_intervals(1, five))
