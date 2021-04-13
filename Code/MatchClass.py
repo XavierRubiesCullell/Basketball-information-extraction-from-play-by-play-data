@@ -1,7 +1,7 @@
 import os
 
 from StandardPbPObtention import StandardPbPObtentionMain
-from BoxScoreClass import BoxScore
+from BoxScores import BoxScoresMain
 from PartialScorings import PartialScoringsMain
 from LongestDrought import LongestDroughtMain
 from GreatestStreak import GreatestStreakMain
@@ -21,10 +21,10 @@ class Match():
         if PbPfile is None:
             PbPfile = home+away+date+"_StandardPbP.txt"
         self.PbPfile = PbPfile
-        StandardPbPObtentionMain('https://www.basketball-reference.com/boxscores/pbp/'+date+'0'+home[:3].upper()+'.html', out_file = self.PbPfile)
+        #StandardPbPObtentionMain('https://www.basketball-reference.com/boxscores/pbp/'+date+'0'+home[:3].upper()+'.html', out_file = self.PbPfile)
         # self.boxscore will probably be generated, being an instance of BoxScore class
 
-    def box_score_obtention(self, start="48:00", end="0:00"):
+    def box_scores(self, start="48:00", end="0:00"):
         '''
         It returns self.boxscore (after creating it if needed)
         Input:
@@ -32,7 +32,7 @@ class Match():
         Output: It returns the instance boxscore of class BoxScore
         '''
         if "boxscore" not in vars(self):
-            self.boxscore = BoxScore(self.home, self.away, self.date, start=start, end=end)
+            self.boxscore = BoxScoresMain("Files/"+self.PbPfile, start=start, end=end)
         return self.boxscore
     
     def box_score_save(self, folder="Files/", pkl1 = None, pkl2 = None):
@@ -48,9 +48,7 @@ class Match():
         if pkl2 is None:
             pkl2 = self.home+self.away+self.date+"_BS_"+self.away+".pkl"
         
-        self.box_score_obtention()
-        
-        (table1, table2) = self.boxscore.get_tables()
+        (table1, table2) = self.box_scores()
         table1.to_pickle(folder + pkl1)
         table2.to_pickle(folder + pkl2)
 
@@ -62,13 +60,14 @@ class Match():
         - table: box score or a variation (pandas dataframe) or a reference to a box score (string)
         Output: Box score filtered by the list of players
         '''
+        tables = self.box_scores()
         if table is None:
-            table = self.box_score_obtention().get_tables()[0].append(self.box_score_obtention().get_tables()[1])
+            table = tables[0].append(tables[1])
         elif isinstance(table, str):
             if table == self.home:
-                table = self.box_score_obtention().get_tables()[0]
+                table = tables[0]
             elif table == self.away:
-                table = self.box_score_obtention().get_tables()[1]
+                table = tables[1]
         return table.loc[players,]
 
     def filter_by_categories(self, categories, table=None):
@@ -79,13 +78,14 @@ class Match():
         - table: box score or a variation (pandas dataframe) or a reference to a box score (string)
         Output: Box score filtered by the list of categories
         '''
+        tables = self.box_scores()
         if table is None:
-            table = self.box_score_obtention().get_tables()[0].append(self.box_score_obtention().get_tables()[1])
+            table = tables[0].append(tables[1])
         elif isinstance(table, str):
             if table == self.home:
-                table = self.box_score_obtention().get_tables()[0]
+                table = tables[0]
             elif table == self.away:
-                table = self.box_score_obtention().get_tables()[1]
+                table = tables[1]
 
         if categories == "shooting":
             categories = ['2PtI', '2PtA', '2Pt%', '3PtI', '3PtA', '3Pt%', 'FG%', '1PtI', '1PtA', '1Pt%', 'AstPts', 'Pts']
@@ -103,13 +103,14 @@ class Match():
         - table: box score or a variation (pandas dataframe) or a reference to a box score (string)
         Output: Box score filtered by the values of the categories introduced
         '''
+        tables = self.box_scores()
         if table is None:
-            table = self.box_score_obtention().get_tables()[0].append(self.box_score_obtention().get_tables()[1])
+            table = tables[0].append(tables[1])
         elif isinstance(table, str):
             if table == self.home:
-                table = self.box_score_obtention().get_tables()[0]
+                table = tables[0]
             elif table == self.away:
-                table = self.box_score_obtention().get_tables()[1]
+                table = tables[1]
 
         if "TOTAL" in table.index:
             table = table.drop(index = ["TOTAL"])
@@ -129,13 +130,14 @@ class Match():
         - max: bool stating if we want the maximum values (true) or the minimum ones (false)
         Output: Table (series) with the players and the category(ies) value
         '''
+        tables = self.box_scores()
         if table is None:
-            table = self.box_score_obtention().get_tables()[0].append(self.box_score_obtention().get_tables()[1])
+            table = tables[0].append(tables[1])
         elif isinstance(table, str):
             if table == self.home:
-                table = self.box_score_obtention().get_tables()[0]
+                table = tables[0]
             elif table == self.away:
-                table = self.box_score_obtention().get_tables()[1]
+                table = tables[1]
 
         table = table[var]
         table = table.drop(["-", "TOTAL"])

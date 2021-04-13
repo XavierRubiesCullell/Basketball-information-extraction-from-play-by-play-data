@@ -19,6 +19,12 @@ def string_from_time(clock):
     '''
     return clock.strftime("%M:%S")
 
+def get_quarter(clock):
+    '''
+    This function returns the quarter the introduced time belongs to
+    '''
+    return 4-int(clock.minute/12)
+
 def compute_interval(in_time, out_time, start=datetime.time(0, 48, 0), end=datetime.time(0, 0, 0)):
     '''
     This function computes the interval in common between a playing interval and the desired interval

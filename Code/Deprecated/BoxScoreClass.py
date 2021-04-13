@@ -180,20 +180,21 @@ class BoxScore():
         self.table2.loc["TOTAL"] = self.table2.apply(np.sum)
 
         # computation of the dependent categories:
-        for pl, row in self.table1.iterrows():
-            # computation of 1Pt%, 2Pt% and 3Pt%:
-            for i in range(1,4):
-                if row[str(i)+'PtA'] != 0:
-                    perc = row[str(i)+'PtI']/row[str(i)+'PtA'] * 100
-                    self.table1.loc[pl,str(i)+'Pt%'] = round(perc, 2)
+        for team in range(1,3):
+            for pl, row in vars(self)["table"+str(team)].iterrows():
+                # computation of 1Pt%, 2Pt% and 3Pt%:
+                for i in range(1,4):
+                    if row[str(i)+'PtA'] != 0:
+                        perc = row[str(i)+'PtI']/row[str(i)+'PtA'] * 100
+                        vars(self)["table"+str(team)].loc[pl,str(i)+'Pt%'] = round(perc, 2)
+                    else:
+                        vars(self)["table"+str(team)].loc[pl,str(i)+'Pt%'] = "-"
+                # computation of field goal percentage (FG%):
+                if row['2PtA'] + row['3PtA'] != 0:
+                    perc = (row['2PtI'] + row['3PtI'])/(row['2PtA'] + row['3PtA']) * 100
+                    vars(self)["table"+str(team)].loc[pl,'FG%'] = round(perc, 2)
                 else:
-                    self.table1.loc[pl,str(i)+'Pt%'] = "-"
-            # computation of field goal percentage (FG%):
-            if row['2PtA'] + row['3PtA'] != 0:
-                perc = (row['2PtI'] + row['3PtI'])/(row['2PtA'] + row['3PtA']) * 100
-                self.table1.loc[pl,'FG%'] = round(perc, 2)
-            else:
-                self.table1.loc[pl,'FG%'] = "-"
+                    vars(self)["table"+str(team)].loc[pl,'FG%'] = "-"
 
 
     def __shoot(self, i, action, start, end):
