@@ -28,7 +28,7 @@ def treat_line(line, last_time, max_length):
             last_time[team-1] = clock
 
 
-def LongestDroughtMain(file):
+def main(file):
     '''
     This function returns the longest time for every team without scoring
     - file: play-by-play input file (string)

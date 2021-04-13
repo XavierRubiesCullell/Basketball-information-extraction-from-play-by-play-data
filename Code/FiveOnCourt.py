@@ -16,7 +16,7 @@ def check_fives(intervals, clock):
                 return five
 
 
-def FiveOnCourtMain(oncourtintervals, clock):
+def main(oncourtintervals, clock):
     fives = [None, None]
     clock = time_from_string(clock)
     for team in range(1,3):

@@ -183,7 +183,7 @@ def print_results():
         print()
 
 
-def StandardPbPObtentionMain(webpage, out_file):
+def main(webpage, out_file):
     os.chdir(os.path.dirname(__file__))
 
     global actions

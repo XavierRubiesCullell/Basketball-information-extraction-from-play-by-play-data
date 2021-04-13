@@ -31,7 +31,7 @@ def treat_line(line, streak, max_streak, last_team):
     return streak, last_team
 
 
-def GreatestStreakMain(file):
+def main(file):
     '''
     This function returns the greatest scoring streak for every team
     - file: play-by-play input file (string)

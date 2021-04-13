@@ -1,15 +1,15 @@
 import os
 
-from StandardPbPObtention import StandardPbPObtentionMain
-from BoxScores import BoxScoresMain
-from PartialScorings import PartialScoringsMain
-from LongestDrought import LongestDroughtMain
-from GreatestStreak import GreatestStreakMain
-from AssistMap import AssistMapMain
-from PlayingIntervals import PlayingIntervalsMain
-from FiveOnCourt import FiveOnCourtMain
-from FivesIntervals import FivesIntervalsMain
-from StreakWithoutMissing import StreakWithoutMissingMain
+from StandardPbPObtention import main as StandardPbPObtention_main
+from BoxScores import main as BoxScores_main
+from PartialScorings import main as PartialScorings_main
+from LongestDrought import main as LongestDrought_main
+from GreatestStreak import main as GreatestStreak_main
+from StreakWithoutMissing import main as StreakWithoutMissing_main
+from AssistMap import main as AssistMap_main
+from PlayingIntervals import main as PlayingIntervals_main
+from FiveOnCourt import main as FiveOnCourt_main
+from FivesIntervals import main as FivesIntervals_main
 
 
 class Match():
@@ -21,7 +21,7 @@ class Match():
         if PbPfile is None:
             PbPfile = home+away+date+"_StandardPbP.txt"
         self.PbPfile = PbPfile
-        #StandardPbPObtentionMain('https://www.basketball-reference.com/boxscores/pbp/'+date+'0'+home[:3].upper()+'.html', out_file = self.PbPfile)
+        #StandardPbPObtention_main('https://www.basketball-reference.com/boxscores/pbp/'+date+'0'+home[:3].upper()+'.html', out_file = self.PbPfile)
         # self.boxscore will probably be generated, being an instance of BoxScore class
 
     def box_scores(self, start="48:00", end="0:00"):
@@ -32,7 +32,7 @@ class Match():
         Output: It returns the instance boxscore of class BoxScore
         '''
         if "boxscore" not in vars(self):
-            self.boxscore = BoxScoresMain("Files/"+self.PbPfile, start=start, end=end)
+            self.boxscore = BoxScores_main("Files/"+self.PbPfile, start=start, end=end)
         return self.boxscore
     
     def box_score_save(self, folder="Files/", pkl1 = None, pkl2 = None):
@@ -150,32 +150,32 @@ class Match():
         '''
         This function returns the scoring at every quarter end
         '''
-        return PartialScoringsMain("Files/"+self.PbPfile, self.home, self.away, end)
+        return PartialScorings_main("Files/"+self.PbPfile, self.home, self.away, end)
 
     def longest_drought(self):
         '''
         This function returns the longest time for every team without scoring
         '''
-        return LongestDroughtMain("Files/"+self.PbPfile)
+        return LongestDrought_main("Files/"+self.PbPfile)
 
     def greatest_streak(self):
         '''
         This function returns the greatest scoring streak for every team
         '''
-        return GreatestStreakMain("Files/"+self.PbPfile)
+        return GreatestStreak_main("Files/"+self.PbPfile)
     
     def streak_without_missing(self):
         '''
         This function returns the maximum amount of consecutive points without missing for every team
         '''
-        return StreakWithoutMissingMain("Files/"+self.PbPfile)
+        return StreakWithoutMissing_main("Files/"+self.PbPfile)
 
     def assist_map(self):
         '''
         This function draws the assists between each team members
         M[i][j] indicates the number of assists from player i to player j
         '''
-        return AssistMapMain("Files/"+self.PbPfile)
+        return AssistMap_main("Files/"+self.PbPfile)
   
     def playing_intervals(self):
         '''
@@ -184,7 +184,7 @@ class Match():
         - playersintervals: playing intervals for every team member (dictionary of string: list of tuples)
         - oncourtintervals: players on court for each interval without changes (dictionary of tuple: set of strings)
         '''
-        return PlayingIntervalsMain("Files/" + self.PbPfile)
+        return PlayingIntervals_main("Files/" + self.PbPfile)
     
     def five_on_court(self, clock):
         '''
@@ -192,7 +192,7 @@ class Match():
         Input:
         - clock: time (string)
         '''
-        return FiveOnCourtMain(self.playing_intervals()[1], clock)
+        return FiveOnCourt_main(self.playing_intervals()[1], clock)
     
     def fives_intervals(self, team, five):
         '''
@@ -201,4 +201,4 @@ class Match():
         - team: players' team (integer)
         - five: list of players (list)
         '''
-        return FivesIntervalsMain(self.playing_intervals()[1][team], five)
+        return FivesIntervals_main(self.playing_intervals()[1][team], five)

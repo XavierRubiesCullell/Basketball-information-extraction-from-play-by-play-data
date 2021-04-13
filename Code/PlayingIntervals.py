@@ -169,7 +169,7 @@ def treat_line(line, prev_Q, oncourt, playerintervals, temponcourtintervals, onc
     return Q
 
 
-def PlayingIntervalsMain(file):
+def main(file):
     '''
     This function returns the playing intervals for every player and the 5 on court for each interval
     Input:

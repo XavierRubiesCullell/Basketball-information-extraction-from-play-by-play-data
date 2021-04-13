@@ -62,7 +62,7 @@ def treat_line(line, scores, Q_scores, prev_Q, end):
     return Q, clock
 
 
-def PartialScoringsMain(file, home, away, end="00:00"):
+def main(file, home, away, end="00:00"):
     '''
     This function returns the partial scorings scoreboard
     - file: play-by-play input file (string)

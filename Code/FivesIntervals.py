@@ -1,4 +1,4 @@
-def FivesIntervalsMain(oncourtintervals, five):
+def main(oncourtintervals, five):
     '''
     This function returns the intervals an introduced five played
     Input:

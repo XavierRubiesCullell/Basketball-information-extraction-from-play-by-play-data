@@ -338,7 +338,7 @@ def read_plays(f, start, end, table, oncourt, plusminus, others):
         Q = treat_line(lines, i, line, Q, start, end, table, oncourt, plusminus, others)
 
 
-def BoxScoresMain(file, start = "48:00", end = "00:00"):
+def main(file, start = "48:00", end = "00:00"):
     '''
     This function builds the boxscores (stored in table)
     '''

@@ -35,7 +35,7 @@ def treat_line(line, streak, max_streak):
         streak[op_team-1] = 0
                 
 
-def StreakWithoutMissingMain(file):
+def main(file):
     '''
     This function returns the maximum amount of consecutive points without missing for every team
     - file: play-by-play input file (string)

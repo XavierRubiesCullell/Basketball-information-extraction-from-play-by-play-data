@@ -42,7 +42,7 @@ def treat_line(line, assists):
                 assists[team-1].loc[assistant, scorer] += 1
 
 
-def AssistMapMain(file):
+def main(file):
     '''
     This function draws the assists between each team members
     ast[i][j] indicates the number of assists from player i to player j
