@@ -30,16 +30,16 @@ print()
 print(game.top_players(['Pts', 'TR'], n=5))
 
 print()
-print(game.partial_scoring(end="12:01"))
+print(game.quarter_scorings(end="12:01"))
 
 print()
 print(game.longest_drought())
 
 print()
-print(game.greatest_streak())
+print(game.greatest_partial())
 
 print()
-print(game.streak_without_missing())
+print(game.greatest_streak())
 
 print()
 assists = game.assist_map()

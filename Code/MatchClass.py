@@ -22,7 +22,8 @@ class Match():
         if PbPfile is None:
             PbPfile = home+away+date+"_StandardPbP.txt"
         self.PbPfile = PbPFolder+PbPfile
-        StandardPbPObtention_main('https://www.basketball-reference.com/boxscores/pbp/'+date+'0'+home[:3].upper()+'.html', outFile = self.PbPfile)
+        if not os.path.exists(self.PbPfile):
+            StandardPbPObtention_main('https://www.basketball-reference.com/boxscores/pbp/'+date+'0'+home[:3].upper()+'.html', outFile = self.PbPfile)
         # self.boxscore will probably be generated
 
     def box_scores(self, start="48:00", end="0:00"):
@@ -151,27 +152,32 @@ class Match():
             table = table[:n]
         return table
 
-    def partial_scoring(self, end="00:00"):
+    def quarter_scorings(self, end="00:00"):
         '''
-        This function returns the scoring at every quarter end
+        This function returns the scoring at every quarter end until time reaches 'end'
+        Input:
+        - end: stopping time to compute the scoring (string)
         '''
         return QuarterScorings_main(self.PbPfile, self.home, self.away, end)
 
     def longest_drought(self):
         '''
         This function returns the longest time for every team without scoring
+        Ouput: list of strings
         '''
         return LongestDrought_main(self.PbPfile)
 
-    def greatest_streak(self):
+    def greatest_partial(self):
         '''
-        This function returns the greatest scoring streak for every team
+        This function returns the greatest partial (consecutive points without the opponent scoring) for every team
+        Ouput: list of integers
         '''
         return GreatestPartial_main(self.PbPfile)
     
-    def streak_without_missing(self):
+    def greatest_streak(self):
         '''
         This function returns the maximum amount of consecutive points without missing for every team
+        Ouput: list of integers
         '''
         return GreatestStreak_main(self.PbPfile)
 

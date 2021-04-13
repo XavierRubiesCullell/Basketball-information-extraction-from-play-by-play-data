@@ -22,20 +22,18 @@ def treat_line(line, assists):
     '''
     This function is launched to detect the type of play an action is and treat it in case it is a shot
     - line: action that we are going to study (string)
-    - streak: current scoring streak being computed (integer)
-    - max_streak: current scoring streak for each team (list of integer)
-    - last_team: last team that scored (string)
+    - assists: matrix of the assists (pandas DataFrame)
     '''
     action = line.split(", ")
 
     if len(action) > 3 and action[3] == "S":
-        dist_given = action[5] != "I" and action[5] != "O" # true if it is not I or O, so in this position we have the distance
-        result = action[5 + dist_given]
+        distGiven = action[5] != "I" and action[5] != "O" # true if it is not I or O, so in this position we have the distance
+        result = action[5 + distGiven]
         if result == "I": # the shot was in
-            if len(action) == 8+dist_given and action[6+dist_given] == "A": # there is an assist
+            if len(action) == 8+distGiven and action[6+distGiven] == "A": # there is an assist
                 team = int(action[1])
                 scorer = action[2]
-                assistant = action[7+dist_given]
+                assistant = action[7+distGiven]
 
                 check_player(scorer, assists[team-1])
                 check_player(assistant, assists[team-1])

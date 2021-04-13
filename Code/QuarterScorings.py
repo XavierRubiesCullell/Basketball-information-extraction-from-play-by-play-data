@@ -18,46 +18,46 @@ def define_index(scores):
         return "OT" + str(ncols-3)
 
 
-def quarter_check(clock, end, prev_Q, scores, Q_scores):
+def quarter_check(clock, end, prevQ, scores, QScores):
     '''
     This function is launched to detect a change of quarter
     - clock: time of the play we are treating (datetime.time)
     - end: ending time we are considering (datetime.time)
-    - prev_Q: quarter from the previous play (integer)
+    - prevQ: quarter from the previous play (integer)
     - scores: scoring table (pandas.dataframe)
-    - Q_scores: temporary quarter scoring (list)
+    - QScores: temporary quarter scoring (list of integers)
     '''
-    Q = (4-int(clock.minute/12))
+    Q = get_quarter(clock)
     # If there is a quarter change, we write down the quarter result
     # Without the second restriction, if end is in Q_t and clock in Q_{t+1}, [0, 0] would be written for Q_{t+1} at Main
-    if prev_Q != Q and clock >= end:
+    if prevQ != Q and clock >= end:
         index = define_index(scores)
-        scores[index] = Q_scores
-        Q_scores[0] = Q_scores[1] = 0
+        scores[index] = QScores
+        QScores[0] = QScores[1] = 0
     return Q
 
 
-def treat_line(line, scores, Q_scores, prev_Q, end):
+def treat_line(line, scores, QScores, prevQ, end):
     '''
     This function is launched to detect the type of play an action is and treat it in case it is a shot
     - line: action that we are going to study (string)
     - scores: scoring table (dataframe)
-    - Q_scores: temporary quarter scoring (list)
-    - prev_Q: quarter from the previous play (integer)
+    - QScores: temporary quarter scoring (list)
+    - prevQ: quarter from the previous play (integer)
     - end: ending time we are considering (datetime.time)
     '''
     action = line.split(", ")
 
     clock = action[0]
     clock = time_from_string(clock)
-    Q = quarter_check(clock, end, prev_Q, scores, Q_scores)
+    Q = quarter_check(clock, end, prevQ, scores, QScores)
 
     if clock >= end and len(action) > 3 and action[3] == "S":
-        dist_given = action[5] != "I" and action[5] != "O" # true if it is not I or O, so in this position we have the distance
-        result = action[5 + dist_given]
+        distGiven = action[5] != "I" and action[5] != "O" # true if it is not I or O, so in this position we have the distance
+        result = action[5 + distGiven]
         if result == "I": # the shot was in
             team, points = action[1], action[4]
-            Q_scores[int(team)-1] += int(points)
+            QScores[int(team)-1] += int(points)
 
     return Q, clock
 
@@ -68,12 +68,12 @@ def main(file, home, away, end="00:00"):
     - file: play-by-play input file (string)
     - home: local team (string)
     - away: visiting team (string)
-    - end: ending time we are considering (datetime.time)
+    - end: ending time we are considering (string)
     '''
     os.chdir(os.path.dirname(__file__))
 
     scores = pd.DataFrame(index=[home, away])
-    Q_scores = [0, 0]
+    QScores = [0, 0]
     Q = 1
     end = time_from_string(end)
 
@@ -81,11 +81,11 @@ def main(file, home, away, end="00:00"):
         lines = f.readlines()
         for line in lines:
             line = line.strip()
-            Q, clock = treat_line(line, scores, Q_scores, Q, end)
+            Q, clock = treat_line(line, scores, QScores, Q, end)
             if clock < end:
                 break
 
     index = define_index(scores)
-    scores[index] = Q_scores
+    scores[index] = QScores
     scores["T"] = scores.apply(np.sum, axis=1)
     return scores
