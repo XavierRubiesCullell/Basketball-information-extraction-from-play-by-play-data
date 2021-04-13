@@ -13,16 +13,16 @@ from FivesIntervals import main as FivesIntervals_main
 
 
 class Match():
-    def __init__(self, home, away, date, PbPfile=None):
+    def __init__(self, home, away, date, PbPFolder="Files/", PbPfile=None):
         os.chdir(os.path.dirname(__file__))
         self.home = home
         self.away = away
         self.date = date
         if PbPfile is None:
             PbPfile = home+away+date+"_StandardPbP.txt"
-        self.PbPfile = PbPfile
-        #StandardPbPObtention_main('https://www.basketball-reference.com/boxscores/pbp/'+date+'0'+home[:3].upper()+'.html', out_file = self.PbPfile)
-        # self.boxscore will probably be generated, being an instance of BoxScore class
+        self.PbPfile = PbPFolder+PbPfile
+        StandardPbPObtention_main('https://www.basketball-reference.com/boxscores/pbp/'+date+'0'+home[:3].upper()+'.html', outFile = self.PbPfile)
+        # self.boxscore will probably be generated
 
     def box_scores(self, start="48:00", end="0:00"):
         '''
@@ -32,7 +32,7 @@ class Match():
         Output: It returns the instance boxscore of class BoxScore
         '''
         if "boxscore" not in vars(self):
-            self.boxscore = BoxScores_main("Files/"+self.PbPfile, start=start, end=end)
+            self.boxscore = BoxScores_main(self.PbPfile, start=start, end=end)
         return self.boxscore
     
     def box_score_save(self, folder="Files/", pkl1 = None, pkl2 = None):
@@ -150,32 +150,32 @@ class Match():
         '''
         This function returns the scoring at every quarter end
         '''
-        return PartialScorings_main("Files/"+self.PbPfile, self.home, self.away, end)
+        return PartialScorings_main(self.PbPfile, self.home, self.away, end)
 
     def longest_drought(self):
         '''
         This function returns the longest time for every team without scoring
         '''
-        return LongestDrought_main("Files/"+self.PbPfile)
+        return LongestDrought_main(self.PbPfile)
 
     def greatest_streak(self):
         '''
         This function returns the greatest scoring streak for every team
         '''
-        return GreatestStreak_main("Files/"+self.PbPfile)
+        return GreatestStreak_main(self.PbPfile)
     
     def streak_without_missing(self):
         '''
         This function returns the maximum amount of consecutive points without missing for every team
         '''
-        return StreakWithoutMissing_main("Files/"+self.PbPfile)
+        return StreakWithoutMissing_main(self.PbPfile)
 
     def assist_map(self):
         '''
         This function draws the assists between each team members
         M[i][j] indicates the number of assists from player i to player j
         '''
-        return AssistMap_main("Files/"+self.PbPfile)
+        return AssistMap_main(self.PbPfile)
   
     def playing_intervals(self):
         '''
@@ -184,7 +184,7 @@ class Match():
         - playersintervals: playing intervals for every team member (dictionary of string: list of tuples)
         - oncourtintervals: players on court for each interval without changes (dictionary of tuple: set of strings)
         '''
-        return PlayingIntervals_main("Files/" + self.PbPfile)
+        return PlayingIntervals_main(self.PbPfile)
     
     def five_on_court(self, clock):
         '''
