@@ -1,11 +1,12 @@
 import os
+import pandas as pd
 
 from StandardPbPObtention import main as StandardPbPObtention_main
 from BoxScores import main as BoxScores_main
-from PartialScorings import main as PartialScorings_main
+from QuarterScorings import main as QuarterScorings_main
 from LongestDrought import main as LongestDrought_main
+from GreatestPartial import main as GreatestPartial_main
 from GreatestStreak import main as GreatestStreak_main
-from StreakWithoutMissing import main as StreakWithoutMissing_main
 from AssistMap import main as AssistMap_main
 from PlayingIntervals import main as PlayingIntervals_main
 from FiveOnCourt import main as FiveOnCourt_main
@@ -60,14 +61,15 @@ class Match():
         - table: box score or a variation (pandas dataframe) or a reference to a box score (string)
         Output: Box score filtered by the list of players
         '''
-        tables = self.box_scores()
-        if table is None:
-            table = tables[0].append(tables[1])
-        elif isinstance(table, str):
-            if table == self.home:
-                table = tables[0]
-            elif table == self.away:
-                table = tables[1]
+        if not isinstance(table, pd.DataFrame):
+            tables = self.box_scores()
+            if isinstance(table, str):
+                if table == self.home:
+                    table = tables[0]
+                elif table == self.away:
+                    table = tables[1]
+            else:
+                table = tables[0].append(tables[1])
         return table.loc[players,]
 
     def filter_by_categories(self, categories, table=None):
@@ -78,14 +80,15 @@ class Match():
         - table: box score or a variation (pandas dataframe) or a reference to a box score (string)
         Output: Box score filtered by the list of categories
         '''
-        tables = self.box_scores()
-        if table is None:
-            table = tables[0].append(tables[1])
-        elif isinstance(table, str):
-            if table == self.home:
-                table = tables[0]
-            elif table == self.away:
-                table = tables[1]
+        if not isinstance(table, pd.DataFrame):
+            tables = self.box_scores()
+            if isinstance(table, str):
+                if table == self.home:
+                    table = tables[0]
+                elif table == self.away:
+                    table = tables[1]
+            else:
+                table = tables[0].append(tables[1])
 
         if categories == "shooting":
             categories = ['2PtI', '2PtA', '2Pt%', '3PtI', '3PtA', '3Pt%', 'FG%', '1PtI', '1PtA', '1Pt%', 'AstPts', 'Pts']
@@ -103,14 +106,15 @@ class Match():
         - table: box score or a variation (pandas dataframe) or a reference to a box score (string)
         Output: Box score filtered by the values of the categories introduced
         '''
-        tables = self.box_scores()
-        if table is None:
-            table = tables[0].append(tables[1])
-        elif isinstance(table, str):
-            if table == self.home:
-                table = tables[0]
-            elif table == self.away:
-                table = tables[1]
+        if not isinstance(table, pd.DataFrame):
+            tables = self.box_scores()
+            if isinstance(table, str):
+                if table == self.home:
+                    table = tables[0]
+                elif table == self.away:
+                    table = tables[1]
+            else:
+                table = tables[0].append(tables[1])
 
         if "TOTAL" in table.index:
             table = table.drop(index = ["TOTAL"])
@@ -130,14 +134,15 @@ class Match():
         - max: bool stating if we want the maximum values (true) or the minimum ones (false)
         Output: Table (series) with the players and the category(ies) value
         '''
-        tables = self.box_scores()
-        if table is None:
-            table = tables[0].append(tables[1])
-        elif isinstance(table, str):
-            if table == self.home:
-                table = tables[0]
-            elif table == self.away:
-                table = tables[1]
+        if not isinstance(table, pd.DataFrame):
+            tables = self.box_scores()
+            if isinstance(table, str):
+                if table == self.home:
+                    table = tables[0]
+                elif table == self.away:
+                    table = tables[1]
+            else:
+                table = tables[0].append(tables[1])
 
         table = table[var]
         table = table.drop(["-", "TOTAL"])
@@ -150,7 +155,7 @@ class Match():
         '''
         This function returns the scoring at every quarter end
         '''
-        return PartialScorings_main(self.PbPfile, self.home, self.away, end)
+        return QuarterScorings_main(self.PbPfile, self.home, self.away, end)
 
     def longest_drought(self):
         '''
@@ -162,13 +167,13 @@ class Match():
         '''
         This function returns the greatest scoring streak for every team
         '''
-        return GreatestStreak_main(self.PbPfile)
+        return GreatestPartial_main(self.PbPfile)
     
     def streak_without_missing(self):
         '''
         This function returns the maximum amount of consecutive points without missing for every team
         '''
-        return StreakWithoutMissing_main(self.PbPfile)
+        return GreatestStreak_main(self.PbPfile)
 
     def assist_map(self):
         '''
