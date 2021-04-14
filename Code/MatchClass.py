@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+from Functions import *
 
 from StandardPbPObtention import main as StandardPbPObtention_main
 from BoxScores import main as BoxScores_main
@@ -16,14 +17,14 @@ from FivesIntervals import main as FivesIntervals_main
 class Match():
     def __init__(self, home, away, date, PbPFolder="Files/", PbPfile=None):
         os.chdir(os.path.dirname(__file__))
-        self.home = home
-        self.away = away
+        self.home = get_team(home)
+        self.away = get_team(away)
         self.date = date
         if PbPfile is None:
-            PbPfile = home+away+date+"_StandardPbP.txt"
+            PbPfile = self.home + "_" + self.away + "_" + self.date + "_StandardPbP.txt"
         self.PbPfile = PbPFolder+PbPfile
         if not os.path.exists(self.PbPfile):
-            StandardPbPObtention_main('https://www.basketball-reference.com/boxscores/pbp/'+date+'0'+home[:3].upper()+'.html', outFile = self.PbPfile)
+            StandardPbPObtention_main('https://www.basketball-reference.com/boxscores/pbp/'+date+'0'+self.home+'.html', outFile = self.PbPfile)
         # self.boxscore will probably be generated
 
     def box_scores(self, start="48:00", end="0:00"):
@@ -46,9 +47,9 @@ class Match():
         - pkl2: name of the away file (string)
         '''
         if pkl1 is None:
-            pkl1 = self.home+self.away+self.date+"_BS_"+self.home+".pkl"
+            pkl1 = self.home + "_" + self.away + "_" + self.date + "_BS_" + self.home + ".pkl"
         if pkl2 is None:
-            pkl2 = self.home+self.away+self.date+"_BS_"+self.away+".pkl"
+            pkl2 = self.home + "_" + self.away + "_" + self.date + "_BS_" + self.away + ".pkl"
         
         (table1, table2) = self.box_scores()
         table1.to_pickle(folder + pkl1)

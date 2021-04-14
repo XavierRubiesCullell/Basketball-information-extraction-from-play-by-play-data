@@ -1,4 +1,15 @@
 import datetime
+import os
+
+def get_team(team):
+    os.chdir(os.path.dirname(__file__))
+    f = open('./Teams.txt', 'r')
+    while True:
+        line = f.readline().strip().split(', ')
+        n = len(line)
+        for i in range(n-1):
+            if line[i] == team:
+                return line[n-1]
 
 def other_team(team):
     '''

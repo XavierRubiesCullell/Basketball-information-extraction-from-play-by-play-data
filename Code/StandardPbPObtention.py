@@ -173,7 +173,7 @@ def treat_action(action, Q):
     clock = datetime.datetime.strptime(clock, "%M:%S.%f")
     quarterTime = datetime.timedelta(minutes = 12*(4-Q))
     clock = clock + quarterTime
-    outLine.append(clock.strftime("%M:%S"))
+    outLine.append(string_from_time(clock))
 
     if len(cols[1].text) > 1: # the action belongs to the visiting team
         outLine.append("2")
