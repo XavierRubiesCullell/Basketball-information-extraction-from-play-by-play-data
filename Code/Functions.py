@@ -2,6 +2,12 @@ import datetime
 import os
 
 def get_team(team):
+    '''
+    This functions returns the codification of the team name, which is needed to access to the website
+    As information is stored by using it, it also grants unicity in the database
+    - team: Team name in whatever variant is desired: city, club name or both (string)
+    Output: 3-letter representation of the team, which are often the first 3 letters of the city (string)
+    '''
     os.chdir(os.path.dirname(__file__))
     f = open('./Teams.txt', 'r')
     while True:

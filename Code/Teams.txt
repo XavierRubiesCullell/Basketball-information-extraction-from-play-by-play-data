@@ -18,11 +18,11 @@ Milwaukee, Bucks, Milwaukee Bucks, MIL
 Minnesota, Timberwolves, Minnesota Timberwolves, MIN
 New Orleans, Pelicans, New Orleans Pelicans, NOP
 New York, Knicks, New York Knicks, NYK
-Orlando, Magic, Orlando Magic, ORL
 Oklahoma City, Thunders, Oklahoma City Thunders, OKC
-Philadelphia, Sixers, Philadelphia 76ers, PHI
+Orlando, Magic, Orlando Magic, ORL
+Philadelphia, Sixers, 76ers, Philadelphia 76ers, PHI
 Phoenix, Suns, Phoenix Suns, PHO
-Portland, Blazers, Portland Trail Blazers, POR
+Portland, Blazers, Trail Blazers, Portland Trail Blazers, POR
 Sacramento, Kings, Sacramento Kings, SAC
 San Antonio, Spurs, San Antonio Spurs, SAS
 Toronto, Raptors, Toronto Raptors, TOR
