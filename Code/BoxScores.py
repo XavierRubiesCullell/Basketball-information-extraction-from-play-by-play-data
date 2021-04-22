@@ -7,7 +7,7 @@ from Functions import *
 
 def modify_table(table, team, player, variable, value):
     '''
-    This function is launched to modify the boxscore values
+    This function modifies the 'variable' record corresponding to 'player' in the box score from 'team' by value 'value'
     '''
     table[team-1].loc[player,variable] += value
 
@@ -15,6 +15,7 @@ def modify_table(table, team, player, variable, value):
 def check_player(table, team, player):
     '''
     This function is launched to avoid an error due to a missing key (player) in a boxscore table
+    - table: box score of the teams (list of pandas.DataFrame)
     - team: team of the player, either 1 or 2 (string)
     - player: name of the player (string)
     '''
@@ -24,19 +25,22 @@ def check_player(table, team, player):
         table[team-1] = table[team-1].append(newrow)
 
 
-def check_oncourt(oncourt, team, player, clock, start, end, table, plusminus):
+def check_oncourt(oncourt, team, player, clock, Q, start, end, table, plusminus):
     '''
     This function is launched to check whether the presence of the player was already detected.
     In case it was not, it adds it to the players on court and adds the player +/- missing
+    - oncourt: players on court (list of dictionaries {player: string})
     - team: team of the player, either 1 or 2 (string)
     - player: name of the player (string)
     - clock: time of a specific moment (string)
+    - Q: current quarter (string)
     - start: starting time of the boxscore compution interval (string)
     - end: ending time of the boxscore compution interval (string)
+    - table: box score of the teams (list of pandas.DataFrame)
+    - plusminus: plusminus value in the current quarter (list of integers)
     '''
-    Q = get_quarter(clock)
     if player != "-" and player not in oncourt[team-1]:
-        oncourt[team-1][player] = datetime.time(0, (5-Q)*12, 0)
+        oncourt[team-1][player] = quarter_start_time(Q)
         if start >= clock and clock >= end:
             check_player(table, team, player)
             modify_table(table, team, player, '+/-', plusminus[team-1])
@@ -45,14 +49,17 @@ def check_oncourt(oncourt, team, player, clock, start, end, table, plusminus):
 def quarter_end(Q, start, end, table, oncourt, plusminus):
     '''
     This function is launched every time a quarter end is detected
-    - Q: quarter that has just ended (int)
+    - Q: quarter that has just ended (string)
     - start: starting time of the boxscore compution interval (string)
     - end: ending time of the boxscore compution interval (string)
+    - table: box score of the teams (list of pandas.DataFrame)
+    - oncourt: players on court (list of dictionaries {player: string})
+    - plusminus: plusminus value in the current quarter (list of integers)
     '''
     for team in range(1,3):
         # we add the minutes of the players that end the quarter (as it is usually done when they are changed)
         for player in oncourt[team-1]:
-            interval, _, _ = compute_interval(oncourt[team-1][player], datetime.time(0, 12*(4-Q), 0), start, end)
+            interval, _, _ = compute_interval(oncourt[team-1][player], quarter_end_time(Q), start, end)
             if interval != datetime.timedelta():
                 check_player(table, team, player)
                 modify_table(table, team, player, 'Mins', interval)
@@ -65,7 +72,6 @@ def quarter_end(Q, start, end, table, oncourt, plusminus):
 def final_computations(table):
     '''
     This function computes the cumulative value for every category and computes the dependent categories
-    Input:
     - table: box score of the teams (list of pandas.DataFrame)
     '''
     for team in range(1,3):
@@ -94,7 +100,9 @@ def correct_plusminus(lines, i, table):
     This function is launched when there is a scored free throw,
     to check whether there was a change after the corresponding foul.
     In case there was any change, it corrects the +/- of the involving players
+    - lines: list of the actions in the game (list of strings)
     - i: the index of the free throw action (int)
+    - table: box score of the teams (list of pandas.DataFrame)
     '''
     ftAction = lines[i].strip().split(", ")
     ftTeam = int(ftAction[1])
@@ -110,19 +118,24 @@ def correct_plusminus(lines, i, table):
         action = lines[j].strip().split(", ")
 
 
-def shoot(i, action, start, end, table, oncourt, plusminus, lines):
+def shoot(i, action, Q, start, end, table, oncourt, plusminus, lines):
     '''
     Treatment of an action that was detected as a shot. It will have the following structure:
         clock team player "S" points [dist] result [A assistant]
     - i: index of the studied line. It will be useful in plays such as free throws (int)
     - action: studied play (list)
+    - Q: current quarter (string)
     - start: starting time of the boxscore compution interval (string)
     - end: ending time of the boxscore compution interval (string)
+    - table: box score of the teams (list of pandas.DataFrame)
+    - oncourt: players on court (list of dictionaries {player: string})
+    - plusminus: plusminus value in the current quarter (list of integers)
+    - lines: list of the actions in the game (list of strings)
     '''
     clock, team, player, points = action[0], int(action[1]), action[2], int(action[4])
     clock = time_from_string(clock)
     opTeam = other_team(team)  # team = 1 -> opTeam = 2, team = 2 -> opTeam = 1
-    check_oncourt(oncourt, team, player, clock, start, end, table, plusminus)
+    check_oncourt(oncourt, team, player, clock, Q, start, end, table, plusminus)
 
     if start >= clock and clock >= end:
         check_player(table, team, player)
@@ -150,7 +163,7 @@ def shoot(i, action, start, end, table, oncourt, plusminus, lines):
 
         if len(action) == 8+distGiven and action[6+distGiven] == "A": # there is an assist
             assistant = action[7+distGiven]
-            check_oncourt(oncourt, team, assistant, clock, start, end, table, plusminus)
+            check_oncourt(oncourt, team, assistant, clock, Q, start, end, table, plusminus)
             if start >= clock and clock >= end:
                 check_player(table, team, assistant)
                 modify_table(table, team, assistant, 'Ast', 1)
@@ -158,17 +171,21 @@ def shoot(i, action, start, end, table, oncourt, plusminus, lines):
                 modify_table(table, team, player, 'AstPts', points)
 
 
-def rebound(action, start, end, table, oncourt, plusminus):
+def rebound(action, Q, start, end, table, oncourt, plusminus):
     '''
     Treatment of an action that was detected as a rebound. It will have the following structure:
         clock team player "R" kind
     - action: studied play (list)
+    - Q: current quarter (string)
     - start: starting time of the boxscore compution interval (string)
     - end: ending time of the boxscore compution interval (string)
+    - table: box score of the teams (list of pandas.DataFrame)
+    - oncourt: players on court (list of dictionaries {player: string})
+    - plusminus: plusminus value in the current quarter (list of integers)
     '''
     clock, team, player, kind = action[0], int(action[1]), action[2], action[4]
     clock = time_from_string(clock)
-    check_oncourt(oncourt, team, player, clock, start, end, table, plusminus)
+    check_oncourt(oncourt, team, player, clock, Q, start, end, table, plusminus)
 
     if start >= clock and clock >= end:
         check_player(table, team, player)
@@ -176,36 +193,44 @@ def rebound(action, start, end, table, oncourt, plusminus):
         modify_table(table, team, player, kind+"R", 1)
 
 
-def turnover(action, start, end, table, oncourt, plusminus):
+def turnover(action, Q, start, end, table, oncourt, plusminus):
     '''
     Treatment of an action that was detected as a simple turnover. It will have the following structure:
         clock team player "T"
     - action: studied play (list)
+    - Q: current quarter (string)
     - start: starting time of the boxscore compution interval (string)
     - end: ending time of the boxscore compution interval (string)
+    - table: box score of the teams (list of pandas.DataFrame)
+    - oncourt: players on court (list of dictionaries {player: string})
+    - plusminus: plusminus value in the current quarter (list of integers)
     '''
     clock, team, player = action[0], int(action[1]), action[2]
     clock = time_from_string(clock)
-    check_oncourt(oncourt, team, player, clock, start, end, table, plusminus)
+    check_oncourt(oncourt, team, player, clock, Q, start, end, table, plusminus)
 
     if start >= clock and clock >= end:
         check_player(table, team, player)
         modify_table(table, team, player, 'To', 1)
 
 
-def steal(action, start, end, table, oncourt, plusminus):
+def steal(action, Q, start, end, table, oncourt, plusminus):
     '''
     Treatment of an action that was detected as a steal. It will have the following structure:
         clock team player "St" receiver
     - action: studied play (list)
+    - Q: current quarter (string)
     - start: starting time of the boxscore compution interval (string)
     - end: ending time of the boxscore compution interval (string)
+    - table: box score of the teams (list of pandas.DataFrame)
+    - oncourt: players on court (list of dictionaries {player: string})
+    - plusminus: plusminus value in the current quarter (list of integers)
     '''
     clock, team, player, opPlayer = action[0], int(action[1]), action[2], action[4]
     clock = time_from_string(clock)
-    check_oncourt(oncourt, team, player, clock, start, end, table, plusminus)
+    check_oncourt(oncourt, team, player, clock, Q, start, end, table, plusminus)
     opTeam = other_team(team)  # team = 1 -> opTeam = 2, team = 2 -> opTeam = 1
-    check_oncourt(oncourt, opTeam, opPlayer, clock, start, end, table, plusminus)
+    check_oncourt(oncourt, opTeam, opPlayer, clock, Q, start, end, table, plusminus)
 
     if start >= clock and clock >= end:
         check_player(table, team, player)
@@ -214,20 +239,24 @@ def steal(action, start, end, table, oncourt, plusminus):
         modify_table(table, opTeam, opPlayer, 'To', 1)
 
 
-def block(action, start, end, table, oncourt, plusminus):
+def block(action, Q, start, end, table, oncourt, plusminus):
     '''
     Treatment of an action that was detected as a block. It will have the following structure:
         clock team player "B" receiver points
     - action: studied play (list)
+    - Q: current quarter (string)
     - start: starting time of the boxscore compution interval (string)
     - end: ending time of the boxscore compution interval (string)
+    - table: box score of the teams (list of pandas.DataFrame)
+    - oncourt: players on court (list of dictionaries {player: string})
+    - plusminus: plusminus value in the current quarter (list of integers)
     '''
     clock, team, player, opPlayer, points = action[0], int(action[1]), action[2], action[4], action[5]
     clock = time_from_string(clock)
-    check_oncourt(oncourt, team, player, clock, start, end, table, plusminus)
+    check_oncourt(oncourt, team, player, clock, Q, start, end, table, plusminus)
     
     opTeam = other_team(team)  # team == 1 -> opTeam = 2,  team == 2 -> opTeam = 1
-    check_oncourt(oncourt, opTeam, opPlayer, clock, start, end, table, plusminus)
+    check_oncourt(oncourt, opTeam, opPlayer, clock, Q, start, end, table, plusminus)
     
     if start >= clock and clock >= end:
         check_player(table, team, player)
@@ -236,17 +265,21 @@ def block(action, start, end, table, oncourt, plusminus):
         modify_table(table, opTeam, opPlayer, points+"PtA", 1)
 
 
-def foul(action, start, end, table, oncourt, plusminus):
+def foul(action, Q, start, end, table, oncourt, plusminus):
     '''
     Treatment of an action that was detected as a foul. It will have the following structure:
         clock team player "F" kind [receiver]
     - action: studied play (list)
+    - Q: current quarter (string)
     - start: starting time of the boxscore compution interval (string)
     - end: ending time of the boxscore compution interval (string)
+    - table: box score of the teams (list of pandas.DataFrame)
+    - oncourt: players on court (list of dictionaries {player: string})
+    - plusminus: plusminus value in the current quarter (list of integers)
     '''
     clock, team, player, kind = action[0], int(action[1]), action[2], action[4]
     clock = time_from_string(clock)
-    check_oncourt(oncourt, team, player, clock, start, end, table, plusminus)
+    check_oncourt(oncourt, team, player, clock, Q, start, end, table, plusminus)
     
     if start >= clock and clock >= end:
         check_player(table, team, player)
@@ -257,23 +290,27 @@ def foul(action, start, end, table, oncourt, plusminus):
     if len(action) == 6: # there is a player from the opposite team that receives the foul
         opPlayer = action[5]
         opTeam = other_team(team)
-        check_oncourt(oncourt, opTeam, opPlayer, clock, start, end, table, plusminus)
+        check_oncourt(oncourt, opTeam, opPlayer, clock, Q, start, end, table, plusminus)
         if start >= clock and clock >= end:
             check_player(table, opTeam, opPlayer)
             modify_table(table, opTeam, opPlayer, 'FR', 1)
 
 
-def change(action, start, end, table, oncourt, plusminus):
+def change(action, Q, start, end, table, oncourt, plusminus):
     '''
     Treatment of an action that was detected as a change. It will have the following structure:
         clock team playerOut "C" playerIn
     - action: studied play (list)
+    - Q: current quarter (string)
     - start: starting time of the boxscore compution interval (string)
     - end: ending time of the boxscore compution interval (string)
+    - table: box score of the teams (list of pandas.DataFrame)
+    - oncourt: players on court (list of dictionaries {player: string})
+    - plusminus: plusminus value in the current quarter (list of integers)
     '''
     clock, team, playerOut, playerIn = action[0], int(action[1]), action[2], action[4]
     clock = time_from_string(clock)
-    check_oncourt(oncourt, team, playerOut, clock, start, end, table, plusminus)
+    check_oncourt(oncourt, team, playerOut, clock, Q, start, end, table, plusminus)
 
     interval, _, _ = compute_interval(oncourt[team-1][playerOut], clock, start, end)
     if interval != datetime.timedelta(): # if it is equal, the interval is null (there is no overlap)
@@ -288,37 +325,43 @@ def change(action, start, end, table, oncourt, plusminus):
 def treat_line(lines, i, line, prevQ, start, end, table, oncourt, plusminus, others):
     '''
     This function is launched to detect the type of play an action is
+    - lines: list of the actions in the game (list of strings)
     - i: index of the studied line. It will be useful in plays such as free throws (int)
     - line: studied line (string)
+    - prevQ: quarter from the previous action (string)
     - start: starting time of the boxscore compution interval (string)
     - end: ending time of the boxscore compution interval (string)
+    - table: box score of the teams (list of pandas.DataFrame)
+    - oncourt: players on court (list of dictionaries {player: string})
+    - plusminus: plusminus value in the current quarter (list of integers)
+    - others: list of the actions that do not affect box scores (list of lists)
+    Output: quarter of the action (string)
     '''
     action = line.split(", ")
     
     #we need to check whether there was a change of quarter
     clock = action[0]
-    clock = time_from_string(clock)
-    Q = get_quarter(clock)
+    Q = clock.split(":")[0]
     if prevQ != Q:
         quarter_end(prevQ, start, end, table, oncourt, plusminus)
-    prevQ = Q
     
     # classification of the action
     if len(action) > 3 and action[3] == "S":
-        shoot(i, action, start, end, table, oncourt, plusminus, lines)
+        shoot(i, action, Q, start, end, table, oncourt, plusminus, lines)
     elif len(action) > 3 and action[3] == "R":
-        rebound(action, start, end, table, oncourt, plusminus)
+        rebound(action, Q, start, end, table, oncourt, plusminus)
     elif len(action) > 3 and action[3] == "T":
-        turnover(action, start, end, table, oncourt, plusminus)
+        turnover(action, Q, start, end, table, oncourt, plusminus)
     elif len(action) > 3 and action[3] == "St":
-        steal(action, start, end, table, oncourt, plusminus)
+        steal(action, Q, start, end, table, oncourt, plusminus)
     elif len(action) > 3 and action[3] == "B":
-        block(action, start, end, table, oncourt, plusminus)
+        block(action, Q, start, end, table, oncourt, plusminus)
     elif len(action) > 3 and action[3] == "F":
-        foul(action, start, end, table, oncourt, plusminus)
+        foul(action, Q, start, end, table, oncourt, plusminus)
     elif len(action) > 3 and action[3] == "C":
-        change(action, start, end, table, oncourt, plusminus)
+        change(action, Q, start, end, table, oncourt, plusminus)
     else:
+        clock = time_from_string(clock)
         if start >= clock and clock >= end:
             others.append(action)
     return Q
@@ -330,17 +373,27 @@ def read_plays(f, start, end, table, oncourt, plusminus, others):
     - f: file object with the PbP in the standard format
     - start: starting time of the boxscore compution interval (string)
     - end: ending time of the boxscore compution interval (string)
+    - table: box score of the teams (list of pandas.DataFrame)
+    - oncourt: players on court (list of dictionaries {player: string})
+    - plusminus: plusminus value in the current quarter (list of integers)
+    - others: list of the actions that do not affect box scores (list of lists)
+    Output: quarter of the action (string)
     '''
-    Q = 1
+    Q = "1Q"
     lines = f.readlines()
     for i, line in enumerate(lines):
         line = line.strip()
         Q = treat_line(lines, i, line, Q, start, end, table, oncourt, plusminus, others)
+    return Q
 
 
-def main(file, start = "48:00", end = "00:00"):
+def main(file, start, end):
     '''
     This function builds the boxscores (stored in table)
+    - file: file object with the PbP in the standard format
+    - start: starting time of the boxscore compution interval (string)
+    - end: ending time of the boxscore compution interval (string)
+    Output: box score of the teams (list of pandas.DataFrame)
     '''
     global categories
     categories = ['Mins', '2PtI', '2PtA', '2Pt%', '3PtI', '3PtA', '3Pt%', 'FG%', '1PtI', '1PtA', '1Pt%', 'OR', 'DR', 'TR', '2PtAst', '3PtAst', 'Ast', 'Bl', 'St', 'To', 'FM', 'FR', 'AstPts', 'Pts', '+/-']
@@ -359,9 +412,9 @@ def main(file, start = "48:00", end = "00:00"):
     others = []
 
     with open(file, encoding="utf-8") as f:
-        read_plays(f, start, end, table, oncourt, plusminus, others)
+        lastQ = read_plays(f, start, end, table, oncourt, plusminus, others)
 
-    quarter_end(4, start, end, table, oncourt, plusminus)
+    quarter_end(lastQ, start, end, table, oncourt, plusminus)
     final_computations(table)
 
     return table

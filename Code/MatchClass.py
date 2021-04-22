@@ -15,33 +15,54 @@ from FivesIntervals import main as FivesIntervals_main
 
 
 class Match():
-    def __init__(self, home, away, date, PbPFolder="Files/", PbPfile=None):
+    def __init__(self, home, away, date, PbPFolder="Files/", PbPFile=None):
+        '''
+        - home: name of the local team (string)
+        - away: name of the visiting team (string)
+        - date: date of the match (string in YYYYMMDD format)
+        - PbPFolder: directory where the standard PbP file is/will be located (string)
+        - PbPFile: name of the standard PbP file (string)
+        '''
         os.chdir(os.path.dirname(__file__))
         self.home = get_team(home)
         self.away = get_team(away)
         self.date = date
-        if PbPfile is None:
-            PbPfile = self.home + "_" + self.away + "_" + self.date + "_StandardPbP.txt"
-        self.PbPfile = PbPFolder+PbPfile
-        if not os.path.exists(self.PbPfile):
-            StandardPbPObtention_main('https://www.basketball-reference.com/boxscores/pbp/'+date+'0'+self.home+'.html', outFile = self.PbPfile)
+        if PbPFile is None:
+            PbPFile = self.home + "_" + self.away + "_" + self.date + "_StandardPbP.txt"
+        self.PbPFile = PbPFolder+PbPFile
+        if not os.path.exists(self.PbPFile):
+            self.lastQ = StandardPbPObtention_main('https://www.basketball-reference.com/boxscores/pbp/'+date+'0'+self.home+'.html', outFile = self.PbPFile)
         # self.boxscore will probably be generated
+    
+    def get_lastQ(self):
+        '''
+        This function returns the last quarter of the match (string)
+        '''
+        if "lastQ" not in vars(self):
+            # the PbP file already existed, so we must compute lastQ
+            with open(self.PbPFile, encoding="utf-8") as f:
+                lines = f.readlines()
+            lastLine = lines[-1]
+            lastLine = lastLine.split(", ")
+            clock = lastLine[0]
+            self.lastQ = quarter_from_time(clock)
+        return self.lastQ
 
-    def box_scores(self, start="48:00", end="0:00"):
+    def box_scores(self, start="1Q:12:00", end=None):
         '''
         It returns self.boxscore (after creating it if needed)
-        Input:
         - start, end: time interval where we want the box score to be computed (string)
-        Output: It returns the instance boxscore of class BoxScore
+        Output: It returns the box scores of both teams (list of pandas.DataFrame)
         '''
+        if end is None:
+            end = self.get_lastQ()+":00:00"
         if "boxscore" not in vars(self):
-            self.boxscore = BoxScores_main(self.PbPfile, start=start, end=end)
+            self.boxscore = BoxScores_main(self.PbPFile, start=start, end=end)
         return self.boxscore
     
     def box_score_save(self, folder="Files/", pkl1 = None, pkl2 = None):
         '''
-        This functions saves the box scores in self.boxscore (after creating it if needed)
-        Input:
+        This function saves the box scores in self.boxscore
         - folder: relative path to the folder where the box scores will be saved (string)
         - pkl1: name of the home file (string)
         - pkl2: name of the away file (string)
@@ -58,9 +79,8 @@ class Match():
     def filter_by_players(self, players, table=None):
         '''
         This function filters the box score values of a list of players
-        Input:
         - players: list of players as they are represented on the table (list of strings)
-        - table: box score or a variation (pandas dataframe) or a reference to a box score (string)
+        - table: box score or a variation (pandas dataframe) or a reference to a team (string)
         Output: Box score filtered by the list of players
         '''
         if not isinstance(table, pd.DataFrame):
@@ -77,9 +97,8 @@ class Match():
     def filter_by_categories(self, categories, table=None):
         '''
         This function filters the box score values of a list of categories
-        Input:
         - categories: list of categories or type of categories (list of strings or string)
-        - table: box score or a variation (pandas dataframe) or a reference to a box score (string)
+        - table: box score or a variation (pandas dataframe) or a reference to a team (string)
         Output: Box score filtered by the list of categories
         '''
         if not isinstance(table, pd.DataFrame):
@@ -103,9 +122,8 @@ class Match():
     def filter_by_value(self, vars, table=None):
         '''
         This function filters the box score of the players surpassing the minimum values introduced
-        Input:
         - vars: list of lists having the form (category, value)
-        - table: box score or a variation (pandas dataframe) or a reference to a box score (string)
+        - table: box score or a variation (pandas dataframe) or a reference to a team (string)
         Output: Box score filtered by the values of the categories introduced
         '''
         if not isinstance(table, pd.DataFrame):
@@ -129,7 +147,6 @@ class Match():
     def top_players(self, var, n=None, table=None, max=False):
         '''
         This function returns the top n players having the maximum/minimum value in var
-        Input:
         - var: category(ies) we are interested in (string)
         - n: number of players (integer)
         - table: box score or a variation (pandas dataframe) or a reference to a box score (string)
@@ -153,64 +170,66 @@ class Match():
             table = table[:n]
         return table
 
-    def quarter_scorings(self, end="00:00"):
+    def quarter_scorings(self, end=None):
         '''
         This function returns the scoring at every quarter end until time reaches 'end'
-        Input:
         - end: stopping time to compute the scoring (string)
+        Ouput: pandas.DataFrame
         '''
-        return QuarterScorings_main(self.PbPfile, self.home, self.away, end)
+        if end is None:
+            end = self.get_lastQ()+":00:00"
+        return QuarterScorings_main(self.PbPFile, self.home, self.away, end)
 
     def longest_drought(self):
         '''
         This function returns the longest time for every team without scoring
         Ouput: list of strings
         '''
-        return LongestDrought_main(self.PbPfile)
+        return LongestDrought_main(self.PbPFile, self.get_lastQ())
 
     def greatest_partial(self):
         '''
         This function returns the greatest partial (consecutive points without the opponent scoring) for every team
         Ouput: list of integers
         '''
-        return GreatestPartial_main(self.PbPfile)
+        return GreatestPartial_main(self.PbPFile)
     
     def greatest_streak(self):
         '''
         This function returns the maximum amount of consecutive points without missing for every team
         Ouput: list of integers
         '''
-        return GreatestStreak_main(self.PbPfile)
+        return GreatestStreak_main(self.PbPFile)
 
     def assist_map(self):
         '''
         This function draws the assists between each team members
-        M[i][j] indicates the number of assists from player i to player j
+        Ouput: assist matrix (list of pandas.DataFrame). M[i][j] indicates the number of assists from player i to player j
         '''
-        return AssistMap_main(self.PbPfile)
+        return AssistMap_main(self.PbPFile)
   
     def playing_intervals(self):
         '''
         This function returns the playing intervals for every player and the 5 on court for each interval
         Output:
-        - playersintervals: playing intervals for every team member (dictionary of string: list of tuples)
-        - oncourtintervals: players on court for each interval without changes (dictionary of tuple: set of strings)
+        - playersintervals: playing intervals for every team member (list [dictionary of {string: list of tuples}])
+        - oncourtintervals: players on court for each interval without changes (list [dictionary of {tuple: set of strings}])
         '''
-        return PlayingIntervals_main(self.PbPfile)
+        return PlayingIntervals_main(self.PbPFile)
     
     def five_on_court(self, clock):
         '''
         This function returns the players on court at a given time
-        Input:
-        - clock: time (string)
+        - clock: timestamp (string)
+        Output: either one five or two fives (list: [set or list of sets])
         '''
         return FiveOnCourt_main(self.playing_intervals()[1], clock)
     
     def fives_intervals(self, team, five):
         '''
         This function returns the intervals an introduced five played
-        Input:
         - team: players' team (integer)
         - five: list of players (list)
+        Ouput: list of the intervals (list: [(start, end)])
         '''
         return FivesIntervals_main(self.playing_intervals()[1][team], five)

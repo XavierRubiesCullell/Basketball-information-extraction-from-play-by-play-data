@@ -11,6 +11,7 @@ def shoot(play, outLine):
     This function treats a play consisting on a shot
     - play: row of the webpage representing an action (bs4.element.Tag)
     - outLine: line being written to add to the PbP file (string)
+    Output: line to be added to the PbP file (list)
     '''
     players = play.find_all("a", href=True)
 
@@ -52,6 +53,7 @@ def rebound(play, outLine):
     This function treats a play consisting on a rebound
     - play: row of the webpage representing an action (bs4.element.Tag)
     - outLine: line being written to add to the PbP file (string)
+    Output: line to be added to the PbP file (list)
     '''
     player = play.find("a", href=True)
     if player: # the player is determined (sometimes it is not)
@@ -73,6 +75,7 @@ def turnover(play, outLine):
     This function treats a play consisting on a turnover
     - play: row of the webpage representing an action (bs4.element.Tag)
     - outLine: line being written to add to the PbP file (string)
+    Output: line to be added to the PbP file (list)
     '''
     players = play.find_all("a", href=True)
     if "foul" in play.text: # we do not store the turnover corresponding to an offensive foul, we will compute it anyways
@@ -99,6 +102,7 @@ def foul(play, outLine):
     This function treats a play consisting on a foul
     - play: row of the webpage representing an action (bs4.element.Tag)
     - outLine: line being written to add to the PbP file (string)
+    Output: line to be added to the PbP file (list)
     '''
     players = play.find_all("a", href=True)
     if len(players) > 0: # the player is determined (sometimes it is not)
@@ -127,6 +131,7 @@ def change(play, outLine):
     This function treats a play consisting on a change
     - play: row of the webpage representing an action (bs4.element.Tag)
     - outLine: line being written to add to the PbP file (string)
+    Output: line to be added to the PbP file (list)
     '''
     players = play.find_all("a", href=True)
     playerOut = players[1].text
@@ -140,12 +145,13 @@ def treat_play(play, outLine):
     This function treats a play information and classifies it
     - play: row of the webpage representing an action (bs4.element.Tag)
     - outLine: line being written to add to the PbP file (string)
+    Output: line to be added to the PbP file (list)
     '''
     if "makes" in play.text or "misses" in play.text:
         outLine = shoot(play, outLine)
     elif "rebound" in play.text:
         outLine = rebound(play, outLine)
-    elif "Turnover" in play.text:
+    elif "Turnover" in play.text or "Violation" in play.text:
         outLine = turnover(play, outLine)
     elif "foul" in play.text:
         outLine = foul(play, outLine)
@@ -164,16 +170,14 @@ def treat_action(action, Q):
     '''
     This function treats an action and classifies it
     - action: row of the webpage representing an action (bs4.element.Tag)
-    - Q: current quarter (integer)
+    - Q: current quarter (string)
     '''
     outLine = []
 
     cols = action.find_all('td')
     clock = cols[0].text
-    clock = datetime.datetime.strptime(clock, "%M:%S.%f")
-    quarterTime = datetime.timedelta(minutes = 12*(4-Q))
-    clock = clock + quarterTime
-    outLine.append(string_from_time(clock))
+    clock = clock.split(".")[0]
+    outLine.append(Q + ":" + clock)
 
     if len(cols[1].text) > 1: # the action belongs to the visiting team
         outLine.append("2")
@@ -186,29 +190,33 @@ def treat_action(action, Q):
     if len(outLine) != 0:
         actions.append(outLine)
 
-    return
 
-
-def treat_line(row, Q):
+def treat_line(row, Q, prevClock):
     '''
     This function treats a line and recognises if it is a game action. If so, it launches treat_action
     - row: row of the webpage (bs4.element.Tag)
-    - Q: current quarter (integer)
+    - Q: current quarter (string)
+    - prevClock: timestamp of the previous action (string)
+    Ouput:
+    - Q: current quarter (string)
+    - clock: timestamp of the action (string)
     '''
     cols = row.find_all('td')
     if len(cols) == 0:
         nonActions.append(row)
-
-    elif len(cols) == 2:
-        clock = row.find('td').text
-        if clock == "12:00.0":
-            Q = Q + 1
-        neutralActions.append(row)
+        clock = prevClock # as this function returns clock, but this line does not have it, we return the previous value
 
     else:
-        treat_action(row, Q)
+        clock = row.find('td').text
+        if len(cols) == 2:
+            if prevClock == "0:00.0" and clock != prevClock:
+                Q = next_quarter(Q)
+            neutralActions.append(row)
 
-    return Q
+        else:
+            treat_action(row, Q)
+
+    return Q, clock
 
 
 def print_results():
@@ -231,6 +239,7 @@ def main(webpage, outFile):
     This function creates the standard PbP file
     - webpage: link of the webpage where the information must be fetched (string)
     - outFile: path of the file where the standard PbP will be stored (string)
+    Ouput: last quarter of the match (string)
     '''
     os.chdir(os.path.dirname(__file__))
 
@@ -240,7 +249,8 @@ def main(webpage, outFile):
     neutralActions = []
     global nonActions
     nonActions = []
-    Q = 0
+    Q = "1Q"
+    clock = "12:00.0"
 
     response = urllib.request.urlopen(webpage)
     htmlDoc = response.read()
@@ -248,10 +258,12 @@ def main(webpage, outFile):
     res = soup.find_all('tr')
     
     for line in res:
-        Q = treat_line(line, Q)
+        Q, clock = treat_line(line, Q, clock)
 
     #print_results()    
 
     with open(outFile, "w", encoding="utf8") as out:
         for action in actions:
             out.write(", ".join(action) + '\n')
+
+    return Q

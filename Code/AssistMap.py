@@ -45,6 +45,7 @@ def main(file):
     This function draws the assists between each team members
     ast[i][j] indicates the number of assists from player i to player j
     - file: play-by-play input file (string)
+    Output: assist matrix (pandas.DataFrame)
     '''
     os.chdir(os.path.dirname(__file__))
 

@@ -28,10 +28,12 @@ def treat_line(line, lastTime, maxLength):
             lastTime[team-1] = clock
 
 
-def main(file):
+def main(file, lastQ):
     '''
     This function returns the longest time for every team without scoring
     - file: play-by-play input file (string)
+    - lastQ: last quarter of the match (string)
+    Output: maximum time interval without scoring (list)
     '''
     os.chdir(os.path.dirname(__file__))
 
@@ -45,7 +47,7 @@ def main(file):
             treat_line(line, lastTime, maxLength)
         
         for team in range(1,3):
-            diff, _, _ = compute_interval(lastTime[team-1], time_from_string("00:00"))
+            diff, _, _ = compute_interval(lastTime[team-1], time_from_string(lastQ+":00:00"))
             if diff > maxLength[team-1]:
                 maxLength[team-1] = diff
     return tuple(map(str, maxLength))

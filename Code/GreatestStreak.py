@@ -39,6 +39,7 @@ def main(file):
     '''
     This function returns the maximum amount of consecutive points without missing for every team
     - file: play-by-play input file (string)
+    Output: maximum scoring streak for each team (list of integers)
     '''
     os.chdir(os.path.dirname(__file__))
 
@@ -51,6 +52,7 @@ def main(file):
             line = line.strip()
             treat_line(line, streak, maxStreak)
 
+    # verification for the final temporal values:
     for team in range(1,3):
         if streak[team-1] > maxStreak[team-1]:
             maxStreak[team-1] = streak[team-1]

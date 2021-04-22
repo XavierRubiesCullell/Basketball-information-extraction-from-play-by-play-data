@@ -4,13 +4,16 @@ import pandas as pd
 import numpy as np
 
 
-def treat_line(line, streak, maxStreak, lastTeam):
+def treat_line(line, partial, maxPartial, lastTeam):
     '''
     This function is launched to detect the type of play an action is and treat it in case it is a shot
     - line: action that we are going to study (string)
-    - streak: current scoring streak being computed (integer)
-    - maxStreak: current scoring streak for each team (list of integer)
+    - partial: current scoring partial being computed (integer)
+    - maxPartial: current scoring partial for each team (list of integer)
     - lastTeam: last team that scored (string)
+    Output:
+    - lastTeam: last team that scored (integer)
+    - partial: current partial scoring for lastTeam (integer)
     '''
     action = line.split(", ")
 
@@ -21,31 +24,32 @@ def treat_line(line, streak, maxStreak, lastTeam):
             team = int(action[1])
             points = int(action[4])
             if team == lastTeam:
-                streak += points
+                partial += points
             else:
-                if streak > maxStreak[lastTeam-1]:
-                    maxStreak[lastTeam-1] = streak
+                if partial > maxPartial[lastTeam-1]:
+                    maxPartial[lastTeam-1] = partial
                 lastTeam = team
-                streak = points
+                partial = points
 
-    return streak, lastTeam
+    return lastTeam, partial
 
 
 def main(file):
     '''
-    This function returns the greatest scoring streak for every team
+    This function returns the greatest scoring streak for every team without the other one scoring
     - file: play-by-play input file (string)
+    Output: maximum partial in favour for each team (list of integers)
     '''
     os.chdir(os.path.dirname(__file__))
 
-    streak = 0
-    maxStreak = [0, 0]
+    partial = 0
+    maxPartial = [0, 0]
     lastTeam = 0
 
     with open(file, encoding="utf-8") as f:
         lines = f.readlines()
         for line in lines:
             line = line.strip()
-            streak, lastTeam = treat_line(line, streak, maxStreak, lastTeam)
+            lastTeam, partial = treat_line(line, partial, maxPartial, lastTeam)
 
-    return maxStreak
+    return maxPartial
