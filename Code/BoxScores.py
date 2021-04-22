@@ -69,6 +69,15 @@ def quarter_end(Q, start, end, table, oncourt, plusminus):
         oncourt[team-1].clear()
 
 
+def pir_computation(box):
+    '''
+    This function computes the metric PIR from the box score 'box'
+    '''
+    PIR_pos = box['Pts'] + box['TR'] + box['Ast'] + box['St'] + box['Bl'] + box['DF']
+    PIR_neg = (box['FGA'] - box['FGM']) + (box['FTA'] - box['FTM']) + box['To'] + box['PF']
+    return PIR_pos - PIR_neg
+
+
 def final_computations(table):
     '''
     This function computes the cumulative value for every category and computes the dependent categories
@@ -80,19 +89,32 @@ def final_computations(table):
 
         # computation of the dependent categories:
         for pl, row in table[team-1].iterrows():
-            # computation of 1Pt%, 2Pt% and 3Pt%:
-            for i in range(1,4):
+            # computation of FT%, 2Pt% and 3Pt%:
+            if row['FTA'] != 0:
+                perc = row['FTM']/row['FTA'] * 100
+                table[team-1].loc[pl, 'FT%'] = round(perc, 1)
+            else:
+                table[team-1].loc[pl,'FT%'] = "-"
+            for i in range(2,4):
                 if row[str(i)+'PtA'] != 0:
-                    perc = row[str(i)+'PtI']/row[str(i)+'PtA'] * 100
-                    table[team-1].loc[pl,str(i)+'Pt%'] = round(perc, 2)
+                    perc = row[str(i)+'PtM']/row[str(i)+'PtA'] * 100
+                    table[team-1].loc[pl,str(i)+'Pt%'] = round(perc, 1)
                 else:
                     table[team-1].loc[pl,str(i)+'Pt%'] = "-"
             # computation of field goal percentage (FG%):
             if row['2PtA'] + row['3PtA'] != 0:
-                perc = (row['2PtI'] + row['3PtI'])/(row['2PtA'] + row['3PtA']) * 100
-                table[team-1].loc[pl,'FG%'] = round(perc, 2)
+                FGM = row['2PtM'] + row['3PtM']
+                FGA = row['2PtA'] + row['3PtA']
+                perc = FGM/FGA * 100
+                table[team-1].loc[pl,'FGM'] = FGM
+                table[team-1].loc[pl,'FGA'] = FGA
+                table[team-1].loc[pl,'FG%'] = round(perc, 1)
             else:
+                table[team-1].loc[pl,'FGM'] = 0
+                table[team-1].loc[pl,'FGA'] = 0
                 table[team-1].loc[pl,'FG%'] = "-"
+        # computation of PIR
+        table[team-1]['PIR'] = pir_computation(table[team-1])
 
 
 def correct_plusminus(lines, i, table):
@@ -139,7 +161,10 @@ def shoot(i, action, Q, start, end, table, oncourt, plusminus, lines):
 
     if start >= clock and clock >= end:
         check_player(table, team, player)
-        modify_table(table, team, player, str(points)+"PtA", 1)
+        if points == 1:
+            modify_table(table, team, player, 'FTA', 1)
+        else:
+            modify_table(table, team, player, str(points)+"PtA", 1)
     distGiven = action[5] != "I" and action[5] != "O"
     # distGiven is true if it is neither I nor O. Then in this position we have the distance.
     # Its presence moves the position of the other arguments
@@ -147,7 +172,10 @@ def shoot(i, action, Q, start, end, table, oncourt, plusminus, lines):
     result = action[5 + distGiven]
     if result == "I": # the shot was in
         if start >= clock and clock >= end:
-            modify_table(table, team, player, str(points)+"PtI", 1)
+            if points == 1:
+                modify_table(table, team, player, 'FTM', 1)
+            else:
+                modify_table(table, team, player, str(points)+"PtM", 1)
             modify_table(table, team, player, 'Pts', points)
             plusminus[team-1] += points
             for pl in oncourt[team-1]: #modificacion of the +/- of the scoring team
@@ -167,7 +195,7 @@ def shoot(i, action, Q, start, end, table, oncourt, plusminus, lines):
             if start >= clock and clock >= end:
                 check_player(table, team, assistant)
                 modify_table(table, team, assistant, 'Ast', 1)
-                modify_table(table, team, assistant, str(points)+'PtAst', 1)
+                modify_table(table, team, assistant, str(points)+'PtAst', 1) # it cannot be FT as they do not have assists
                 modify_table(table, team, player, 'AstPts', points)
 
 
@@ -283,7 +311,7 @@ def foul(action, Q, start, end, table, oncourt, plusminus):
     
     if start >= clock and clock >= end:
         check_player(table, team, player)
-        modify_table(table, team, player, 'FM', 1)
+        modify_table(table, team, player, 'PF', 1)
         if kind == "O":
             modify_table(table, team, player, 'To', 1)
 
@@ -293,7 +321,7 @@ def foul(action, Q, start, end, table, oncourt, plusminus):
         check_oncourt(oncourt, opTeam, opPlayer, clock, Q, start, end, table, plusminus)
         if start >= clock and clock >= end:
             check_player(table, opTeam, opPlayer)
-            modify_table(table, opTeam, opPlayer, 'FR', 1)
+            modify_table(table, opTeam, opPlayer, 'DF', 1)
 
 
 def change(action, Q, start, end, table, oncourt, plusminus):
@@ -396,7 +424,7 @@ def main(file, start, end):
     Output: box score of the teams (list of pandas.DataFrame)
     '''
     global categories
-    categories = ['Mins', '2PtI', '2PtA', '2Pt%', '3PtI', '3PtA', '3Pt%', 'FG%', '1PtI', '1PtA', '1Pt%', 'OR', 'DR', 'TR', '2PtAst', '3PtAst', 'Ast', 'Bl', 'St', 'To', 'FM', 'FR', 'AstPts', 'Pts', '+/-']
+    categories = ['Mins', '2PtM', '2PtA', '2Pt%', '3PtM', '3PtA', '3Pt%', 'FGM', 'FGA', 'FG%', 'FTM', 'FTA', 'FT%', 'OR', 'DR', 'TR', '2PtAst', '3PtAst', 'Ast', 'Bl', 'St', 'To', 'PF', 'DF', 'AstPts', 'Pts', '+/-']
     os.chdir(os.path.dirname(__file__))
 
     start = time_from_string(start)
