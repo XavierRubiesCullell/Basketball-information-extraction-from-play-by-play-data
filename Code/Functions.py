@@ -133,21 +133,23 @@ def quarter_end_time(Q):
         return datetime.timedelta(minutes = (4-num)*12, microseconds=1)
     return datetime.timedelta(minutes = -num*5, microseconds=1)
 
-def compute_interval(in_time, out_time, start=datetime.timedelta(0, 48, 0), end=datetime.timedelta(0, 0, 0)):
+def compute_interval(start, end, restrStart=None, restrEnd=None):
     '''
     This function computes the intersection of a playing interval and the desired interval
-    - in_time-out_time: playing interval of a player (datetime.time)
-    - start-end: interval of the match we are interested in (datetime.time)
+    - start-end: playing interval of a player (datetime.time)
+    - restrStart-restrEnd: interval of the match we are interested in (datetime.time)
     Output:
     - interval length
-    - int_start: interval starting time (datetime.timedelta)
-    - int_end: interval ending time (datetime.timedelta)
-    '''    
-    int_start = min(in_time, start)
-    if int_start.microseconds != 0:
-        int_start -= datetime.timedelta(microseconds=1)
-    int_end = max(out_time, end)
-    if int_end.microseconds != 0:
-        int_end -= datetime.timedelta(microseconds=1)
+    - start: intersection interval starting time (datetime.timedelta)
+    - end: intersection interval ending time (datetime.timedelta)
+    '''
+    if restrStart is not None:
+        start = min(start, restrStart)
+    if start.microseconds != 0:
+        start -= datetime.timedelta(microseconds=1)
+    if restrEnd is not None:
+        end = max(end, restrEnd)
+    if end.microseconds != 0:
+        end -= datetime.timedelta(microseconds=1)
     null = datetime.timedelta() # in case the interval is negative, we will return a null interval
-    return max(int_start - int_end, null), int_start, int_end
+    return max(start - end, null), start, end
