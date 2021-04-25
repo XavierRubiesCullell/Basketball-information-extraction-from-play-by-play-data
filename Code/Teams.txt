@@ -18,7 +18,7 @@ Milwaukee, Bucks, Milwaukee Bucks, MIL
 Minnesota, Timberwolves, Minnesota Timberwolves, MIN
 New Orleans, Pelicans, New Orleans Pelicans, NOP
 New York, Knicks, New York Knicks, NYK
-Oklahoma City, Thunders, Oklahoma City Thunders, OKC
+Oklahoma City, Thunder, Oklahoma City Thunder, OKC
 Orlando, Magic, Orlando Magic, ORL
 Philadelphia, Sixers, 76ers, Philadelphia 76ers, PHI
 Phoenix, Suns, Phoenix Suns, PHO

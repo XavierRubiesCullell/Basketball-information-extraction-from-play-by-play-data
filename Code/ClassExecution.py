@@ -2,7 +2,7 @@ from MatchClass import *
 
 home = "Denver"
 away = "Dallas"
-date = "20210107"
+date = "2021/01/07"
 game = Match(home, away, date)
 
 print("\n\nget_lastQ")
@@ -24,11 +24,12 @@ players = table.index[:2]
 print(game.filter_by_players(players, table))
 
 print("\n\nfilter_by_categories")
-print(game.filter_by_categories(["2PtI", "2PtA"], table))
+print(game.filter_by_categories(["2PtM", "2PtA"], table))
+print(game.filter_by_categories("shooting", table))
 print(game.filter_by_categories("simple", table))
 
 print("\n\nfilter_by_value")
-print(game.filter_by_value([("2PtI", 2), ("2PtA", 5)], table))
+print(game.filter_by_value([("2PtM", 2), ("2PtA", 5)], table))
 
 print("\n\ntop_players")
 print(game.top_players(['Pts', 'TR'], n=5))

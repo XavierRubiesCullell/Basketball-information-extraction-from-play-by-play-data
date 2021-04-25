@@ -14,12 +14,19 @@ from FiveOnCourt import main as FiveOnCourt_main
 from FivesIntervals import main as FivesIntervals_main
 
 
+def convert_date(date):
+    '''
+    This functions receives a date in format "YYYY/MM/DD" and returns it in format "YYYYMMDD"
+    '''
+    date = datetime.datetime.strptime(date, "%Y/%m/%d")
+    return date.strftime("%Y%m%d")
+
 class Match():
     def __init__(self, home, away, date, PbPFolder="Files/", PbPFile=None):
         '''
-        - home: name of the local team (string)
-        - away: name of the visiting team (string)
-        - date: date of the match (string in YYYYMMDD format)
+        - home: name of the local team. It can be the city, the club name or a combination (string)
+        - away: name of the visiting team. It can be the city, the club name or a combination (string)
+        - date: date of the match (string in YYYY/MM/DD format)
         - PbPFolder: directory where the standard PbP file is/will be located (string)
         - PbPFile: name of the standard PbP file (string)
         '''
@@ -28,7 +35,7 @@ class Match():
         self.away = get_team(away)
         self.date = date
         if PbPFile is None:
-            PbPFile = self.home + "_" + self.away + "_" + self.date + "_StandardPbP.txt"
+            PbPFile = self.home + "_" + self.away + "_" + convert_date(self.date) + "_StandardPbP.txt"
         self.PbPFile = PbPFolder+PbPFile
         if not os.path.exists(self.PbPFile):
             self.lastQ = StandardPbPObtention_main('https://www.basketball-reference.com/boxscores/pbp/'+date+'0'+self.home+'.html', outFile = self.PbPFile)
@@ -68,9 +75,9 @@ class Match():
         - pkl2: name of the away file (string)
         '''
         if pkl1 is None:
-            pkl1 = self.home + "_" + self.away + "_" + self.date + "_BS_" + self.home + ".pkl"
+            pkl1 = self.home + "_" + self.away + "_" + convert_date(self.date) + "_BS_" + self.home + ".pkl"
         if pkl2 is None:
-            pkl2 = self.home + "_" + self.away + "_" + self.date + "_BS_" + self.away + ".pkl"
+            pkl2 = self.home + "_" + self.away + "_" + convert_date(self.date) + "_BS_" + self.away + ".pkl"
         
         (table1, table2) = self.box_scores()
         table1.to_pickle(folder + pkl1)
@@ -112,11 +119,11 @@ class Match():
                 table = tables[0].append(tables[1])
 
         if categories == "shooting":
-            categories = ['2PtI', '2PtA', '2Pt%', '3PtI', '3PtA', '3Pt%', 'FG%', '1PtI', '1PtA', '1Pt%', 'AstPts', 'Pts']
+            categories = ['2PtM', '2PtA', '2Pt%', '3PtM', '3PtA', '3Pt%', 'FGM', 'FGA', 'FG%', 'FTM', 'FTA', 'FT%', 'AstPts', 'Pts']
         elif categories == "rebounding":
             categories = ['OR', 'DR', 'TR']
         elif categories == "simple":
-            categories = ['Mins', 'Pts', 'TR', 'Ast', 'Bl', 'St', 'To', 'FM', '+/-']
+            categories = ['Mins', 'Pts', 'TR', 'Ast', 'Bl', 'St', 'To', 'PF', '+/-']
         return table[categories]
 
     def filter_by_value(self, vars, table=None):
