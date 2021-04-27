@@ -75,3 +75,5 @@ for team in range(1,3):
 print("\n\nfives_intervals")
 five = list(oncourtIntervals[1].values())[0]
 print(game.fives_intervals(1, five))
+
+game.visual_PbP()

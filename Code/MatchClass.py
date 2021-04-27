@@ -12,9 +12,10 @@ from AssistMap import main as AssistMap_main
 from PlayingIntervals import main as PlayingIntervals_main
 from FiveOnCourt import main as FiveOnCourt_main
 from FivesIntervals import main as FivesIntervals_main
+from VisualPbP import main as VisualPbP_main
 
 
-def convert_date(date):
+def convert_date_match(date):
     '''
     This functions receives a date in format "YYYY/MM/DD" and returns it in format "YYYYMMDD"
     '''
@@ -35,10 +36,10 @@ class Match():
         self.away = get_team(away)
         self.date = date
         if PbPFile is None:
-            PbPFile = self.home + "_" + self.away + "_" + convert_date(self.date) + "_StandardPbP.txt"
+            PbPFile = self.home + "_" + self.away + "_" + convert_date_match(self.date) + "_StandardPbP.txt"
         self.PbPFile = PbPFolder+PbPFile
         if not os.path.exists(self.PbPFile):
-            self.lastQ = StandardPbPObtention_main('https://www.basketball-reference.com/boxscores/pbp/'+date+'0'+self.home+'.html', outFile = self.PbPFile)
+            self.lastQ = StandardPbPObtention_main('https://www.basketball-reference.com/boxscores/pbp/'+convert_date_match(date)+'0'+self.home+'.html', outFile = self.PbPFile)
         # self.boxscore will probably be generated
     
     def get_lastQ(self):
@@ -75,9 +76,9 @@ class Match():
         - pkl2: name of the away file (string)
         '''
         if pkl1 is None:
-            pkl1 = self.home + "_" + self.away + "_" + convert_date(self.date) + "_BS_" + self.home + ".pkl"
+            pkl1 = self.home + "_" + self.away + "_" + convert_date_match(self.date) + "_BS_" + self.home + ".pkl"
         if pkl2 is None:
-            pkl2 = self.home + "_" + self.away + "_" + convert_date(self.date) + "_BS_" + self.away + ".pkl"
+            pkl2 = self.home + "_" + self.away + "_" + convert_date_match(self.date) + "_BS_" + self.away + ".pkl"
         
         (table1, table2) = self.box_scores()
         table1.to_pickle(folder + pkl1)
@@ -240,3 +241,10 @@ class Match():
         Ouput: list of the intervals (list: [(start, end)])
         '''
         return FivesIntervals_main(self.playing_intervals()[1][team], five)
+    
+    def visual_PbP(self):
+        '''
+        This function returns the greatest partial (consecutive points without the opponent scoring) for every team
+        Ouput: list of integers
+        '''
+        return VisualPbP_main(self.PbPFile, self.get_lastQ())
