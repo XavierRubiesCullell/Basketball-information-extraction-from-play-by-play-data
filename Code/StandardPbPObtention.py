@@ -176,7 +176,8 @@ def treat_action(action, Q):
 
     cols = action.find_all('td')
     clock = cols[0].text
-    clock = clock.split(".")[0]
+    clock = datetime.datetime.strptime(clock, "%M:%S.%f")
+    clock = clock.strftime("%M:%S")
     outLine.append(Q + ":" + clock)
 
     if len(cols[1].text) > 1: # the action belongs to the visiting team

@@ -48,9 +48,10 @@ def string_from_time(clock):
     if clock >= datetime.timedelta(microseconds=1):
         seconds = clock.seconds
         minutes = seconds//60
-        seconds = seconds%60
         Q = 4 - int(minutes/12)
-        if minutes%12 == 0:
+        minutes %= 12
+        seconds %= 60
+        if minutes%12 == 0 and seconds == 0:
             if clock.microseconds == 0:
                 Q += 1
                 minutes = 12
@@ -61,8 +62,9 @@ def string_from_time(clock):
         clock = -clock
         seconds = clock.seconds
         minutes = seconds//60
-        seconds = seconds%60
         Q = 1 + int(minutes/5)
+        minutes %= 5
+        seconds %= 60
         if (minutes+1)%5 == 0 and seconds == 59 and clock.microseconds == 999999:
             minutes = seconds = 0
         elif minutes%5 == 0 and seconds == 0:
