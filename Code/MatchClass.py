@@ -56,12 +56,14 @@ class Match():
             self.lastQ = quarter_from_time(clock)
         return self.lastQ
 
-    def box_scores(self, start="1Q:12:00", end=None, joint = False):
+    def box_scores(self, start=None, end=None, joint = False):
         '''
         It returns the box score of the interval introduced
         - start, end: time interval where we want the box score to be computed (string)
         Output: It returns the box scores of both teams (list of pandas.DataFrame)
         '''
+        if start is None:
+            start = "1Q:12:00"
         if end is None:
             end = self.get_lastQ()+":00:00"
         boxs = BoxScores_main(self.PbPFile, start=start, end=end)
@@ -117,8 +119,6 @@ class Match():
         '''
         if "TOTAL" in table.index:
             table = table.drop(index = ["TOTAL"])
-        if "-" in table.index:
-            table = table.drop(index = ["-"])
         for cat, val in vars.items():
             table = table.loc[table[cat] >= val]
         return table
@@ -133,7 +133,7 @@ class Match():
         Output: Table (series) with the players and the category(ies) value
         '''
         table = table[var]
-        table = table.drop(["-", "TOTAL"])
+        table = table.drop(["TOTAL"])
         table = table.sort_values(by=var, ascending=max)
         if n is not None:
             table = table[:n]
