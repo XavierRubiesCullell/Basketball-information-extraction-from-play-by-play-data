@@ -5,34 +5,35 @@ away = "Dallas"
 date = "2021/01/07"
 game = Match(home, away, date)
 
-print("\n\nget_lastQ")
-print(game.get_lastQ())
-print("\n\nbox_scores")
-tables = game.box_scores()
-game.box_score_save()
+# print("\n\nget_lastQ")
+# print(game.get_lastQ())
+# print("\n\nbox_scores")
+tables = game.box_scores(joint = False)
+table = game.box_scores(joint = True)
+
+game.box_score_save(table, "joint")
+
 print("\nHome team boxscore from BoxScores.py")
 print(tables[0])
-
 print("\nAway team boxscore from BoxScores.py")
 print(tables[1])
 
-table = game.boxscore[1]
-# print(table)
-
 print("\n\nfilter_by_players")
 players = table.index[:2]
-print(game.filter_by_players(players, table))
+print(game.filter_by_players(table, players))
 
 print("\n\nfilter_by_categories")
-print(game.filter_by_categories(["2PtM", "2PtA"], table))
-print(game.filter_by_categories("shooting", table))
-print(game.filter_by_categories("simple", table))
+print(game.filter_by_categories(table, ["2PtM", "2PtA"]))
+print()
+print(game.filter_by_categories(table, "shooting"))
+print()
+print(game.filter_by_categories(table, "simple"))
 
 print("\n\nfilter_by_value")
-print(game.filter_by_value([("2PtM", 2), ("2PtA", 5)], table))
+print(game.filter_by_value(table, {"2PtM": 2, "2PtA": 5}))
 
 print("\n\ntop_players")
-print(game.top_players(['Pts', 'TR'], n=5))
+print(game.top_players(table, ['Pts', 'TR'], n=5))
 
 print("\n\nquarter_scorings")
 print(game.quarter_scorings("2Q:10:01"))

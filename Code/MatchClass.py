@@ -56,103 +56,74 @@ class Match():
             self.lastQ = quarter_from_time(clock)
         return self.lastQ
 
-    def box_scores(self, start="1Q:12:00", end=None):
+    def box_scores(self, start="1Q:12:00", end=None, joint = False):
         '''
-        It returns self.boxscore (after creating it if needed)
+        It returns the box score of the interval introduced
         - start, end: time interval where we want the box score to be computed (string)
         Output: It returns the box scores of both teams (list of pandas.DataFrame)
         '''
         if end is None:
             end = self.get_lastQ()+":00:00"
-        if "boxscore" not in vars(self):
-            self.boxscore = BoxScores_main(self.PbPFile, start=start, end=end)
-        return self.boxscore
-    
-    def box_score_save(self, folder="Files/", pkl1 = None, pkl2 = None):
-        '''
-        This function saves the box scores in self.boxscore
-        - folder: relative path to the folder where the box scores will be saved (string)
-        - pkl1: name of the home file (string)
-        - pkl2: name of the away file (string)
-        '''
-        if pkl1 is None:
-            pkl1 = self.home + "_" + self.away + "_" + convert_date_match(self.date) + "_BS_" + self.home + ".pkl"
-        if pkl2 is None:
-            pkl2 = self.home + "_" + self.away + "_" + convert_date_match(self.date) + "_BS_" + self.away + ".pkl"
-        
-        (table1, table2) = self.box_scores()
-        table1.to_pickle(folder + pkl1)
-        table2.to_pickle(folder + pkl2)
+        boxs = BoxScores_main(self.PbPFile, start=start, end=end)
 
-    def filter_by_players(self, players, table=None):
+        if not joint:
+            return boxs
+        boxs[0]['Team'] = [self.home]*len(boxs[0])
+        boxs[1]['Team'] = [self.away]*len(boxs[1])
+        table = boxs[0].append(boxs[1])
+        return table[['Team'] + table.columns.tolist()[:-1]]
+    
+    def box_score_save(self, table, pkl="", folder="Files/"):
+        '''
+        This function saves the box scores in a CSV
+        - folder: relative path to the folder where the box score will be saved (string)
+        - pkl: name of the file (string)
+        '''
+        path = folder + self.home + "_" + self.away + "_" + convert_date_match(self.date) + "_BS_" + pkl + ".csv"
+        table.to_csv(path, sep = ";", encoding="utf8")
+
+    def filter_by_players(self, table, players):
         '''
         This function filters the box score values of a list of players
         - players: list of players as they are represented on the table (list of strings)
-        - table: box score or a variation (pandas dataframe) or a reference to a team (string)
+        - table: box score or a variation (pandas dataframe)
         Output: Box score filtered by the list of players
         '''
-        if not isinstance(table, pd.DataFrame):
-            tables = self.box_scores()
-            if isinstance(table, str):
-                if table == self.home:
-                    table = tables[0]
-                elif table == self.away:
-                    table = tables[1]
-            else:
-                table = tables[0].append(tables[1])
         return table.loc[players,]
 
-    def filter_by_categories(self, categories, table=None):
+    def filter_by_categories(self, table, categories):
         '''
         This function filters the box score values of a list of categories
         - categories: list of categories or type of categories (list of strings or string)
         - table: box score or a variation (pandas dataframe) or a reference to a team (string)
         Output: Box score filtered by the list of categories
         '''
-        if not isinstance(table, pd.DataFrame):
-            tables = self.box_scores()
-            if isinstance(table, str):
-                if table == self.home:
-                    table = tables[0]
-                elif table == self.away:
-                    table = tables[1]
-            else:
-                table = tables[0].append(tables[1])
-
         if categories == "shooting":
             categories = ['2PtM', '2PtA', '2Pt%', '3PtM', '3PtA', '3Pt%', 'FGM', 'FGA', 'FG%', 'FTM', 'FTA', 'FT%', 'AstPts', 'Pts']
         elif categories == "rebounding":
             categories = ['OR', 'DR', 'TR']
         elif categories == "simple":
             categories = ['Mins', 'Pts', 'TR', 'Ast', 'Bl', 'St', 'To', 'PF', '+/-']
+        if 'Team' in table.columns:
+            categories = ['Team'] + categories
         return table[categories]
 
-    def filter_by_value(self, vars, table=None):
+    def filter_by_value(self, table, vars):
         '''
         This function filters the box score of the players surpassing the minimum values introduced
-        - vars: list of lists having the form (category, value)
+        - vars: dictionary {category: value}
         - table: box score or a variation (pandas dataframe) or a reference to a team (string)
         Output: Box score filtered by the values of the categories introduced
         '''
-        if not isinstance(table, pd.DataFrame):
-            tables = self.box_scores()
-            if isinstance(table, str):
-                if table == self.home:
-                    table = tables[0]
-                elif table == self.away:
-                    table = tables[1]
-            else:
-                table = tables[0].append(tables[1])
-
         if "TOTAL" in table.index:
             table = table.drop(index = ["TOTAL"])
         if "-" in table.index:
             table = table.drop(index = ["-"])
-        for (cat, val) in vars:
+        for cat, val in vars.items():
             table = table.loc[table[cat] >= val]
         return table
 
-    def top_players(self, var, n=None, table=None, max=False):
+    def top_players(self, table, var, n=None, max=False):
         '''
         This function returns the top n players having the maximum/minimum value in var
         - var: category(ies) we are interested in (string)
@@ -161,16 +132,6 @@ class Match():
         - max: bool stating if we want the maximum values (true) or the minimum ones (false)
         Output: Table (series) with the players and the category(ies) value
         '''
-        if not isinstance(table, pd.DataFrame):
-            tables = self.box_scores()
-            if isinstance(table, str):
-                if table == self.home:
-                    table = tables[0]
-                elif table == self.away:
-                    table = tables[1]
-            else:
-                table = tables[0].append(tables[1])
-
         table = table[var]
         table = table.drop(["-", "TOTAL"])
         table = table.sort_values(by=var, ascending=max)
