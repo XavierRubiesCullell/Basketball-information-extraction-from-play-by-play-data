@@ -86,15 +86,17 @@ def final_computations(table):
     for team in range(1,3):
         # computation of the cumulative values:
         table[team-1].loc["TOTAL"] = table[team-1].apply(np.sum)
-
+        # deletion of the "0 days" in Mins
+        table[team-1]['Mins'] = list(map(lambda x:str(x).split("days ")[1], table[team-1]['Mins']))
         # computation of the dependent categories:
         for pl, row in table[team-1].iterrows():
-            # computation of FT%, 2Pt% and 3Pt%:
+            # computation of FT%:
             if row['FTA'] != 0:
                 perc = row['FTM']/row['FTA'] * 100
                 table[team-1].loc[pl, 'FT%'] = round(perc, 1)
             else:
                 table[team-1].loc[pl,'FT%'] = "-"
+            # computation of 2Pt% and 3Pt%:
             for i in range(2,4):
                 if row[str(i)+'PtA'] != 0:
                     perc = row[str(i)+'PtM']/row[str(i)+'PtA'] * 100
@@ -113,7 +115,7 @@ def final_computations(table):
                 table[team-1].loc[pl,'FGM'] = 0
                 table[team-1].loc[pl,'FGA'] = 0
                 table[team-1].loc[pl,'FG%'] = "-"
-        # computation of PIR
+        # computation of PIR:
         table[team-1]['PIR'] = pir_computation(table[team-1])
 
 
