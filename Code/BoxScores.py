@@ -86,6 +86,8 @@ def final_computations(table):
     for team in range(1,3):
         # computation of the cumulative values:
         table[team-1].loc["TOTAL"] = table[team-1].apply(np.sum)
+        # deletion of the team value
+        table[team-1] = table[team-1].drop(index = ["-"])
         # deletion of the "0 days" in Mins
         table[team-1]['Mins'] = list(map(lambda x:str(x).split("days ")[1], table[team-1]['Mins']))
         # computation of the dependent categories:
