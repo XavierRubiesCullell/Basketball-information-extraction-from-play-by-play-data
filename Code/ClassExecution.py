@@ -5,9 +5,9 @@ away = "Dallas"
 date = "2021/01/07"
 game = Match(home, away, date)
 
-# print("\n\nget_lastQ")
-# print(game.get_lastQ())
-# print("\n\nbox_scores")
+print("\n\nget_lastQ")
+print(game.get_lastQ())
+print("\n\nbox_scores")
 tables = game.box_scores(joint = False)
 table = game.box_scores(joint = True)
 
