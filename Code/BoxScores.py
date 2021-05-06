@@ -181,6 +181,7 @@ def shoot(i, action, Q, start, end, table, oncourt, plusminus, lines):
             else:
                 modify_table(table, team, player, str(points)+"PtM", 1)
             modify_table(table, team, player, 'Pts', points)
+            modify_table(table, team, player, 'PtsC', points)
             plusminus[team-1] += points
             for pl in oncourt[team-1]: #modificacion of the +/- of the scoring team
                 check_player(table, team, pl)
@@ -199,7 +200,7 @@ def shoot(i, action, Q, start, end, table, oncourt, plusminus, lines):
             if start >= clock and clock >= end:
                 check_player(table, team, assistant)
                 modify_table(table, team, assistant, 'Ast', 1)
-                modify_table(table, team, assistant, str(points)+'PtAst', 1) # it cannot be FT as they do not have assists
+                modify_table(table, team, assistant, 'PtsC', points) # it cannot be FT as they do not have assists
                 modify_table(table, team, player, 'AstPts', points)
 
 
@@ -428,7 +429,7 @@ def main(file, start, end):
     Output: box score of the teams (list of pandas.DataFrame)
     '''
     global categories
-    categories = ['Mins', '2PtM', '2PtA', '2Pt%', '3PtM', '3PtA', '3Pt%', 'FGM', 'FGA', 'FG%', 'FTM', 'FTA', 'FT%', 'OR', 'DR', 'TR', '2PtAst', '3PtAst', 'Ast', 'Bl', 'St', 'To', 'PF', 'DF', 'AstPts', 'Pts', '+/-']
+    categories = ['Mins', '2PtM', '2PtA', '2Pt%', '3PtM', '3PtA', '3Pt%', 'FGM', 'FGA', 'FG%', 'FTM', 'FTA', 'FT%', 'OR', 'DR', 'TR', 'Ast', 'PtsC', 'Bl', 'St', 'To', 'PF', 'DF', 'AstPts', 'Pts', '+/-']
     os.chdir(os.path.dirname(__file__))
 
     start = time_from_string(start)

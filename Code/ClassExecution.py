@@ -8,8 +8,9 @@ game = Match(home, away, date)
 print("\n\nget_lastQ")
 print(game.get_lastQ())
 print("\n\nbox_scores")
-tables = game.box_scores(joint = False)
 table = game.box_scores(joint = True)
+print(table)
+tables = game.box_scores(joint = False)
 
 game.box_score_save(table, "joint")
 
