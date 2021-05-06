@@ -4,6 +4,9 @@ import numpy as np
 import datetime
 from MatchClass import Match
 
+
+### AUXILIARY FUNCTIONS
+
 def convert_date_match(date):
     '''
     This functions receives a date in format "YYYY/MM/DD" and returns it in format "YYYYMMDD"
@@ -11,7 +14,25 @@ def convert_date_match(date):
     date = datetime.datetime.strptime(date, "%Y/%m/%d")
     return date.strftime("%Y%m%d")
 
-def mainMenu():
+def convert(name):
+    diff = 4 - len(name)
+    if diff > 0:
+        half = int(diff/2)
+        return " "*(diff-half) + name + " "*half
+    return name
+
+def create_table(table, indexCol):
+    auxTable = table.copy()
+    auxTable[indexCol] = auxTable.index
+    auxTable = auxTable.rename(convert, axis="columns")
+    cols = auxTable.columns.tolist()
+    cols = cols[-1:] + cols[:-1]
+    return auxTable[cols]
+
+
+### WINDOW FUNCTIONS
+
+def main_menu():
     buttonSize = (17,1)
     layout = [
         [ sg.Text("Main Menu") ],
@@ -20,7 +41,7 @@ def mainMenu():
     ]
     return sg.Window("Main Menu", layout)
 
-def defineMatchMenu():
+def defineMatch_menu():
     buttonSize = (5,1)
     inputSize = (25,1)
     layout = [
@@ -34,7 +55,7 @@ def defineMatchMenu():
     ]
     return sg.Window("Define Match Menu", layout)
 
-def analyseMatchMenu():
+def analyseMatch_menu():
     buttonSize = (20,1)
     layout = [
         [ sg.Text("Match analysis menu") ],
@@ -49,7 +70,7 @@ def analyseMatchMenu():
     ]
     return sg.Window("Analyse Match Menu", layout)
 
-def chooseBoxScoreMenu():
+def chooseBoxScore_menu():
     inputSize = (15,1)
     layout = [
         [ sg.Text("Choose the time interval you desire:") ],
@@ -63,14 +84,7 @@ def chooseBoxScoreMenu():
     ]
     return sg.Window("Box score election menu", layout)
 
-def create_table(table, indexCol):
-    auxTable = table.copy()
-    auxTable[indexCol] = auxTable.index
-    cols = auxTable.columns.tolist()
-    cols = cols[-1:] + cols[:-1]
-    return auxTable[cols]
-
-def analyseBoxScoreMenu(table, game):
+def analyseBoxScore_menu(table, game):
     auxTable = create_table(table, "Player")
     layout = [
         [sg.Table(values=auxTable.values.tolist(), headings=auxTable.columns.tolist(), num_rows=len(auxTable), alternating_row_color = 'gray', hide_vertical_scroll = True)],
@@ -94,7 +108,7 @@ def analyseBoxScoreMenu(table, game):
     ]
     return sg.Window("Box score menu", layout)
 
-def matchStatisticsMenu(game):
+def matchStatistics_menu(game):
     table1 = create_table(game.quarter_scorings(), " ")
     layout1 = [
         [sg.Table(values=table1.values.tolist(), headings=table1.columns.tolist(), col_widths = [5]*len(table1.columns), auto_size_columns = False, num_rows=len(table1), hide_vertical_scroll = True, row_height = 20)]
@@ -144,8 +158,10 @@ def matchStatisticsMenu(game):
     return sg.Window("Match Statistics Menu", layout)
 
 
+### INTERACTIVE FUNCTIONS
+
 def analyseBoxScore(game, table):
-    window = analyseBoxScoreMenu(table, game)
+    window = analyseBoxScore_menu(table, game)
     event, values = window.read()
 
     window.close()
@@ -186,7 +202,7 @@ def analyseBoxScore(game, table):
 
 
 def chooseBoxScore(game):
-    window = chooseBoxScoreMenu()
+    window = chooseBoxScore_menu()
     event, values = window.read()
 
     if event == 'OK':
@@ -212,7 +228,7 @@ def chooseBoxScore(game):
 
 
 def matchStatistics(game):
-    window = matchStatisticsMenu(game)
+    window = matchStatistics_menu(game)
     event, values = window.read()
 
     if event == 'Back to analyse match menu':
@@ -221,7 +237,7 @@ def matchStatistics(game):
 
 
 def analyseMatch(game):
-    window = analyseMatchMenu()
+    window = analyseMatch_menu()
     event, values = window.read()
 
     if event == 'Box scores':
@@ -236,7 +252,7 @@ def analyseMatch(game):
 
 
 def defineMatch():
-    window = defineMatchMenu()
+    window = defineMatch_menu()
     event, values = window.read()
 
     if event == 'OK':
@@ -249,7 +265,7 @@ def defineMatch():
 
 
 def main():
-    window = mainMenu()
+    window = main_menu()
     event, values = window.read()
 
     if event == 'Analyse match':
