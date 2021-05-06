@@ -158,9 +158,9 @@ def treat_play(play, outLine):
     elif "enters" in play.text:
         outLine = change(play, outLine)
     elif "timeout" in play.text:
-        outLine.append("Timeout")
+        outLine += ["- ", "Timeout"]
     elif "Replay" in play.text:
-        outLine.append("Instant Replay")
+        outLine += ["-", "Instant Replay"]
     else:
         outLine.append("NOT TREATED")
     return outLine
@@ -203,13 +203,13 @@ def treat_line(row, Q, prevClock):
     - clock: timestamp of the action (string)
     '''
     cols = row.find_all('td')
-    if len(cols) == 0:
+    if len(cols) == 0: # this is not an action, it is a header
         nonActions.append(row)
         clock = prevClock # as this function returns clock, but this line does not have it, we return the previous value
 
     else:
         clock = row.find('td').text
-        if len(cols) == 2:
+        if len(cols) == 2: # this is a neutral action, such as a jump ball or a quarter start/end
             if prevClock == "0:00.0" and clock != prevClock:
                 Q = next_quarter(Q)
             neutralActions.append(row)

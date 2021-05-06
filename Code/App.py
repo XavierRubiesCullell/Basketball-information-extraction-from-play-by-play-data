@@ -2,6 +2,8 @@ import PySimpleGUI as sg
 import pandas as pd
 import numpy as np
 import datetime
+import os
+
 from MatchClass import Match
 
 
@@ -157,6 +159,36 @@ def matchStatistics_menu(game):
 
     return sg.Window("Match Statistics Menu", layout)
 
+def seePbP_menu():
+    buttonSize = (15,1)
+    layout = [
+        [ sg.Text("Play-by-play Menu") ],
+        [ sg.Button('Text mode', size = buttonSize)],
+        [ sg.Button('Visual mode', size = buttonSize)],
+        [ sg.Text("")],
+        [ sg.Button('Back to analyse match menu')]
+    ]
+    return sg.Window("Play-by-play Menu", layout)
+
+def textPbP_menu(game):
+    os.chdir(os.path.dirname(__file__))
+    with open(game.PbPFile, encoding="utf-8") as f:
+        lines = f.readlines()
+
+    cols = ["clock", "team", "player", "action", "action information"]
+    plays = pd.DataFrame(columns=cols)
+    for line in lines:
+        action = line.strip().split(", ")
+        row = [action[0], action[1], action[2], action[3], ",".join(action[4:])]
+        row = pd.Series(row, index=cols)
+        plays = plays.append(row, ignore_index=True)
+    layout = [
+        [ sg.Text("Text play-by-play Menu") ],
+        [sg.Table(values=plays.values.tolist(), headings=cols, justification="left", num_rows=20, row_height=15)],
+        [sg.Button('Back to play-by-play menu')]
+    ]
+    return sg.Window("Text play-by-play Menu", layout)
+
 
 ### INTERACTIVE FUNCTIONS
 
@@ -236,6 +268,28 @@ def matchStatistics(game):
         analyseMatch(game)
 
 
+def textPbP(game):
+    window = textPbP_menu(game)
+    event, values = window.read()
+
+    if event == 'Back to play-by-play menu':
+        window.close()
+        seePbP(game)
+
+
+def seePbP(game):
+    window = seePbP_menu()
+    event, values = window.read()
+
+    if event == 'Text mode':
+        window.close()
+        textPbP(game)
+
+    elif event == 'Back to analyse match menu':
+        window.close()
+        analyseMatch(game)
+
+
 def analyseMatch(game):
     window = analyseMatch_menu()
     event, values = window.read()
@@ -243,9 +297,12 @@ def analyseMatch(game):
     if event == 'Box scores':
         window.close()
         chooseBoxScore(game)
-    if event == 'Match statistics':
+    elif event == 'Match statistics':
         window.close()
         matchStatistics(game)
+    elif event == 'See play-by-play':
+        window.close()
+        seePbP(game)
     elif event == 'Back to define match menu':
         window.close()
         defineMatch()
