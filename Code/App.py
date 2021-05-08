@@ -125,27 +125,6 @@ def matchStatistics_menu(game):
         [sg.Table(values=table2.values.tolist(), headings=table2.columns.tolist(), num_rows=len(table2), hide_vertical_scroll = True, row_height = 20)]
     ]
     
-    # indexSize = (12,1)
-    # colSize = (6,1)
-    # stats = [
-    #     ("Longest drought", game.longest_drought()),
-    #     ("Greatest partial", game.greatest_partial()),
-    #     ("Greatest streak", game.greatest_streak())
-    # ]
-    # layout2 = [
-    #     [
-    #         sg.Text("", size=indexSize),
-    #         sg.Text(game.home, size=colSize, justification="center"),
-    #         sg.Text(game.away, size=colSize, justification="center")
-    #     ]
-    # ] + [
-    #     [
-    #         sg.Text(stat[0], size=indexSize),
-    #         sg.Text(stat[1][0], size=colSize, justification="right"),
-    #         sg.Text(stat[1][1], size=colSize, justification="right")
-    #     ]
-    #     for stat in stats
-    # ]
     layout = [
         [sg.Text("Match Statistics Menu")],
         [sg.Text("Quarter scorings:")],
@@ -158,6 +137,27 @@ def matchStatistics_menu(game):
     ]
 
     return sg.Window("Match Statistics Menu", layout)
+
+def playingTimes_menu(game):
+    textLength = 80
+    layout = [
+        [ sg.Text("Playing times Menu")],
+        [ sg.Text("Five on court at a determined time:")],
+        [ sg.Input(key='Time input', size=(10,1)), sg.Button("OK", key="Time OK") ],
+        [ sg.Text("", size=(5,2), key='Team 1'), sg.Text("", size=(textLength,2), key='Time output 1')],
+        [ sg.Text("", size=(5,2), key='Team 2'), sg.Text("", size=(textLength,2), key='Time output 2')],
+        [ sg.Text("")],
+        [ sg.Text("Intervals of time for a player:")],
+        [ sg.Input(key='Team player input', size=(5,1)), sg.Input(key='Player input', size=(50,1)), sg.Button("OK", key="Player OK") ],
+        [ sg.Text("", size=(textLength,2), key='Player output')],
+        [ sg.Text("")],
+        [ sg.Text("Intervals of time for a five:")],
+        [ sg.Input(key='Team five input', size=(5,1)), sg.Input(key='Five input', size=(50,1)), sg.Button("OK", key="Five OK") ],
+        [ sg.Text("", size=(textLength,1), key='Five output')],
+        [ sg.Text("")],
+        [ sg.Button('Back to analyse match menu')]
+    ]
+    return sg.Window("Playing Times Menu", layout)
 
 def seePbP_menu():
     buttonSize = (15,1)
@@ -201,13 +201,14 @@ def analyseBoxScore(game, table):
         if event == 'Filter':
             print(values['Pla'], values['Cat'], values['Val'])
             if values['Pla']:
-                table = game.filter_by_players(table, values['Filter condition'].split(", "))
+                players = values['Filter condition']
+                players = players.split(", ")
+                table = game.filter_by_players(table, players)
                 analyseBoxScore(game, table)
 
             elif values['Cat']:
                 cats = values['Filter condition']
-                print(cats)
-                if "," in cats:
+                if not (isinstance(cats,str) and cats in ("simple", "shooting", "rebounding")):
                     cats = cats.split(", ")
                 table = game.filter_by_categories(table, cats)
                 analyseBoxScore(game, table)
@@ -268,6 +269,52 @@ def matchStatistics(game):
         analyseMatch(game)
 
 
+def playingTimes(game):
+    window = playingTimes_menu(game)
+
+    while True:
+        event, values = window.read()
+
+        if event == 'Time OK':
+            window['Team 1'].update(game.home)
+            window['Team 2'].update(game.away)
+            
+            fives = game.five_on_court(values['Time input'])
+            for team in range(1,3):
+                if isinstance(fives[team-1],list):
+                    window[f'Time output {team}'].update(str(fives[team-1][0]) + "\n" + str(fives[team-1][1]))
+                else:
+                    window[f'Time output {team}'].update(str(fives[team-1]))
+
+        elif event == 'Player OK':
+            team = values['Team player input']
+            if team == game.home:
+                team = 1
+            else:
+                team = 2
+            playerIntervals = game.playing_intervals()[0][team-1]
+            window['Player output'].update(playerIntervals.get(values['Player input'], "Not present"))
+
+        elif event == 'Five OK':
+            team = values['Team five input']
+            if team == game.home:
+                team = 1
+            else:
+                team = 2
+            players = values['Five input'].split(", ")
+            intervals = game.fives_intervals(team-1, players)
+            window['Five output'].update(intervals)
+
+        elif event == 'Back to analyse match menu':
+            window.close()
+            analyseMatch(game)
+            break
+
+        elif event == sg.WIN_CLOSED:
+            window.close()
+            break
+
+
 def textPbP(game):
     window = textPbP_menu(game)
     event, values = window.read()
@@ -300,6 +347,9 @@ def analyseMatch(game):
     elif event == 'Match statistics':
         window.close()
         matchStatistics(game)
+    elif event == 'Playing times':
+        window.close()
+        playingTimes(game)
     elif event == 'See play-by-play':
         window.close()
         seePbP(game)
