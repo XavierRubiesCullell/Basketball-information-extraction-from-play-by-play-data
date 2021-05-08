@@ -1,7 +1,8 @@
-from Functions import *
 import time
 import datetime
 import math
+
+from Functions import *
 
 def get_clock(i, lines):
     action = lines[i]

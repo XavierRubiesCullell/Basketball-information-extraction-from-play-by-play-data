@@ -5,6 +5,7 @@ import numpy as np
 
 from Functions import *
 
+
 def modify_table(table, team, player, variable, value):
     '''
     This function modifies the 'variable' record corresponding to 'player' in the box score from 'team' by value 'value'
@@ -436,7 +437,7 @@ def main(file, start, end):
     end = time_from_string(end)
 
     # tables where the boxscore of the local and visiting team will be computed respectively:
-    table = [pd.DataFrame(columns = categories).astype({'Mins': 'datetime64[ns]', '2Pt%': 'float'})] * 2
+    table = [pd.DataFrame(columns = categories).astype({'Mins': 'datetime64[ns]'})] * 2
     # dictionaries that will hold the local and visiting players respectively at a specific time:
     oncourt = [{}, {}]
     # integers where the plusminus of the local and visiting team will be stored:
