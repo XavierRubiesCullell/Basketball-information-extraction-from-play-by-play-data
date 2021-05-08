@@ -91,6 +91,9 @@ class Match():
         - table: box score or a variation (pandas dataframe)
         Output: Box score filtered by the list of players
         '''
+        for pl in players:
+            if pl not in table.index:
+                return None
         return table.loc[players,]
 
     def filter_by_categories(self, table, categories):
@@ -106,6 +109,9 @@ class Match():
             categories = ['OR', 'DR', 'TR']
         elif categories == "simple":
             categories = ['Mins', 'Pts', 'TR', 'Ast', 'Bl', 'St', 'To', 'PF', '+/-']
+        for cat in categories:
+            if cat not in table.columns:
+                return None
         if 'Team' in table.columns:
             categories = ['Team'] + categories
         return table[categories]
@@ -120,10 +126,12 @@ class Match():
         if "TOTAL" in table.index:
             table = table.drop(index = ["TOTAL"])
         for cat, val in vars.items():
+            if cat not in table.columns:
+                return None
             table = table.loc[table[cat] >= val]
         return table
 
-    def top_players(self, table, var, n=None, max=False):
+    def top_players(self, table, categories, n=None, max=False):
         '''
         This function returns the top n players having the maximum/minimum value in var
         - var: category(ies) we are interested in (string)
@@ -132,9 +140,13 @@ class Match():
         - max: bool stating if we want the maximum values (true) or the minimum ones (false)
         Output: Table (series) with the players and the category(ies) value
         '''
-        table = table[var]
-        table = table.drop(["TOTAL"])
-        table = table.sort_values(by=var, ascending=max)
+        for cat in categories:
+            if cat not in table.columns:
+                return None
+        table = table[categories]
+        if "TOTAL" in table.index:
+            table = table.drop(index = ["TOTAL"])
+        table = table.sort_values(by=categories, ascending=max)
         if n is not None:
             table = table[:n]
         return table
