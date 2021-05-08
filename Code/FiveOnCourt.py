@@ -1,6 +1,5 @@
 from Functions import *
 
-
 def check_fives(intervals, clock):
     '''
     This function returns the fives on court at timestamp clock
@@ -11,9 +10,11 @@ def check_fives(intervals, clock):
     for interval, five in intervals.items():
         if time_from_string(interval[0]) >= clock and clock >= time_from_string(interval[1]):
             if clock == time_from_string(interval[1]):
+                if clock == quarter_end_time(quarter_from_time(string_from_time(clock))):
+                    return five
                 fives = [five]
             elif clock == time_from_string(interval[0]):
-                if string_from_time(clock) == "1Q:12:00":
+                if clock == quarter_start_time(quarter_from_time(string_from_time(clock))):
                     return five
                 else:
                     fives.append(five)
