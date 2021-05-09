@@ -145,16 +145,16 @@ def playingTimes_menu(game):
     layout = [
         [ sg.Text("Playing times Menu")],
         [ sg.Text("Five on court at a determined time:")],
-        [ sg.Input(key='Time input', size=(10,1)), sg.Button("OK", key="Time OK") ],
+        [ sg.Input(size=(10,1), tooltip="Introduce the time in format quarter:MM:SS\nquarter can be '1Q','2Q','3Q','4Q','xOT", key='Time input'), sg.Button("OK", key="Time OK") ],
         [ sg.Text("", size=(5,2), key='Team 1'), sg.Text("", size=(textLength,2), key='Time output 1')],
         [ sg.Text("", size=(5,2), key='Team 2'), sg.Text("", size=(textLength,2), key='Time output 2')],
         [ sg.Text("")],
         [ sg.Text("Intervals of time for a player:")],
-        [ sg.Input(default_text = "Team", enable_events=True, tooltip="Introduce the name of the team", key='Team player input', size=teamSize), sg.Input(key='Player input', size=(20,1)), sg.Button("OK", key="Player OK") ],
+        [ sg.Text("Team:"), sg.Input(size=teamSize, key='Team player input'), sg.Text("Player:"), sg.Input(key='Player input', tooltip="Introduce the initial of the name, a dot and the surname\nExample: L. James", size=(20,1)), sg.Button("OK", key="Player OK") ],
         [ sg.Text("", size=(textLength,2), key='Player output')],
         [ sg.Text("")],
         [ sg.Text("Intervals of time for a five:")],
-        [ sg.Input(key='Team five input', size=teamSize), sg.Input(key='Five input', size=(60,1)), sg.Button("OK", key="Five OK") ],
+        [ sg.Text("Team:"), sg.Input(size=teamSize, key='Team five input'), sg.Text("Five:"), sg.Input(key='Five input', tooltip="Introduce the players separed by a comma\nExample: L. James, K. Leonard, S. Curry, J. Harden, C. Paul",size=(60,1)), sg.Button("OK", key="Five OK") ],
         [ sg.Text("", size=(textLength,1), key='Five output')],
         [ sg.Text("")],
         [ sg.Button('Back to analyse match menu')]
@@ -273,11 +273,8 @@ def matchStatistics(game):
 
 def playingTimes(game):
     window = playingTimes_menu(game)
-
     while True:
         event, values = window.read()
-        if event == 'Team player input':
-            window['Team player input'].update("")
 
         if event == 'Time OK':
             window['Team 1'].update(game.home)
