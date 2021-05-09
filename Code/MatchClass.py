@@ -215,9 +215,9 @@ class Match():
         '''
         return FivesIntervals_main(self.playing_intervals()[1][team], five)
     
-    def visual_PbP(self):
+    def visual_PbP(self, window=None):
         '''
-        This function returns the greatest partial (consecutive points without the opponent scoring) for every team
-        Ouput: list of integers
+        This function executes the dynamic reproduction of the play-by-play
+        - window: window in case we created a visual support (PySimpleGUI.PySimpleGUI.Window)
         '''
-        return VisualPbP_main(self.PbPFile, self.get_lastQ())
+        VisualPbP_main(self.PbPFile, self.get_lastQ(), window)

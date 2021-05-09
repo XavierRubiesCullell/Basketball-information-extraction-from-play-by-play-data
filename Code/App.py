@@ -191,6 +191,15 @@ def textPbP_menu(game):
     ]
     return sg.Window("Text play-by-play Menu", layout)
 
+def visualPbP_menu():
+    layout = [
+        [sg.Text(key="ActionText", size=(40,1))],
+        [sg.Image(key="ActionImage")],
+        [sg.Text("", size=(20,1), key="Clock"), sg.Text("", size=(10,1), key="Score")],
+        [sg.Button('Back to play-by-play menu')]
+    ]
+    return sg.Window("Visual PbP", layout)
+
 
 ### INTERACTIVE FUNCTIONS
 
@@ -315,6 +324,14 @@ def playingTimes(game):
             window.close()
             break
 
+def visualPbP(game):
+    window = visualPbP_menu()
+    event, values = window.read(timeout=25)
+
+    game.visual_PbP(window)
+    if event == 'Back to play-by-play menu':
+        window.close()
+        seePbP(game)
 
 def textPbP(game):
     window = textPbP_menu(game)
@@ -332,6 +349,10 @@ def seePbP(game):
     if event == 'Text mode':
         window.close()
         textPbP(game)
+
+    elif event == 'Visual mode':
+        window.close()
+        visualPbP(game)
 
     elif event == 'Back to analyse match menu':
         window.close()

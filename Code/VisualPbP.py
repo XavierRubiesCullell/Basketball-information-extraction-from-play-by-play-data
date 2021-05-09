@@ -1,6 +1,10 @@
 import time
 import datetime
 import math
+import PIL.Image
+import base64
+import io
+import PySimpleGUI as sg
 
 from Functions import *
 
@@ -15,8 +19,7 @@ def interval(tBefore, tNow):
     diff = tBefore - tNow
     diff = diff.seconds
     diff == max(diff, 1)
-    return math.exp(-math.pow(diff,2) / (2*math.pow(9,2)))
-
+    return math.exp(-math.pow(diff,2) / (2*math.pow(5,2)))
 
 def next_time(t):
     quarter, minutes, seconds = t.split(":")
@@ -31,14 +34,38 @@ def next_time(t):
     clock -= datetime.timedelta(seconds=1)
     return quarter + ":" + clock.strftime("%M:%S")
 
-def show_header(t, score):
-    print(t,score)
+def convert_to_bytes(file_or_bytes, resize=None):
+    if isinstance(file_or_bytes, str):
+        img = PIL.Image.open(file_or_bytes)
 
-def show_action(action):
+    cur_width, cur_height = img.size
+    if resize:
+        new_width, new_height = resize
+        scale = min(new_height/cur_height, new_width/cur_width)
+        img = img.resize((int(cur_width*scale), int(cur_height*scale)), PIL.Image.ANTIALIAS)
+    with io.BytesIO() as bio:
+        img.save(bio, format="PNG")
+        del img
+        return bio.getvalue()
+
+def show_header(t, score, window):
+    window['Clock'].update(value=t)
+    window['Score'].update(value=score)
+
+def show_action(action, window, imageFolder):
     if action == "black":
-        print("\n")
+        if window is None:
+            print("\n")
+        else:
+            window['ActionText'].update(str(""))
+            window['ActionImage'].update(data=convert_to_bytes(f"{imageFolder}/Black.jpg", resize=(200,200)))
     else:
-        print(action.strip().split(", ")[1:], "\n")
+        if window is None:
+            print(action.strip().split(", ")[1:], "\n")
+        else:
+            window['ActionText'].update(str(action.strip().split(", ")[1:]))
+            window['ActionImage'].update(data=convert_to_bytes(f"{imageFolder}/Bryant.jpg", resize=(200,200)))
+
 
 def update_score(line, score):
     action = line.strip().split(", ")
@@ -50,7 +77,8 @@ def update_score(line, score):
             points = int(action[4])
             score[team-1] += points
 
-def treat_second(tNow, lineId, lines, score, lastQ):
+
+def treat_second(tNow, prevAction, lineId, lines, score, lastQ, window, imageFolder):
     nLines = len(lines)
     if lineId == 0:
         clockBefore = "1Q:12:00"
@@ -61,28 +89,39 @@ def treat_second(tNow, lineId, lines, score, lastQ):
     else:
         clockBefore = get_clock(lineId-1, lines)
         clockNext = get_clock(lineId, lines)
+
     t = interval(clockBefore, clockNext)
     time.sleep(t)
+    if prevAction != "black":
+        time.sleep(1)
 
-    show_header(tNow, score)
-    if clockNext == tNow and lineId < nLines:
-        show_action(lines[lineId])
-        update_score(lines[lineId], score)
-        
+    show_header(tNow, score, window)
+    if tNow == clockNext and lineId < nLines:
+        action = lines[lineId]
+        update_score(action, score)
         lineId += 1
     else:
-        show_action("black")
+        action = "black"
+    show_action(action, window, imageFolder)
         
     if lineId >= nLines-1 or get_clock(lineId-1, lines) != get_clock(lineId, lines):
         tNow = next_time(tNow)
 
-    return tNow, lineId
+    return tNow, lineId, action
 
-def main(file, lastQ):
+
+def main(file, lastQ, window=None, imageFolder="VisualPbPImages"):
+    os.chdir(os.path.dirname(__file__))
     with open(file, encoding="utf-8") as f:
         lines = f.readlines()
     tNow = "1Q:12:00"
     score = [0, 0]
     lineId = 0
+    action = "black"
+
     while time_from_string(tNow) >= time_from_string(lastQ+":00:00"):
-        tNow, lineId = treat_second(tNow, lineId, lines, score, lastQ)
+        event, values = window.read(timeout=25)
+        if event in ('Back to play-by-play menu', None, 'Exit', 'Cancel'):
+            window.close()
+            break
+        tNow, lineId, action = treat_second(tNow, action, lineId, lines, score, lastQ, window, imageFolder)
