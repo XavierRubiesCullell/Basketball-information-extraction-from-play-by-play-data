@@ -10,12 +10,14 @@ def get_team(team):
     '''
     os.chdir(os.path.dirname(__file__))
     f = open('./Teams.txt', 'r')
-    while True:
-        line = f.readline().strip().split(', ')
+    lines = f.readlines()
+    for line in lines:
+        line = line.strip().split(', ')
         n = len(line)
-        for i in range(n-1):
+        for i in range(n):
             if line[i] == team:
                 return line[n-1]
+    return None
 
 def other_team(team):
     '''

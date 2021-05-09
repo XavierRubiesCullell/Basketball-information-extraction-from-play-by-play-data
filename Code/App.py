@@ -5,6 +5,7 @@ import datetime
 import os
 
 from MatchClass import Match
+from Functions import get_team
 
 
 ### AUXILIARY FUNCTIONS
@@ -139,6 +140,7 @@ def matchStatistics_menu(game):
     return sg.Window("Match Statistics Menu", layout)
 
 def playingTimes_menu(game):
+    teamSize = (25,1)
     textLength = 80
     layout = [
         [ sg.Text("Playing times Menu")],
@@ -148,11 +150,11 @@ def playingTimes_menu(game):
         [ sg.Text("", size=(5,2), key='Team 2'), sg.Text("", size=(textLength,2), key='Time output 2')],
         [ sg.Text("")],
         [ sg.Text("Intervals of time for a player:")],
-        [ sg.Input(key='Team player input', size=(5,1)), sg.Input(key='Player input', size=(50,1)), sg.Button("OK", key="Player OK") ],
+        [ sg.Input(default_text = "Team", enable_events=True, tooltip="Introduce the name of the team", key='Team player input', size=teamSize), sg.Input(key='Player input', size=(20,1)), sg.Button("OK", key="Player OK") ],
         [ sg.Text("", size=(textLength,2), key='Player output')],
         [ sg.Text("")],
         [ sg.Text("Intervals of time for a five:")],
-        [ sg.Input(key='Team five input', size=(5,1)), sg.Input(key='Five input', size=(50,1)), sg.Button("OK", key="Five OK") ],
+        [ sg.Input(key='Team five input', size=teamSize), sg.Input(key='Five input', size=(60,1)), sg.Button("OK", key="Five OK") ],
         [ sg.Text("", size=(textLength,1), key='Five output')],
         [ sg.Text("")],
         [ sg.Button('Back to analyse match menu')]
@@ -274,6 +276,8 @@ def playingTimes(game):
 
     while True:
         event, values = window.read()
+        if event == 'Team player input':
+            window['Team player input'].update("")
 
         if event == 'Time OK':
             window['Team 1'].update(game.home)
@@ -288,18 +292,18 @@ def playingTimes(game):
 
         elif event == 'Player OK':
             team = values['Team player input']
-            if team == game.home:
+            if get_team(team) == game.home:
                 team = 1
-            else:
+            elif get_team(team) == game.away:
                 team = 2
             playerIntervals = game.playing_intervals()[0][team-1]
             window['Player output'].update(playerIntervals.get(values['Player input'], "Not present"))
 
         elif event == 'Five OK':
             team = values['Team five input']
-            if team == game.home:
+            if get_team(team) == game.home:
                 team = 1
-            else:
+            elif get_team(team) == game.away:
                 team = 2
             players = values['Five input'].split(", ")
             intervals = game.fives_intervals(team-1, players)
