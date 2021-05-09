@@ -220,4 +220,4 @@ class Match():
         This function executes the dynamic reproduction of the play-by-play
         - window: window in case we created a visual support (PySimpleGUI.PySimpleGUI.Window)
         '''
-        VisualPbP_main(self.PbPFile, self.get_lastQ(), window)
+        return VisualPbP_main(self.PbPFile, self.get_lastQ(), window)

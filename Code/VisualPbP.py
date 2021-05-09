@@ -49,8 +49,11 @@ def convert_to_bytes(file_or_bytes, resize=None):
         return bio.getvalue()
 
 def show_header(t, score, window):
-    window['Clock'].update(value=t)
-    window['Score'].update(value=score)
+    if window is None:
+        print(t, score, sep="        ")
+    else:
+        window['Clock'].update(value=t)
+        window['Score'].update(value=score)
 
 def show_action(action, window, imageFolder):
     if action == "black":
@@ -120,8 +123,12 @@ def main(file, lastQ, window=None, imageFolder="VisualPbPImages"):
     action = "black"
 
     while time_from_string(tNow) >= time_from_string(lastQ+":00:00"):
-        event, values = window.read(timeout=25)
-        if event in ('Back to play-by-play menu', None, 'Exit', 'Cancel'):
-            window.close()
-            break
+        if window is not None:
+            event, values = window.read(timeout=25)
+            if event in (None, 'Exit', 'Cancel'):
+                window.close()
+                return False
+            if event == 'Back to play-by-play menu':
+                window.close()
+                return True
         tNow, lineId, action = treat_second(tNow, action, lineId, lines, score, lastQ, window, imageFolder)

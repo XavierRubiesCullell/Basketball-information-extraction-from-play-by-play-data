@@ -328,9 +328,9 @@ def visualPbP(game):
     window = visualPbP_menu()
     event, values = window.read(timeout=25)
 
-    game.visual_PbP(window)
-    if event == 'Back to play-by-play menu':
-        window.close()
+    back = game.visual_PbP(window)
+    print(back)
+    if back:
         seePbP(game)
 
 def textPbP(game):

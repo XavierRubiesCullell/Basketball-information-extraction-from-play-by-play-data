@@ -79,7 +79,6 @@ five = list(oncourtIntervals[1].values())[0]
 print(game.fives_intervals(1, five))
 
 import PySimpleGUI as sg
-
 layout = [
     [sg.Text(key="ActionText", size=(40,1))],
     [sg.Image(key="ActionImage")],
@@ -87,5 +86,7 @@ layout = [
     [sg.Button('Back to play-by-play menu')]
 ]
 window = sg.Window("Visual PbP",layout)
-
 game.visual_PbP(window)
+
+print("\n\nVisual PbP")
+game.visual_PbP()
