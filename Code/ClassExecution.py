@@ -48,10 +48,16 @@ print(game.greatest_partial())
 print("\n\ngreatest_streak")
 print(game.greatest_streak())
 
+import seaborn
+import matplotlib.pyplot as plt
+
 print("\n\nassist_map")
 assists = game.assist_map()
-print(assists[0])
-print(assists[1])
+# print(assists[0])
+# print(assists[1])
+# print(seaborn.heatmap(assists[0]))
+plt.imshow(assists[0])
+plt.show()
 
 print("\n\nplaying_intervals")
 playerIntervals, oncourtIntervals = game.playing_intervals()

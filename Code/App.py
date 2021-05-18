@@ -161,6 +161,14 @@ def playingTimes_menu(game):
     ]
     return sg.Window("Playing Times Menu", layout)
 
+def assistsStatistics_menu(assists):
+    layout = [
+        [ sg.Text("Assists statistics Menu") ],
+        [ sg.Text("") ],
+        [ sg.Button('Back to analyse match menu') ]
+    ]
+    return sg.Window("Assists statistics Menu", layout)
+
 def seePbP_menu():
     buttonSize = (15,1)
     layout = [
@@ -324,12 +332,27 @@ def playingTimes(game):
             window.close()
             break
 
+
+def assistsStatistics(game):
+    import seaborn
+    import matplotlib.pyplot as plt
+    assists = game.assist_map()
+
+    window = assistsStatistics_menu(assists)
+    event, values = window.read()
+    plt.imshow(assists[0])
+    plt.show()
+
+    if event == 'Back to analyse match menu':
+        window.close()
+        analyseMatch(game)
+
+
 def visualPbP(game):
     window = visualPbP_menu()
     event, values = window.read(timeout=25)
 
     back = game.visual_PbP(window)
-    print(back)
     if back:
         seePbP(game)
 
@@ -372,6 +395,9 @@ def analyseMatch(game):
     elif event == 'Playing times':
         window.close()
         playingTimes(game)
+    elif event == 'Assists statistics':
+        window.close()
+        assistsStatistics(game)
     elif event == 'See play-by-play':
         window.close()
         seePbP(game)
