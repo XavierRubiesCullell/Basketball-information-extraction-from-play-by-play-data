@@ -49,9 +49,9 @@ def defineMatch_menu():
     inputSize = (25,1)
     layout = [
         [ sg.Text("Match definition menu") ],
-        [ sg.Text("Home", size=buttonSize), sg.Input(key='Home', size=inputSize)],
-        [ sg.Text("Away", size=buttonSize), sg.Input(key='Away', size=inputSize)],
-        [ sg.Text("Date", size=buttonSize), sg.Input(key='Date', size=(15,1)), sg.CalendarButton(button_text="Calendar", format = "%Y/%m/%d", target='Date', begin_at_sunday_plus=1)],
+        [ sg.Text("Home", size=buttonSize), sg.Input(key='Home', size=inputSize, tooltip="You can write the location, the club name, both or the abbreviation\nFor example: Denver, Nuggets, Denver Nuggets or DEN")],
+        [ sg.Text("Away", size=buttonSize), sg.Input(key='Away', size=inputSize, tooltip="You can write the location, the club name, both or the abbreviation\nFor example: Denver, Nuggets, Denver Nuggets or DEN")],
+        [ sg.Text("Date", size=buttonSize), sg.Input(key='Date', size=(15,1), tooltip="Use the ISO standard: YYYY/MM/DD"), sg.CalendarButton(button_text="Calendar", format = "%Y/%m/%d", target='Date', begin_at_sunday_plus=1)],
         [ sg.Button('OK')],
         [ sg.Text("")],
         [ sg.Button('Back to main menu')]
@@ -77,7 +77,8 @@ def chooseBoxScore_menu():
     inputSize = (15,1)
     layout = [
         [ sg.Text("Choose the time interval you desire:") ],
-        [ sg.Input(key='Start', size=inputSize), sg.Input(key='End', size=inputSize)],
+        [ sg.Input(key='Start', size=inputSize, tooltip="Introduce the time in format quarter:MM:SS\nquarter can be '1Q','2Q','3Q','4Q','xOT\nIf nothing is written, the beginning of the match will be considered"),
+         sg.Input(key='End', size=inputSize, tooltip="Introduce the time in format quarter:MM:SS\nquarter can be '1Q','2Q','3Q','4Q','xOT\nIf nothing is written, the end of the match will be considered")],
         [ sg.Text("Choose the box score you desire:") ],
         #[ sg.Button('Local'), sg.Button('Visiting'), sg.Button('Both')],
         [ sg.Checkbox("Local", key = 'Local'), sg.Checkbox("Visiting", key = 'Visiting')],
@@ -87,16 +88,61 @@ def chooseBoxScore_menu():
     ]
     return sg.Window("Box score election menu", layout)
 
+def helpAnalyseBoxScore_menu(cols):
+    textSize = (9, 1)
+    explanation = {
+        "Mins": "minutes played",
+        "2PtM": "2-point shots made",
+        "2PtA": "2-point shots attempted",
+        "2Pt%": "2-point shots percentage",
+        "3PtM": "3-point shots made",
+        "3PtA": "3-point shots attempted",
+        "3Pt%": "3-point shots percentage",
+        "FGM": "field goals made",
+        "FGA": "field goals attempted",
+        "FG%": "field goals percentage",
+        "FTM": "free throws made",
+        "FTA": "free throws attempted",
+        "FT%": "free throws percentage",
+        "OR": "offensive rebounds",
+        "DR": "deffensive rebounds",
+        "TR": "total rebounds",
+        "Ast": "assists",
+        "PtsC": "points contribution (points by the player + points after an assist by the player)",
+        "Bl": "blocks",
+        "St": "steals",
+        "To": "turnovers",
+        "PF": "personal fouls",
+        "DF": "drawn fouls",
+        "AstPts": "assisted points",
+        "Pts": "points",
+        "+/-": "plusminus",
+        "PIR": "Performance Index Rating"
+    }
+    # word = ""
+    # for cat in cols:
+    #     word += cat + ":" + " "*10 + explanation[cat] + "\n"
+    # layout2 = [
+    #     [sg.Text(word)]
+    # ]
+    if cols[0] == 'Mins':
+        del cols[0]
+    layout = [
+        [sg.Text(cat, size=textSize), sg.Text(explanation[cat])] for cat in cols
+    ]
+    return sg.Window("Help Menu", layout)
+
 def analyseBoxScore_menu(table, game):
     auxTable = create_table(table, "Player")
     layout = [
-        [sg.Table(values=auxTable.values.tolist(), headings=auxTable.columns.tolist(), num_rows=len(auxTable), alternating_row_color = 'gray', hide_vertical_scroll = True)],
-        [sg.Text("Filter:")],
-        [sg.Input(key='Filter condition')],
+        [ sg.Button('Help') ],
+        [ sg.Table(values=auxTable.values.tolist(), headings=auxTable.columns.tolist(), num_rows=len(auxTable), alternating_row_color = 'gray', hide_vertical_scroll = True) ],
+        [ sg.Text("Filter:") ],
+        [ sg.Input(key='Filter condition') ],
         [
-            sg.Radio('Filter by players', "RADIO1", key="Pla"),
-            sg.Radio('Filter by categories', "RADIO1", key="Cat"),
-            sg.Radio('Filter by value', "RADIO1", key="Val"),
+            sg.Radio('Filter by players', "RADIO1", key="Pla", tooltip="Format: player1, player2, player3, ..."),
+            sg.Radio('Filter by categories', "RADIO1", key="Cat", tooltip="Format: category1, category2, category3, ..."),
+            sg.Radio('Filter by value', "RADIO1", key="Val", tooltip="Format: category1: value1, category2: value2, category3: value3, ..."),
             sg.Button('Filter')
         ],
         [sg.Text("Save:")],
@@ -150,11 +196,19 @@ def playingTimes_menu(game):
         [ sg.Text("", size=(5,2), key='Team 2'), sg.Text("", size=(textLength,2), key='Time output 2')],
         [ sg.Text("")],
         [ sg.Text("Intervals of time for a player:")],
-        [ sg.Text("Team:"), sg.Input(size=teamSize, key='Team player input'), sg.Text("Player:"), sg.Input(key='Player input', tooltip="Introduce the initial of the name, a dot and the surname\nExample: L. James", size=(20,1)), sg.Button("OK", key="Player OK") ],
+        [   sg.Text("Team:"),
+            sg.Input(size=teamSize, key='Team player input', tooltip="You can write the location, the club name, both or the abbreviation\nFor example: Denver, Nuggets, Denver Nuggets or DEN"),
+            sg.Text("Player:"),
+            sg.Input(key='Player input', tooltip="Introduce the initial of the name, a dot and the surname\nExample: L. James", size=(20,1)),
+            sg.Button("OK", key="Player OK") ],
         [ sg.Text("", size=(textLength,2), key='Player output')],
         [ sg.Text("")],
         [ sg.Text("Intervals of time for a five:")],
-        [ sg.Text("Team:"), sg.Input(size=teamSize, key='Team five input'), sg.Text("Five:"), sg.Input(key='Five input', tooltip="Introduce the players separed by a comma\nExample: L. James, K. Leonard, S. Curry, J. Harden, C. Paul",size=(60,1)), sg.Button("OK", key="Five OK") ],
+        [   sg.Text("Team:"),
+            sg.Input(size=teamSize, key='Team five input', tooltip="You can write the location, the club name, both or the abbreviation\nFor example: Denver, Nuggets, Denver Nuggets or DEN"),
+            sg.Text("Five:"),
+            sg.Input(key='Five input', tooltip="Introduce the players separed by a comma\nExample: L. James, K. Leonard, S. Curry, J. Harden, C. Paul",size=(60,1)),
+            sg.Button("OK", key="Five OK") ],
         [ sg.Text("", size=(textLength,1), key='Five output')],
         [ sg.Text("")],
         [ sg.Button('Back to analyse match menu')]
@@ -180,6 +234,20 @@ def seePbP_menu():
     ]
     return sg.Window("Play-by-play Menu", layout)
 
+def helpTextPbP_menu():
+    textSize = (12, 1)
+    layout = [
+        [ sg.Text("S, 2, 5, O:", size=textSize), sg.Text("2-point shot from 5ft that went out") ],
+        [ sg.Text("S, 2, 5, I A 23:", size=textSize), sg.Text("2-point shot from 5ft that went in, assisted by #23") ],
+        [ sg.Text("R, O/D:", size=textSize), sg.Text("offensive/deffensive rebound") ],
+        [ sg.Text("T:", size=textSize), sg.Text("turnover") ],
+        [ sg.Text("St, 23:", size=textSize), sg.Text("steal, the ball was stolen from #23") ],
+        [ sg.Text("B, 23:", size=textSize), sg.Text("block, #23 was its receiver") ],
+        [ sg.Text("F, 23:", size=textSize), sg.Text("foul, drawn by #23") ],
+        [ sg.Text("C, 23:", size=textSize), sg.Text("change, #23 is the one that enters the game") ]
+    ]
+    return sg.Window("Help Menu", layout)
+
 def textPbP_menu(game):
     os.chdir(os.path.dirname(__file__))
     with open(game.PbPFile, encoding="utf-8") as f:
@@ -193,9 +261,9 @@ def textPbP_menu(game):
         row = pd.Series(row, index=cols)
         plays = plays.append(row, ignore_index=True)
     layout = [
-        [ sg.Text("Text play-by-play Menu") ],
-        [sg.Table(values=plays.values.tolist(), headings=cols, justification="left", num_rows=20, row_height=15)],
-        [sg.Button('Back to play-by-play menu')]
+        [ sg.Text("Text play-by-play Menu", size=(66,1)), sg.Button('Help') ],
+        [ sg.Table(values=plays.values.tolist(), headings=cols, justification="left", num_rows=20, row_height=15) ],
+        [ sg.Button('Back to play-by-play menu') ]
     ]
     return sg.Window("Text play-by-play Menu", layout)
 
@@ -213,44 +281,52 @@ def visualPbP_menu():
 
 def analyseBoxScore(game, table):
     window = analyseBoxScore_menu(table, game)
-    event, values = window.read()
 
-    window.close()
-    try:
+    while True:
+        event, values = window.read()
         if event == 'Filter':
-            print(values['Pla'], values['Cat'], values['Val'])
-            if values['Pla']:
-                players = values['Filter condition']
-                players = players.split(", ")
-                table = game.filter_by_players(table, players)
-                analyseBoxScore(game, table)
+            window.close()
+            try:
+                if values['Pla']:
+                    players = values['Filter condition']
+                    players = players.split(", ")
+                    table = game.filter_by_players(table, players)
+                    analyseBoxScore(game, table)
 
-            elif values['Cat']:
-                cats = values['Filter condition']
-                if not (isinstance(cats,str) and cats in ("simple", "shooting", "rebounding")):
-                    cats = cats.split(", ")
-                table = game.filter_by_categories(table, cats)
-                analyseBoxScore(game, table)
+                elif values['Cat']:
+                    cats = values['Filter condition']
+                    if not (isinstance(cats,str) and cats in ("simple", "shooting", "rebounding")):
+                        cats = cats.split(", ")
+                    table = game.filter_by_categories(table, cats)
+                    analyseBoxScore(game, table)
 
-            elif values['Val']:
-                cats = values['Filter condition']
-                auxCats = cats.split(", ")
-                auxCats = list(map(lambda x: x.split(": "), auxCats))
-                cats = {}
-                for cat in auxCats:
-                    cats[cat[0]] = int(cat[1])
-                table = game.filter_by_value(table, cats)
-                analyseBoxScore(game, table)
-        
+                elif values['Val']:
+                    cats = values['Filter condition']
+                    auxCats = cats.split(", ")
+                    auxCats = list(map(lambda x: x.split(": "), auxCats))
+                    cats = {}
+                    for cat in auxCats:
+                        cats[cat[0]] = int(cat[1])
+                    table = game.filter_by_value(table, cats)
+                    analyseBoxScore(game, table)
+                break
+            except:
+                sg.popup_error("There was an error in your input. Please check the syntax you need to use")
+        elif event == 'Help':
+            helpWindow = helpAnalyseBoxScore_menu(table.columns.tolist())
+            helpEvent, _ = helpWindow.read()
+            if helpEvent == sg.WIN_CLOSED:
+                helpWindow.close()
         elif event == 'Save':
-            # print(window['hola'])
             game.box_score_save(table, pkl=values['SaveFile'], folder="Files/")
             analyseBoxScore(game, table)
-    except:
-        sg.popup_error("There was an error in your input. Please check the syntax you need to use")
-    if event == 'Back to choose box score menu':
-        window.close()
-        chooseBoxScore(game)
+        elif event == 'Back to choose box score menu':
+            window.close()
+            chooseBoxScore(game)
+            break
+        elif event == sg.WIN_CLOSED:
+            window.close()
+            break
 
 
 def chooseBoxScore(game):
@@ -339,10 +415,10 @@ def assistsStatistics(game):
     assists = game.assist_map()
 
     window = assistsStatistics_menu(assists)
-    event, values = window.read()
     plt.imshow(assists[0])
     plt.show()
 
+    event, values = window.read()
     if event == 'Back to analyse match menu':
         window.close()
         analyseMatch(game)
@@ -358,11 +434,22 @@ def visualPbP(game):
 
 def textPbP(game):
     window = textPbP_menu(game)
-    event, values = window.read()
+    while True:
+        event, _ = window.read()
+        if event == 'Help':
+            helpWindow = helpTextPbP_menu()
+            helpEvent, _ = helpWindow.read()
+            if helpEvent == sg.WIN_CLOSED:
+                helpWindow.close()
 
-    if event == 'Back to play-by-play menu':
-        window.close()
-        seePbP(game)
+        elif event == 'Back to play-by-play menu':
+            window.close()
+            seePbP(game)
+            break
+
+        elif event == sg.WIN_CLOSED:
+            window.close()
+            break
 
 
 def seePbP(game):
