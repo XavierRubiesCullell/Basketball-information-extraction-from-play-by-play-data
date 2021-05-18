@@ -67,7 +67,21 @@ def show_action(action, window, imageFolder):
             print(action.strip().split(", ")[1:], "\n")
         else:
             window['ActionText'].update(str(action.strip().split(", ")[1:]))
-            window['ActionImage'].update(data=convert_to_bytes(f"{imageFolder}/Bryant.jpg", resize=(200,200)))
+            actionType = action.strip().split(", ")[3]
+            if actionType == "S":
+                window['ActionImage'].update(data=convert_to_bytes(f"{imageFolder}/Bryant.jpg", resize=(200,200)))
+            elif actionType == "R":
+                window['ActionImage'].update(data=convert_to_bytes(f"{imageFolder}/Bryant.jpg", resize=(200,200)))
+            elif actionType == "T":
+                window['ActionImage'].update(data=convert_to_bytes(f"{imageFolder}/Bryant.jpg", resize=(200,200)))
+            elif actionType == "St":
+                window['ActionImage'].update(data=convert_to_bytes(f"{imageFolder}/Bryant.jpg", resize=(200,200)))
+            elif actionType == "B":
+                window['ActionImage'].update(data=convert_to_bytes(f"{imageFolder}/Bryant.jpg", resize=(200,200)))
+            elif actionType == "F":
+                window['ActionImage'].update(data=convert_to_bytes(f"{imageFolder}/Bryant.jpg", resize=(200,200)))
+            elif actionType == "C":
+                window['ActionImage'].update(data=convert_to_bytes(f"{imageFolder}/Bryant.jpg", resize=(200,200)))
 
 
 def update_score(line, score):
