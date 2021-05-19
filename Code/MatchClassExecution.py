@@ -1,4 +1,4 @@
-from MatchClass import *
+from MatchClass import Match
 
 home = "Denver"
 away = "Dallas"

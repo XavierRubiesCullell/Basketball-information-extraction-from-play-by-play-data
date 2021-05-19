@@ -1,5 +1,6 @@
-Code/Files/
-Code/Prova*
 __pycache__/
+Code/Files/Seasons/*
+!Code/Files/Seasons/.gitkeep
+Code/Prova*
 Organisation/~$Apunts.docx
 Organisation/~$Gantt.xlsx

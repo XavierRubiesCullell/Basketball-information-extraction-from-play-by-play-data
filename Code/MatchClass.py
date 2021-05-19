@@ -23,24 +23,25 @@ def convert_date_match(date):
     return date.strftime("%Y%m%d")
 
 class Match():
-    def __init__(self, home, away, date, PbPFolder="Files/", PbPFile=None):
+    def __init__(self, home, away, date, fileFolder="Files/"):
         '''
         - home: name of the local team. It can be the city, the club name or a combination (string)
         - away: name of the visiting team. It can be the city, the club name or a combination (string)
         - date: date of the match (string in YYYY/MM/DD format)
-        - PbPFolder: directory where the standard PbP file is/will be located (string)
-        - PbPFile: name of the standard PbP file (string)
+        - fileFolder: directory where the Matches folder is/will be located (string)
         '''
         os.chdir(os.path.dirname(__file__))
         self.home = get_team(home)
         self.away = get_team(away)
         self.date = date
-        if PbPFile is None:
-            PbPFile = self.home + "_" + self.away + "_" + convert_date_match(self.date) + "_StandardPbP.txt"
-        self.PbPFile = PbPFolder+PbPFile
+        self.matchName = self.home + "_" + self.away + "_" + convert_date_match(self.date)
+        path = os.getcwd()
+        self.path = path + "/" + fileFolder + "Matches/" + self.matchName + "/"
+        if not os.path.isdir(self.path):
+            os.mkdir(self.path)
+        self.PbPFile = self.path + "/" + self.matchName + "_StandardPbP.txt"
         if not os.path.exists(self.PbPFile):
             self.lastQ = StandardPbPObtention_main('https://www.basketball-reference.com/boxscores/pbp/'+convert_date_match(date)+'0'+self.home+'.html', outFile = self.PbPFile)
-        # self.boxscore will probably be generated
     
     def get_lastQ(self):
         '''
@@ -75,12 +76,14 @@ class Match():
         table = boxs[0].append(boxs[1])
         return table[['Team'] + table.columns.tolist()[:-1]]
     
-    def box_score_save(self, table, pkl="", folder="Files/"):
+    def box_score_save(self, table, pkl="", folder=None):
         '''
         This function saves the box scores in a CSV
         - folder: relative path to the folder where the box score will be saved (string)
         - pkl: name of the file (string)
         '''
+        if folder is None:
+            folder = self.path
         path = folder + self.home + "_" + self.away + "_" + convert_date_match(self.date) + "_BS_" + pkl + ".csv"
         table.to_csv(path, sep = ";", encoding="utf8")
 
