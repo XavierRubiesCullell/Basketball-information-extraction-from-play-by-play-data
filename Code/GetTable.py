@@ -15,11 +15,23 @@ def convert_date_season(date):
 
 
 def treat_drought(drought):
+    '''
+    This function converts the scoring drought to minutes
+    '''
     hours, mins, seconds = drought.split(":")
-    return int(mins) + int(seconds)/60
+    return round(int(mins) + int(seconds)/60, 1)
 
 
 def get_value(game, statistic, team, category, player):
+    '''
+    This function treats all the matches in a season and does the desired computation for each of them
+    - game: match we are treating (Match instance)
+    - statistic: statistic that we want to study (string)
+    - category: category we want to study in case the statistic is boxscore (string)
+    - player: player we want to study in case the statistic is boxscore (string)
+    Output:
+    - value of the corresponding match (integer/float)
+    '''
     if statistic == "streak":
         return game.greatest_streak()[team]
     if statistic == "partial":
@@ -38,29 +50,35 @@ def get_value(game, statistic, team, category, player):
         return value.iloc[0,0]
 
 
-def treat_match(row, team, currentDate, table, statistic, category, player):
+def treat_match(row, team, table, statistic, category, player):
     '''
     This function treats all the matches in a season and does the desired computation for each of them
     - row: row in the season table (bs4.element.Tag)
     - team: name of the team. It can be the city, the club name or a combination (string)
-    - currentDate: date at the time of the query (string)
+    - table: table where the value of the match will be added (pandas.DataFrame)
+    - statistic: statistic that we want to study (string)
+    - category: category we want to study in case the statistic is boxscore (string)
+    - player: player we want to study in case the statistic is boxscore (string)
+    Output:
+    - table: table with the value added
     '''
     cols = row.find_all('td')
     if len(cols) == 14:
         date = cols[0].text
+        played = cols[3].text == "Box Score"
         location = cols[4].text
         opTeam = cols[5].text
 
-        date = convert_date_season(date)
-        isAway = (location == "@")
-        if isAway:
-            home = opTeam
-            away = team
-        else:
-            home = team
-            away = opTeam
+        if played:
+            date = convert_date_season(date)
+            isAway = (location == "@")
+            if isAway:
+                home = opTeam
+                away = team
+            else:
+                home = team
+                away = opTeam
 
-        if date < currentDate:
             game = Match(home, away, date)
             value = get_value(game, statistic, isAway, category, player)
             row = [date, opTeam, value]
@@ -79,12 +97,11 @@ def main(team, season, matchList, statistic, category=None, player=None):
     - category: category we want to study in case the statistic is boxscore (string)
     - player: player we want to study in case the statistic is boxscore (string)
     '''
-    currentDate = datetime.date.today().strftime("%Y/%m/%d")
     if statistic == "box score" and player is None:
         player = "TOTAL"
 
     table = pd.DataFrame(columns=["Date", "Opponent", "Value"])
     for line in matchList:
-        table = treat_match(line, team, currentDate, table, statistic, category, player)
+        table = treat_match(line, team, table, statistic, category, player)
 
     return table

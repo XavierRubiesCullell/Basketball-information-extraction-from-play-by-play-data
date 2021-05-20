@@ -4,7 +4,7 @@ import urllib.request
 import altair as alt
 
 from Functions import *
-from GetInfo import main as GetInfo_main
+from GetTable import main as GetTable_main
 
 class Season():
     def __init__(self, team, season, fileFolder="Files/"):
@@ -14,10 +14,9 @@ class Season():
         - fileFolder: directory where the Matches folder is/will be located (string)
         '''
         os.chdir(os.path.dirname(__file__))
-        self.team = team
-        self.shortTeam = get_team(team)
+        self.team = get_team(team)
         self.season = season
-        self.seasonName = self.shortTeam + "_" + self.season
+        self.seasonName = self.team + "_" + self.season
         path = os.getcwd()
         self.path = path + "/" + fileFolder + "Seasons/" + self.seasonName + "/"
         if not os.path.isdir(self.path):
@@ -25,19 +24,19 @@ class Season():
 
         # information retrieval:
         season = self.season.split("-")[1]
-        webpage = f"https://www.basketball-reference.com/teams/{self.shortTeam}/{season}_games.html"
+        webpage = f"https://www.basketball-reference.com/teams/{self.team}/{season}_games.html"
         response = urllib.request.urlopen(webpage)
         htmlDoc = response.read()
         soup = BeautifulSoup(htmlDoc, 'html.parser')
         self.matchList = soup.find_all('tr')
     
-    def get_info(self, statistic, category=None, player=None):
+    def get_table(self, statistic, category=None, player=None):
         '''
         - statistic: statistic that we want to study (string)
         - category: category we want to study in case the statistic is boxscore (string)
         - player: player we want to study in case the statistic is boxscore (string)
         '''
-        return GetInfo_main(self.team, self.season, self.matchList, statistic, category, player)
+        return GetTable_main(self.team, self.season, self.matchList, statistic, category, player)
 
     def plot_line(self, table, statistic):
         '''
@@ -50,11 +49,18 @@ class Season():
             point=True
         ).encode(
             x = alt.X('index:T', title = "match"),
-            y = alt.Y('Value:Q', title = statistic),
+            y = alt.Y('Value:Q', title = "value"),
             tooltip = ['Date:T', 'Opponent:N']
         ).add_selection(
             alt.selection_single()
         )
+        if statistic == "streak":
+            statistic = "Greatest scoring streak"
+        elif statistic == "partial":
+            statistic = "Greatest partial"
+        elif statistic == "drought":
+            statistic = "Longest scoring drought"
+        chart = alt.layer(chart, title = statistic + " along the " + self.season + "by" + self.team)
 
         rule = alt.Chart(table).mark_rule(color='darkblue').encode(
             y = alt.Y('mean(Value):Q')
