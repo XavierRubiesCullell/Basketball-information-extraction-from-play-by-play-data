@@ -30,6 +30,7 @@ class Season():
         soup = BeautifulSoup(htmlDoc, 'html.parser')
         self.matchList = soup.find_all('tr')
     
+
     def get_table(self, statistic, category=None, player=None):
         '''
         - statistic: statistic that we want to study (string)
@@ -38,7 +39,17 @@ class Season():
         '''
         return GetTable_main(self.team, self.season, self.matchList, statistic, category, player)
 
-    def plot_line(self, table, statistic):
+
+    def save_table(self, table, name):
+        '''
+        This function saves the plot 'plot' in FileDirectory/Seasons/seasonName:
+        - plot: altair plot object (altair.vegalite.v4.api.LayerChart)
+        - name: name we want for the chart. Chart will be saved in (string)
+        '''
+        table.to_csv(self.path + self.seasonName + "_" + name + ".csv", sep = ";", encoding="utf8")
+
+
+    def plot_line(self, table, statistic, category=None, player=None):
         '''
         - table: values we want to plat (pandas.DataFrame)
         - statistic: statistic that we want to plot, in order to use it as an axis name (string)
@@ -54,18 +65,25 @@ class Season():
         ).add_selection(
             alt.selection_single()
         )
-        if statistic == "streak":
-            statistic = "Greatest scoring streak"
-        elif statistic == "partial":
-            statistic = "Greatest partial"
-        elif statistic == "drought":
-            statistic = "Longest scoring drought"
-        chart = alt.layer(chart, title = statistic + " along the " + self.season + "by" + self.team)
+        if statistic == "box score":
+            statistic = category
+            author = player
+        else:
+            author = self.team
+            if statistic == "streak":
+                statistic = "Greatest scoring streak"
+            elif statistic == "partial":
+                statistic = "Greatest partial"
+            elif statistic == "drought":
+                statistic = "Longest scoring drought"
+            
+        chart = alt.layer(chart, title = statistic + " along the " + self.season + " season by " + author)
 
         rule = alt.Chart(table).mark_rule(color='darkblue').encode(
             y = alt.Y('mean(Value):Q')
         )
         return (chart + rule).properties(width=750)
+
 
     def save_plot(self, plot, name):
         '''
