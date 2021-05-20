@@ -5,6 +5,7 @@ import datetime
 import os
 
 from MatchClass import Match
+from SeasonClass import Season
 from Functions import get_team
 
 
@@ -277,6 +278,75 @@ def visualPbP_menu():
     return sg.Window("Visual PbP", layout)
 
 
+def defineSeason_menu():
+    textSize = (7,1)
+    inputSize = (25,1)
+    layout = [
+        [ sg.Text("Season definition menu") ],
+        [ sg.Text("Team", size=textSize), sg.Input(key='Team', size=inputSize, tooltip="You can write the location, the club name, both or the abbreviation\nFor example: Denver, Nuggets, Denver Nuggets or DEN") ],
+        [ sg.Text("Season", size=textSize), sg.Input(key='Season', size=inputSize, tooltip="Indicate the season in format YYYY-YYYY") ],
+        [ sg.Button('OK')],
+        [ sg.Text("")],
+        [ sg.Button('Back to main menu')]
+    ]
+    return sg.Window("Define Season Menu", layout)
+
+
+def analyseSeason_menu():
+    buttonSize = (20,1)
+    layout = [
+        [ sg.Text("Season analysis menu") ],
+        [ sg.Button('Statistic evolution', size = buttonSize)],
+        [ sg.Text("")],
+        [ sg.Button('Back to define season menu')]
+    ]
+    return sg.Window("Analyse Season Menu", layout)
+
+
+def statisticElection_menu():
+    radioSize = (10,1)
+    layout = [
+        [ sg.Text("Statistic election menu") ],
+        [ sg.Radio('Streak', "RADIO1", size=radioSize, key='Streak') ],
+        [ sg.Radio('Partial', "RADIO1", size=radioSize, key='Partial') ],
+        [ sg.Radio('Drought', "RADIO1", size=radioSize, key='Drought') ],
+        [ sg.Radio('Box score', "RADIO1", size=radioSize, key='BS'),
+            sg.Text("Category"),
+            sg.Input(key='Category', size=(7,1)),
+            sg.Text("Player"),
+            sg.Input(key='Player', size=(20,1), tooltip="If no input is given, team value is considered") ],
+        [ sg.Button('OK') ],
+        [ sg.Text("*Box score is slow (takes about 2 minutes) and program may warn it is not answering, but just let it work") ],
+        [ sg.Text("") ],
+        [ sg.Button('Back to analyse season menu') ]
+    ]
+    return sg.Window("Statistic Evolution Menu", layout)
+
+
+def statisticAnalysis_menu():
+    buttonSize = (20,1)
+    layout = [
+        [ sg.Text("Statistic analysis menu") ],
+        [ sg.Button('See table', size = buttonSize) ],
+        [ sg.Button('Save plot', size = buttonSize) ],
+        [ sg.Text("") ],
+        [ sg.Button('Back to statistic election menu') ]
+    ]
+    return sg.Window("Statistic Analysis Menu", layout)
+
+
+def statisticTable_menu(season, table, statistic):
+    auxTable = create_table(table, "Match")
+    layout = [
+        [   sg.Table(values=auxTable.values.tolist(),
+            headings=auxTable.columns.tolist(),
+            alternating_row_color = 'gray') ],
+        [ sg.Button('Save') ],
+        [ sg.Button('Back to statistic analysis menu') ]
+    ]
+    return sg.Window("Statistic Table Menu", layout)
+
+
 ### INTERACTIVE FUNCTIONS
 
 def analyseBoxScore(game, table):
@@ -506,6 +576,102 @@ def defineMatch():
         main()
 
 
+def statisticTable(season, table, statistic, category, player):
+    window = statisticTable_menu(season, table, statistic)
+    event, values = window.read()
+
+    if event == 'Save':
+        window.close()
+        if statistic == "box score":
+            name = category + "_" + player
+        else:
+            name = statistic
+        season.save_table(table, name)
+        statisticTable(season, table, statistic, category, player)
+    elif event == 'Back to statistic analysis menu':
+        window.close()
+        statisticAnalysis(season, table, statistic, category, player)
+
+
+def statisticAnalysis(season, table, statistic, category, player):
+    window = statisticAnalysis_menu()
+    event, values = window.read()
+
+    if event == 'See table':
+        window.close()
+        statisticTable(season, table, statistic, category, player)
+
+    elif event == 'Save plot':
+        plot = season.plot_line(table, statistic, category, player)
+        if statistic == "box score":
+            name = category + "_" + player
+        else:
+            name = statistic
+        season.save_plot(plot, name)
+        window.close()
+        statisticAnalysis(season, table, statistic, category, player)
+    
+    elif event == 'Back to statistic election menu':
+        window.close()
+        statisticElection(season)
+
+
+def statisticElection(season):
+    window = statisticElection_menu()
+    event, values = window.read()
+
+    if event == 'OK':
+        if values['BS']:
+            statistic = "box score"
+            category = values['Category']
+            player = values['Player']
+            if player == "":
+                player = None
+            table = season.get_table(statistic, category, player)
+        else:
+            if values['Streak']:
+                statistic = "streak"
+            elif values['Partial']:
+                statistic = "partial"
+            elif values['Drought']:
+                statistic = "drought"
+            table = season.get_table(statistic)     
+            category = player = None
+        
+        window.close()
+        statisticAnalysis(season, table, statistic, category, player)
+    
+    elif event == 'Back to analyse season menu':
+        window.close()
+        analyseSeason(season)
+
+
+def analyseSeason(season):
+    window = analyseSeason_menu()
+    event, values = window.read()
+
+    if event == 'Statistic evolution':
+        window.close()
+        statisticElection(season)
+    
+    elif event == 'Back to define season menu':
+        window.close()
+        defineSeason()
+
+
+def defineSeason():
+    window = defineSeason_menu()
+    event, values = window.read()
+
+    if event == 'OK':
+        season = Season(values['Team'], values['Season'])
+        window.close()
+        analyseSeason(season)
+    elif event == 'Back to main menu':
+        window.close()
+        main()
+
+
 def main():
     window = main_menu()
     event, values = window.read()
@@ -513,6 +679,10 @@ def main():
     if event == 'Analyse match':
         window.close()
         defineMatch()
+
+    elif event == 'Analyse season':
+        window.close()
+        defineSeason()
 
 if __name__ == '__main__':
     main()
