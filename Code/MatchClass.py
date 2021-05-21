@@ -8,6 +8,7 @@ from QuarterScorings import main as QuarterScorings_main
 from LongestDrought import main as LongestDrought_main
 from GreatestPartial import main as GreatestPartial_main
 from GreatestStreak import main as GreatestStreak_main
+from ShootingStatistics import main as ShootingStatistics_main
 from AssistMap import main as AssistMap_main
 from PlayingIntervals import main as PlayingIntervals_main
 from FiveOnCourt import main as FiveOnCourt_main
@@ -76,15 +77,15 @@ class Match():
         table = boxs[0].append(boxs[1])
         return table[['Team'] + table.columns.tolist()[:-1]]
     
-    def box_score_save(self, table, pkl="", folder=None):
+    def box_score_save(self, table, name="", folder=None):
         '''
         This function saves the box scores in a CSV
         - folder: relative path to the folder where the box score will be saved (string)
-        - pkl: name of the file (string)
+        - name: name specification for the file (string)
         '''
         if folder is None:
             folder = self.path
-        path = folder + self.home + "_" + self.away + "_" + convert_date_match(self.date) + "_BS_" + pkl + ".csv"
+        path = folder + self.matchName + "_BS_" + name + ".csv"
         table.to_csv(path, sep = ";", encoding="utf8")
 
     def filter_by_players(self, table, players):
@@ -156,9 +157,9 @@ class Match():
 
     def quarter_scorings(self, end=None):
         '''
-        This function returns the scoring at every quarter end until time reaches 'end'
+        This function returns the scoring at each quarter end until time reaches 'end'
         - end: stopping time to compute the scoring (string)
-        Ouput: pandas.DataFrame
+        Output: pandas.DataFrame
         '''
         if end is None:
             end = self.get_lastQ()+":00:00"
@@ -166,37 +167,62 @@ class Match():
 
     def longest_drought(self):
         '''
-        This function returns the longest time for every team without scoring
-        Ouput: list of strings
+        This function returns the longest time for each team without scoring
+        Output: list of strings
         '''
         return LongestDrought_main(self.PbPFile, self.get_lastQ())
 
     def greatest_partial(self):
         '''
-        This function returns the greatest partial (consecutive points without the opponent scoring) for every team
-        Ouput: list of integers
+        This function returns the greatest partial (consecutive points without the opponent scoring) for each team
+        Output: list of integers
         '''
         return GreatestPartial_main(self.PbPFile)
     
     def greatest_streak(self):
         '''
-        This function returns the maximum amount of consecutive points without missing for every team
-        Ouput: list of integers
+        This function returns the maximum amount of consecutive points without missing for each team
+        Output: list of integers
         '''
         return GreatestStreak_main(self.PbPFile)
 
+    def get_shooting_table(self):
+        '''
+        This function returns the table with the shots for every distance from hoop for each team
+        Output: list of pandas.DataFrame
+        '''
+        return ShootingStatistics_main(self.PbPFile)
+
+    def save_shooting_table(self, team, folder=None):
+        '''
+        This function saves the shooting statistics table of the desired team
+        - team: team id (integer)
+        '''
+        table = self.get_shooting_table()
+        if folder is None:
+            folder = self.path
+        if team == 1:
+            teamName = self.home
+        else:
+            teamName = self.away
+        path = folder + self.matchName + "_shooting_" + teamName + ".csv"
+        table[team-1].to_csv(path, sep = ";", encoding="utf8")
+# get_shooting_plot(self)
+    # table = self.get_shooting_table()
+# save_shooting_plot
+    # plot = self.get_shooting_plot()
     def assist_map(self):
         '''
         This function draws the assists between each team members
-        Ouput: assist matrix (list of pandas.DataFrame). M[i][j] indicates the number of assists from player i to player j
+        Output: assist matrix (list of pandas.DataFrame). M[i][j] indicates the number of assists from player i to player j
         '''
         return AssistMap_main(self.PbPFile)
   
     def playing_intervals(self):
         '''
-        This function returns the playing intervals for every player and the 5 on court for each interval
+        This function returns the playing intervals for each player and the 5 on court for each interval
         Output:
-        - playersintervals: playing intervals for every team member (list [dictionary of {string: list of tuples}])
+        - playersintervals: playing intervals for each team member (list [dictionary of {string: list of tuples}])
         - oncourtintervals: players on court for each interval without changes (list [dictionary of {tuple: set of strings}])
         '''
         return PlayingIntervals_main(self.PbPFile)
@@ -214,7 +240,7 @@ class Match():
         This function returns the intervals an introduced five played
         - team: players' team (integer)
         - five: list of players (list)
-        Ouput: list of the intervals (list: [(start, end)])
+        Output: list of the intervals (list: [(start, end)])
         '''
         return FivesIntervals_main(self.playing_intervals()[1][team], five)
     

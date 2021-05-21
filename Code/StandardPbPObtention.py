@@ -33,7 +33,7 @@ def shoot(play, outLine):
             try:
                 outLine.append(dist.group(1))
             except AttributeError:
-                pass
+                outLine.append("0")
         except ValueError:
             outLine.append("1")
 

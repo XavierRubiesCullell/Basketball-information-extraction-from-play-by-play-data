@@ -48,6 +48,15 @@ print(game.greatest_partial())
 print("\n\ngreatest_streak")
 print(game.greatest_streak())
 
+print("\n\nshooting statistics")
+shotStats = game.get_shooting_table()
+print("home")
+print(shotStats[0])
+print("away")
+print(shotStats[1])
+
+game.save_shooting_table(1)
+
 import seaborn
 import matplotlib.pyplot as plt
 
