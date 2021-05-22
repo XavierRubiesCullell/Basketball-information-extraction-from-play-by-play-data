@@ -7,13 +7,13 @@ game = Match(home, away, date)
 
 print("\n\nget_lastQ")
 print(game.get_lastQ())
+
 print("\n\nbox_scores")
+
 table = game.box_scores(joint = True)
-print(table)
+game.save_box_score(table, "joint")
+
 tables = game.box_scores(joint = False)
-
-game.box_score_save(table, "joint")
-
 print("\nHome team boxscore from BoxScores.py")
 print(tables[0])
 print("\nAway team boxscore from BoxScores.py")
@@ -57,14 +57,19 @@ print(shotStats[1])
 
 game.save_shooting_table(1)
 
+plot = game.get_shooting_plot(1)
+plot.show()
+
+game.save_shooting_plot(1)
+
 import seaborn
 import matplotlib.pyplot as plt
 
 print("\n\nassist_map")
 assists = game.assist_map()
-# print(assists[0])
-# print(assists[1])
-# print(seaborn.heatmap(assists[0]))
+print(assists[0])
+print(assists[1])
+print(seaborn.heatmap(assists[0]))
 plt.imshow(assists[0])
 plt.show()
 

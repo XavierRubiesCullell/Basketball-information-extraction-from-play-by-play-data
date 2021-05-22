@@ -388,7 +388,7 @@ def analyseBoxScore(game, table):
             if helpEvent == sg.WIN_CLOSED:
                 helpWindow.close()
         elif event == 'Save':
-            game.box_score_save(table, pkl=values['SaveFile'])
+            game.save_box_score(table, name=values['SaveFile'])
             analyseBoxScore(game, table)
         elif event == 'Back to choose box score menu':
             window.close()

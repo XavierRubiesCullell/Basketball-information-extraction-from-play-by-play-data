@@ -9,6 +9,7 @@ from LongestDrought import main as LongestDrought_main
 from GreatestPartial import main as GreatestPartial_main
 from GreatestStreak import main as GreatestStreak_main
 from ShootingStatistics import main as ShootingStatistics_main
+from ShootingStatisticsPlot import main as ShootingStatisticsPlot_main
 from AssistMap import main as AssistMap_main
 from PlayingIntervals import main as PlayingIntervals_main
 from FiveOnCourt import main as FiveOnCourt_main
@@ -77,7 +78,7 @@ class Match():
         table = boxs[0].append(boxs[1])
         return table[['Team'] + table.columns.tolist()[:-1]]
     
-    def box_score_save(self, table, name="", folder=None):
+    def save_box_score(self, table, name="", extension='csv', folder=None):
         '''
         This function saves the box scores in a CSV
         - folder: relative path to the folder where the box score will be saved (string)
@@ -85,8 +86,13 @@ class Match():
         '''
         if folder is None:
             folder = self.path
-        path = folder + self.matchName + "_BS_" + name + ".csv"
-        table.to_csv(path, sep = ";", encoding="utf8")
+        path = folder + self.matchName + "_BS_" + name
+        if extension == 'csv':
+            path += ".csv"
+            table.to_csv(path, sep = ";", encoding="utf8")
+        elif extension == 'html':
+            path += ".html"
+            table.to_html(path, encoding="utf8")
 
     def filter_by_players(self, table, players):
         '''
@@ -193,10 +199,12 @@ class Match():
         '''
         return ShootingStatistics_main(self.PbPFile)
 
-    def save_shooting_table(self, team, folder=None):
+    def save_shooting_table(self, team, extension='csv', folder=None):
         '''
         This function saves the shooting statistics table of the desired team
         - team: team id (integer)
+        - extension: type of the file where the table will be saved. It can either be csv or html (string)
+        - folder: folder where the table will be saved (string)
         '''
         table = self.get_shooting_table()
         if folder is None:
@@ -205,12 +213,40 @@ class Match():
             teamName = self.home
         else:
             teamName = self.away
-        path = folder + self.matchName + "_shooting_" + teamName + ".csv"
-        table[team-1].to_csv(path, sep = ";", encoding="utf8")
-# get_shooting_plot(self)
-    # table = self.get_shooting_table()
-# save_shooting_plot
-    # plot = self.get_shooting_plot()
+        path = folder + self.matchName + "_shooting_table_" + teamName
+        if extension == 'csv':
+            path += ".csv"
+            table[team-1].to_csv(path, sep = ";", encoding="utf8")
+        elif extension == 'html':
+            path += ".html"
+            table[team-1].to_html(path, encoding="utf8")
+
+    def get_shooting_plot(self, team):
+        '''
+        This function returns the plot with the shots for every distance from hoop for each team
+        - team: team id (integer)
+        '''
+        shootingTables = self.get_shooting_table()
+        return ShootingStatisticsPlot_main(shootingTables[team-1])
+    
+    def save_shooting_plot(self, team, extension='svg', folder=None):
+        '''
+        This function saves the shooting statistics plot of the desired team
+        - team: team id (integer)
+        - extension: type of the file where the plot will be saved. It can be svg or pdf (vector), or png, jpeg or webp (raster)  (string)
+        - folder: folder where the plot will be saved (string)
+        '''
+        plot = self.get_shooting_plot(team)
+        if folder is None:
+            folder = self.path
+        if team == 1:
+            teamName = self.home
+        else:
+            teamName = self.away
+        if extension in ('svg', 'pdf', 'png', 'jpeg', 'webp'):
+            path = folder + self.matchName + "_shooting_plot_" + teamName + "." + extension
+            plot.write_image(path)
+
     def assist_map(self):
         '''
         This function draws the assists between each team members
