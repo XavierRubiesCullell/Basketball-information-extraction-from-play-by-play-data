@@ -1,9 +1,5 @@
-import os
-import datetime
 import pandas as pd
 import numpy as np
-import seaborn
-import matplotlib.pyplot as plt
 
 
 def check_player(player, ast):
@@ -22,7 +18,7 @@ def treat_line(line, assists):
     '''
     This function is launched to detect the type of play an action is and treat it in case it is a shot
     - line: action that we are going to study (string)
-    - assists: matrix of the assists (pandas DataFrame)
+    - assists: matrix of the assists (pandas.DataFrame)
     '''
     action = line.split(", ")
 
@@ -40,35 +36,36 @@ def treat_line(line, assists):
                 assists[team-1].loc[assistant, scorer] += 1
 
 
-def main(file):
+def main(file, assists=None):
     '''
     This function draws the assists between each team members
-    ast[i][j] indicates the number of assists from player i to player j
+    assists[i][j] indicates the number of assists from player i to player j
     - file: play-by-play input file (string)
+    - assists: if not null, matrix where the assist values will be added (pandas.DataFrame)
     Output: assist matrix (pandas.DataFrame)
     '''
-    os.chdir(os.path.dirname(__file__))
-
-    assists = [pd.DataFrame(dtype=int), pd.DataFrame(dtype=int)]
+    if assists is None:
+        assists = [pd.DataFrame(dtype=int), pd.DataFrame(dtype=int)]
+    else:
+        assists[0] = assists[0].drop(index = ["TOTAL"])
+        assists[0] = assists[0].drop(columns = ["TOTAL"])
+        assists[1] = assists[1].drop(index = ["TOTAL"])
+        assists[1] = assists[1].drop(columns = ["TOTAL"])
 
     with open(file, encoding="utf-8") as f:
         lines = f.readlines()
-        for line in lines:
-            line = line.strip()
-            treat_line(line, assists)
+    for line in lines:
+        line = line.strip()
+        treat_line(line, assists)
 
-    for i in range(2):
+    for team in range(1,3):
         # correction of automatic .0 at 1st column:
-        assists[i] = assists[i].astype({assists[i].columns[0]: 'int'})
+        assists[team-1] = assists[team-1].astype({assists[team-1].columns[0]: 'int'})
         # sorting according to players' name:
-        assists[i].sort_index(0, inplace=True)
-        assists[i].sort_index(1, inplace=True)
+        assists[team-1].sort_index(0, inplace=True)
+        assists[team-1].sort_index(1, inplace=True)
         # marginal values computation:
-        assists[i]["TOTAL"] = assists[i].apply(np.sum, axis=1)
-        assists[i].loc["TOTAL"] = assists[i].apply(np.sum)
-
-    # print(seaborn.heatmap(assists[0]))
-    # plt.imshow(assists[0])
-    # plt.show()
+        assists[team-1]["TOTAL"] = assists[team-1].apply(np.sum, axis=1)
+        assists[team-1].loc["TOTAL"] = assists[team-1].apply(np.sum)
 
     return assists

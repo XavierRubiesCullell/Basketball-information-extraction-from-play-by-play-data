@@ -2,6 +2,11 @@ import pandas as pd
 import numpy as np
 
 def treat_line(line, shots):
+    '''
+    This function is launched to detect the type of play an action is and treat it in case it is a shot
+    - line: action that we are going to study (string)
+    - shots: table of the shots (pandas.DataFrame)
+    '''
     action = line.split(", ")
 
     if len(action) > 3 and action[3] == "S":
@@ -20,6 +25,12 @@ def treat_line(line, shots):
             
 
 def main(file, shots=None):
+    '''
+    This function builds the shooting statistics table
+    - file: play-by-play input file (string)
+    - shots: if not null, matrix where the shooting values will be added (pandas.DataFrame)
+    Output: shooting table (pandas.DataFrame)
+    '''
     if shots is None:
         shots = [ pd.DataFrame(columns=['Shots made', 'Shots attempted']) ]*2
     else:
