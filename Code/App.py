@@ -9,7 +9,7 @@ from SeasonClass import Season
 from Functions import get_team
 
 
-### AUXILIARY FUNCTIONS
+# AUXILIARY FUNCTIONS
 
 def convert_date_match(date):
     '''
@@ -33,9 +33,8 @@ def create_table(table, indexCol):
     cols = cols[-1:] + cols[:-1]
     return auxTable[cols]
 
-
-### WINDOW FUNCTIONS
-
+# ----------------------------------------------------------------------------------
+# WINDOW FUNCTIONS
 def main_menu():
     buttonSize = (17,1)
     layout = [
@@ -45,6 +44,7 @@ def main_menu():
     ]
     return sg.Window("Main Menu", layout)
 
+## 1. Analyse match
 def defineMatch_menu():
     buttonSize = (5,1)
     inputSize = (25,1)
@@ -55,7 +55,7 @@ def defineMatch_menu():
         [ sg.Text("Date", size=buttonSize), sg.Input(key='Date', size=(15,1), tooltip="Use the ISO standard: YYYY/MM/DD"), sg.CalendarButton(button_text="Calendar", format = "%Y/%m/%d", target='Date', begin_at_sunday_plus=1)],
         [ sg.Button('OK')],
         [ sg.Text("")],
-        [ sg.Button('Back to main menu')]
+        [ sg.Button('Back')]
     ]
     return sg.Window("Define Match Menu", layout)
 
@@ -66,14 +66,15 @@ def analyseMatch_menu():
         [ sg.Button('Box scores', size = buttonSize)],
         [ sg.Button('Match statistics', size = buttonSize)],
         [ sg.Button('Playing times', size = buttonSize)],
-        [ sg.Button('Assists statistics', size = buttonSize)],
         [ sg.Button('Shooting statistics', size = buttonSize)],
+        [ sg.Button('Assist statistics', size = buttonSize)],
         [ sg.Button('See play-by-play', size = buttonSize)],
         [ sg.Text("")],
-        [ sg.Button('Back to define match menu')]
+        [ sg.Button('Back')]
     ]
     return sg.Window("Analyse Match Menu", layout)
 
+### 1.1. Box score
 def chooseBoxScore_menu():
     inputSize = (15,1)
     layout = [
@@ -85,7 +86,7 @@ def chooseBoxScore_menu():
         [ sg.Checkbox("Local", key = 'Local'), sg.Checkbox("Visiting", key = 'Visiting')],
         [ sg.Button('OK')],
         [ sg.Text("")],
-        [ sg.Button('Back to analyse match menu')]
+        [ sg.Button('Back')]
     ]
     return sg.Window("Box score election menu", layout)
 
@@ -108,7 +109,7 @@ def helpAnalyseBoxScore_menu(cols):
         "OR": "offensive rebounds",
         "DR": "deffensive rebounds",
         "TR": "total rebounds",
-        "Ast": "assists",
+        "Ast": "assist",
         "PtsC": "points contribution (points by the player + points after an assist by the player)",
         "Bl": "blocks",
         "St": "steals",
@@ -154,10 +155,11 @@ def analyseBoxScore_menu(table, game):
             sg.Button('Save')
         ],
         [ sg.Text("")],
-        [ sg.Button('Back to choose box score menu')]
+        [ sg.Button('Back')]
     ]
     return sg.Window("Box score menu", layout)
 
+### 1.2. Match statistics
 def matchStatistics_menu(game):
     table1 = create_table(game.quarter_scorings(), " ")
     layout1 = [
@@ -181,11 +183,12 @@ def matchStatistics_menu(game):
         [sg.Text("Match statistics:")],
         layout2,
         [ sg.Text("")],
-        [sg.Button('Back to analyse match menu')]
+        [sg.Button('Back')]
     ]
 
     return sg.Window("Match Statistics Menu", layout)
 
+### 1.3. Playing times
 def playingTimes_menu(game):
     teamSize = (25,1)
     textLength = 80
@@ -212,18 +215,74 @@ def playingTimes_menu(game):
             sg.Button("OK", key="Five OK") ],
         [ sg.Text("", size=(textLength,1), key='Five output')],
         [ sg.Text("")],
-        [ sg.Button('Back to analyse match menu')]
+        [ sg.Button('Back')]
     ]
     return sg.Window("Playing Times Menu", layout)
 
-def assistsStatistics_menu(assists):
+### 1.4. Shooting statistics
+def teamElection_menu():
+    radioSize = (10,1)
     layout = [
-        [ sg.Text("Assists statistics Menu") ],
+        [ sg.Radio("Local", "RADIO1", size=radioSize, key='Local') ],
+        [ sg.Radio("Visiting", "RADIO1", size=radioSize, key='Visiting') ],
+        [ sg.Button('OK') ],
         [ sg.Text("") ],
-        [ sg.Button('Back to analyse match menu') ]
+        [ sg.Button('Back') ]
     ]
-    return sg.Window("Assists statistics Menu", layout)
+    return sg.Window("Team election Menu", layout)
 
+def shootingStatisticsTable_menu(game, team):
+    table = game.get_shooting_table()[team-1]
+    table = create_table(table, "Distance (ft)")
+    layout = [
+        [ sg.Button('Save') ],
+        [ sg.Table(values=table.values.tolist(), headings=table.columns.tolist(), num_rows=len(table), hide_vertical_scroll = True) ],
+        [ sg.Button('Back') ]
+    ]
+    return sg.Window("Shooting statistics table Menu", layout)
+
+def shootingStatisticsPlot_menu():
+    layout = [
+        [ sg.Text("Shooting statistics plot Menu") ],
+        [ sg.Button('Show plot') ],
+        [ sg.Button('Save plot') ],
+        [ sg.Text("") ],
+        [ sg.Button('Back') ]
+    ]
+    return sg.Window("Shooting statistics plot Menu", layout)
+
+def shootingStatistics_menu():
+    layout = [
+        [ sg.Text("Shooting statistics Menu") ],
+        [ sg.Button('Shooting statistics table') ],
+        [ sg.Button('Shooting statistics plot') ],
+        [ sg.Text("") ],
+        [ sg.Button('Back') ]
+    ]
+    return sg.Window("Shooting statistics Menu", layout)
+
+### 1.5. Assist statistics
+def assistStatisticsMatrix_menu(game, team):
+    table = game.get_assist_matrix()[team-1]
+    table = create_table(table, " ")
+    layout = [
+        [ sg.Button('Save') ],
+        [ sg.Table(values=table.values.tolist(), headings=table.columns.tolist(), num_rows=len(table), hide_vertical_scroll = True) ],
+        [ sg.Button('Back') ]
+    ]
+    return sg.Window("Assist statistics table Menu", layout)
+
+def assistStatistics_menu():
+    layout = [
+        [ sg.Text("Assist statistics Menu") ],
+        [ sg.Button('Assist statistics matrix') ],
+        [ sg.Button('Assist statistics plot') ],
+        [ sg.Text("") ],
+        [ sg.Button('Back') ]
+    ]
+    return sg.Window("Assist statistics Menu", layout)
+
+### 1.6. PbP
 def seePbP_menu():
     buttonSize = (15,1)
     layout = [
@@ -231,7 +290,7 @@ def seePbP_menu():
         [ sg.Button('Text mode', size = buttonSize)],
         [ sg.Button('Visual mode', size = buttonSize)],
         [ sg.Text("")],
-        [ sg.Button('Back to analyse match menu')]
+        [ sg.Button('Back')]
     ]
     return sg.Window("Play-by-play Menu", layout)
 
@@ -264,7 +323,7 @@ def textPbP_menu(game):
     layout = [
         [ sg.Text("Text play-by-play Menu", size=(66,1)), sg.Button('Help') ],
         [ sg.Table(values=plays.values.tolist(), headings=cols, justification="left", num_rows=20, row_height=15) ],
-        [ sg.Button('Back to play-by-play menu') ]
+        [ sg.Button('Back') ]
     ]
     return sg.Window("Text play-by-play Menu", layout)
 
@@ -273,11 +332,11 @@ def visualPbP_menu():
         [sg.Text(key="ActionText", size=(40,1))],
         [sg.Image(key="ActionImage")],
         [sg.Text("", size=(20,1), key="Clock"), sg.Text("", size=(10,1), key="Score")],
-        [sg.Button('Back to play-by-play menu')]
+        [sg.Button('Back')]
     ]
     return sg.Window("Visual PbP", layout)
 
-
+## 2. Analyse season
 def defineSeason_menu():
     textSize = (7,1)
     inputSize = (25,1)
@@ -287,7 +346,7 @@ def defineSeason_menu():
         [ sg.Text("Season", size=textSize), sg.Input(key='Season', size=inputSize, tooltip="Indicate the season in format YYYY-YYYY") ],
         [ sg.Button('OK')],
         [ sg.Text("")],
-        [ sg.Button('Back to main menu')]
+        [ sg.Button('Back')]
     ]
     return sg.Window("Define Season Menu", layout)
 
@@ -298,7 +357,7 @@ def analyseSeason_menu():
         [ sg.Text("Season analysis menu") ],
         [ sg.Button('Statistic evolution', size = buttonSize)],
         [ sg.Text("")],
-        [ sg.Button('Back to define season menu')]
+        [ sg.Button('Back')]
     ]
     return sg.Window("Analyse Season Menu", layout)
 
@@ -318,7 +377,7 @@ def statisticElection_menu():
         [ sg.Button('OK') ],
         [ sg.Text("*Box score is slow (takes about 2 minutes) and program may warn it is not answering, but just let it work") ],
         [ sg.Text("") ],
-        [ sg.Button('Back to analyse season menu') ]
+        [ sg.Button('Back') ]
     ]
     return sg.Window("Statistic Evolution Menu", layout)
 
@@ -330,7 +389,7 @@ def statisticAnalysis_menu():
         [ sg.Button('See table', size = buttonSize) ],
         [ sg.Button('Save plot', size = buttonSize) ],
         [ sg.Text("") ],
-        [ sg.Button('Back to statistic election menu') ]
+        [ sg.Button('Back') ]
     ]
     return sg.Window("Statistic Analysis Menu", layout)
 
@@ -342,13 +401,15 @@ def statisticTable_menu(season, table, statistic):
             headings=auxTable.columns.tolist(),
             alternating_row_color = 'gray') ],
         [ sg.Button('Save') ],
-        [ sg.Button('Back to statistic analysis menu') ]
+        [ sg.Button('Back') ]
     ]
     return sg.Window("Statistic Table Menu", layout)
 
 
-### INTERACTIVE FUNCTIONS
+# ----------------------------------------------------------------------------------
+# INTERACTIVE FUNCTIONS
 
+### 1.1. Box score
 def analyseBoxScore(game, table):
     window = analyseBoxScore_menu(table, game)
 
@@ -390,7 +451,7 @@ def analyseBoxScore(game, table):
         elif event == 'Save':
             game.save_box_score(table, name=values['SaveFile'])
             analyseBoxScore(game, table)
-        elif event == 'Back to choose box score menu':
+        elif event == 'Back':
             window.close()
             chooseBoxScore(game)
             break
@@ -420,20 +481,20 @@ def chooseBoxScore(game):
                 table = boxScores[1]
         window.close()
         analyseBoxScore(game, table)
-    elif event == 'Back to analyse match menu':
+    elif event == 'Back':
         window.close()
         analyseMatch(game)
 
-
+### 1.2. Match statistics
 def matchStatistics(game):
     window = matchStatistics_menu(game)
     event, values = window.read()
 
-    if event == 'Back to analyse match menu':
+    if event == 'Back':
         window.close()
         analyseMatch(game)
 
-
+### 1.3. Playing times
 def playingTimes(game):
     window = playingTimes_menu(game)
     while True:
@@ -469,7 +530,7 @@ def playingTimes(game):
             intervals = game.fives_intervals(team-1, players)
             window['Five output'].update(intervals)
 
-        elif event == 'Back to analyse match menu':
+        elif event == 'Back':
             window.close()
             analyseMatch(game)
             break
@@ -478,22 +539,137 @@ def playingTimes(game):
             window.close()
             break
 
-
-def assistsStatistics(game):
-    import seaborn
-    import matplotlib.pyplot as plt
-    assists = game.assist_map()
-
-    window = assistsStatistics_menu(assists)
-    plt.imshow(assists[0])
-    plt.show()
-
+### 1.4. Shooting statistics
+def shootingStatisticsTable(game, team):
+    window = shootingStatisticsTable_menu(game, team)
     event, values = window.read()
-    if event == 'Back to analyse match menu':
+    if event == 'Save':
+        window.close()
+        game.save_shooting_table(team)
+        shootingStatisticsTable(game, team)
+
+    elif event == 'Back':
+        window.close()
+        shootingStatisticsTableElection(game)
+
+
+def shootingStatisticsTableElection(game):
+    window = teamElection_menu()
+    event, values = window.read()
+
+    if event == 'OK':
+        window.close()
+        if values['Local']:
+            window.close()
+            shootingStatisticsTable(game, 1)
+        elif values['Visiting']:
+            window.close()
+            shootingStatisticsTable(game, 2)
+
+    elif event == 'Back':
+        window.close()
+        shootingStatistics(game)
+
+
+def shootingStatisticsPlot(game, team):
+    window = shootingStatisticsPlot_menu()
+    event, values = window.read()
+
+    if event == 'Show plot':
+        plot = game.get_shooting_plot(team)
+        plot.show()
+        window.close()
+        shootingStatisticsPlot(game, team)
+    elif event == 'Save plot':
+        game.save_shooting_plot(team)
+        window.close()
+        shootingStatisticsPlot(game, team)
+    elif event == 'Back':
+        window.close()
+        shootingStatisticsPlotElection(game)
+
+def shootingStatisticsPlotElection(game):
+    window = teamElection_menu()
+    event, values = window.read()
+
+    if event == 'OK':
+        window.close()
+        if values['Local']:
+            window.close()
+            shootingStatisticsPlot(game, 1)
+        elif values['Visiting']:
+            window.close()
+            shootingStatisticsPlot(game, 2)
+
+    elif event == 'Back':
+        window.close()
+        shootingStatistics(game)
+
+
+def shootingStatistics(game):
+    window = shootingStatistics_menu()
+    event, values = window.read()
+
+    if event == 'Shooting statistics table':
+        window.close()
+        shootingStatisticsTableElection(game)
+    elif event == 'Shooting statistics plot':
+        window.close()
+        shootingStatisticsPlotElection(game)
+    elif event == 'Back':
         window.close()
         analyseMatch(game)
 
 
+### 1.5. Assist statistics
+def assistStatisticsMatrix(game, team):
+    window = assistStatisticsMatrix_menu(game, team)
+    event, values = window.read()
+    if event == 'Save':
+        window.close()
+        game.save_assist_matrix(team)
+        assistStatisticsMatrix(game, team)
+    elif event == 'Back':
+        window.close()
+        assistStatisticsMatrixElection(game)
+
+
+def assistStatisticsMatrixElection(game):
+    window = teamElection_menu()
+    event, values = window.read()
+
+    if event == 'OK':
+        window.close()
+        if values['Local']:
+            window.close()
+            assistStatisticsMatrix(game, 1)
+        elif values['Visiting']:
+            window.close()
+            assistStatisticsMatrix(game, 2)
+
+    elif event == 'Back':
+        window.close()
+        assistStatistics(game)
+
+
+def assistStatistics(game):
+    window = assistStatistics_menu()
+    event, values = window.read()
+
+    if event == 'Assist statistics matrix':
+        window.close()
+        assistStatisticsMatrixElection(game)
+    
+    elif event == 'Assist statistics plot':
+        window.close()
+        analyseMatch(game)
+
+    elif event == 'Back':
+        window.close()
+        analyseMatch(game)
+
+
+### 1.6. PbP
 def visualPbP(game):
     window = visualPbP_menu()
     event, values = window.read(timeout=25)
@@ -512,7 +688,7 @@ def textPbP(game):
             if helpEvent == sg.WIN_CLOSED:
                 helpWindow.close()
 
-        elif event == 'Back to play-by-play menu':
+        elif event == 'Back':
             window.close()
             seePbP(game)
             break
@@ -529,16 +705,14 @@ def seePbP(game):
     if event == 'Text mode':
         window.close()
         textPbP(game)
-
     elif event == 'Visual mode':
         window.close()
         visualPbP(game)
-
-    elif event == 'Back to analyse match menu':
+    elif event == 'Back':
         window.close()
         analyseMatch(game)
 
-
+## 1. Analyse match
 def analyseMatch(game):
     window = analyseMatch_menu()
     event, values = window.read()
@@ -552,13 +726,16 @@ def analyseMatch(game):
     elif event == 'Playing times':
         window.close()
         playingTimes(game)
-    elif event == 'Assists statistics':
+    elif event == 'Shooting statistics':
         window.close()
-        assistsStatistics(game)
+        shootingStatistics(game)
+    elif event == 'Assist statistics':
+        window.close()
+        assistStatistics(game)
     elif event == 'See play-by-play':
         window.close()
         seePbP(game)
-    elif event == 'Back to define match menu':
+    elif event == 'Back':
         window.close()
         defineMatch()
 
@@ -571,11 +748,11 @@ def defineMatch():
         game = Match(values['Home'], values['Away'], values['Date'])
         window.close()
         analyseMatch(game)
-    elif event == 'Back to main menu':
+    elif event == 'Back':
         window.close()
         main()
 
-
+## 2. Analyse season
 def statisticTable(season, table, statistic, category, player):
     window = statisticTable_menu(season, table, statistic)
     event, values = window.read()
@@ -588,7 +765,7 @@ def statisticTable(season, table, statistic, category, player):
             name = statistic
         season.save_table(table, name)
         statisticTable(season, table, statistic, category, player)
-    elif event == 'Back to statistic analysis menu':
+    elif event == 'Back':
         window.close()
         statisticAnalysis(season, table, statistic, category, player)
 
@@ -611,7 +788,7 @@ def statisticAnalysis(season, table, statistic, category, player):
         window.close()
         statisticAnalysis(season, table, statistic, category, player)
     
-    elif event == 'Back to statistic election menu':
+    elif event == 'Back':
         window.close()
         statisticElection(season)
 
@@ -641,7 +818,7 @@ def statisticElection(season):
         window.close()
         statisticAnalysis(season, table, statistic, category, player)
     
-    elif event == 'Back to analyse season menu':
+    elif event == 'Back':
         window.close()
         analyseSeason(season)
 
@@ -654,7 +831,7 @@ def analyseSeason(season):
         window.close()
         statisticElection(season)
     
-    elif event == 'Back to define season menu':
+    elif event == 'Back':
         window.close()
         defineSeason()
 
@@ -667,7 +844,7 @@ def defineSeason():
         season = Season(values['Team'], values['Season'])
         window.close()
         analyseSeason(season)
-    elif event == 'Back to main menu':
+    elif event == 'Back':
         window.close()
         main()
 

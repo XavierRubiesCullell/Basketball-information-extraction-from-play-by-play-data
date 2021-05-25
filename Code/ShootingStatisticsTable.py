@@ -33,6 +33,8 @@ def main(file, shots=None):
     '''
     if shots is None:
         shots = [ pd.DataFrame(columns=['Shots made', 'Shots attempted']) ]*2
+        shots[0].index.name = 'Distance (ft)'
+        shots[1].index.name = 'Distance (ft)'
     else:
         shots[0] = shots[0].drop(index = ["TOTAL"])
         shots[1] = shots[1].drop(index = ["TOTAL"])
