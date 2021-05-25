@@ -1,4 +1,3 @@
-import os
 from bs4 import BeautifulSoup
 import urllib.request
 import datetime
@@ -242,8 +241,6 @@ def main(webpage, outFile):
     - outFile: path of the file where the standard PbP will be stored (string)
     Ouput: last quarter of the match (string)
     '''
-    os.chdir(os.path.dirname(__file__))
-
     global actions
     actions = []
     global neutralActions

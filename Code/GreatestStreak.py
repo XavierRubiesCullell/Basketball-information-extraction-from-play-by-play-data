@@ -1,7 +1,4 @@
-import os
-import datetime
 import pandas as pd
-import numpy as np
 
 from Functions import *
 
@@ -41,8 +38,6 @@ def main(file):
     - file: play-by-play input file (string)
     Output: maximum scoring streak for each team (list of integers)
     '''
-    os.chdir(os.path.dirname(__file__))
-
     streak = [0, 0]
     maxStreak = [0, 0]
 

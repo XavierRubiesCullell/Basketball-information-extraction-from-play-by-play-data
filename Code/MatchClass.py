@@ -1,7 +1,7 @@
 import os
 import pandas as pd
-from Functions import *
 
+from Functions import *
 from StandardPbPObtention import main as StandardPbPObtention_main
 from BoxScores import main as BoxScores_main
 from QuarterScorings import main as QuarterScorings_main

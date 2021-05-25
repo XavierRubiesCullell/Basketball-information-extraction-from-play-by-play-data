@@ -1,6 +1,5 @@
 import pandas as pd
 import datetime
-import os
 import numpy as np
 
 from Functions import *
@@ -431,7 +430,6 @@ def main(file, start, end):
     '''
     global categories
     categories = ['Mins', '2PtM', '2PtA', '2Pt%', '3PtM', '3PtA', '3Pt%', 'FGM', 'FGA', 'FG%', 'FTM', 'FTA', 'FT%', 'OR', 'DR', 'TR', 'Ast', 'PtsC', 'Bl', 'St', 'To', 'PF', 'DF', 'AstPts', 'Pts', '+/-']
-    os.chdir(os.path.dirname(__file__))
 
     start = time_from_string(start)
     end = time_from_string(end)

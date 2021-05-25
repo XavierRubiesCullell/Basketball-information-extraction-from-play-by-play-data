@@ -1,7 +1,4 @@
-import os
 import datetime
-import pandas as pd
-import numpy as np
 
 from Functions import *
 
@@ -172,8 +169,6 @@ def main(file):
     - playersIntervals: playing intervals for every team member (dictionary of {string: list of tuples})
     - oncourtIntervals: players on court for each interval without changes (dictionary of {tuple: set of strings})
     '''
-    os.chdir(os.path.dirname(__file__))
-
     playerIntervals = [{}, {}]
     oncourt = [{}, {}]
     tempOncourtIntervals = [{}, {}]
@@ -183,9 +178,9 @@ def main(file):
 
     with open(file, encoding="utf-8") as f:
         lines = f.readlines()
-        for line in lines:
-            line = line.strip()
-            Q = treat_line(line, Q, oncourt, playerIntervals, tempOncourtIntervals, oncourtIntervals, lastChange)
+    for line in lines:
+        line = line.strip()
+        Q = treat_line(line, Q, oncourt, playerIntervals, tempOncourtIntervals, oncourtIntervals, lastChange)
     quarter_end(Q, oncourt, playerIntervals, oncourtIntervals, lastChange)
 
     return playerIntervals, oncourtIntervals

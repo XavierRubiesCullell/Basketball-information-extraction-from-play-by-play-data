@@ -1,7 +1,4 @@
-import os
-import datetime
 import pandas as pd
-import numpy as np
 
 from Functions import *
 
@@ -35,8 +32,6 @@ def main(file, lastQ):
     - lastQ: last quarter of the match (string)
     Output: maximum time interval without scoring (list)
     '''
-    os.chdir(os.path.dirname(__file__))
-
     lastTime = [None, None]
     maxLength = [None, None]
 

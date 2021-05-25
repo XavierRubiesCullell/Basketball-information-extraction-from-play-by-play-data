@@ -1,7 +1,4 @@
-import os
-import datetime
 import pandas as pd
-import numpy as np
 
 
 def treat_line(line, partial, maxPartial, lastTeam):
@@ -40,8 +37,6 @@ def main(file):
     - file: play-by-play input file (string)
     Output: maximum partial in favour for each team (list of integers)
     '''
-    os.chdir(os.path.dirname(__file__))
-
     partial = 0
     maxPartial = [0, 0]
     lastTeam = 0

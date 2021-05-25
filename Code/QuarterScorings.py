@@ -1,5 +1,3 @@
-import os
-import datetime
 import pandas as pd
 import numpy as np
 
@@ -77,8 +75,6 @@ def main(file, home, away, end):
     - end: ending time we are considering (string)
     Output: scoring of the quarters and total scoring (pandas.DataFrame)
     '''
-    os.chdir(os.path.dirname(__file__))
-
     scores = pd.DataFrame(index=[home, away])
     QScores = [0, 0]
     Q = 1
