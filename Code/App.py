@@ -93,7 +93,6 @@ def chooseBoxScore_menu():
 def helpAnalyseBoxScore_menu(cols):
     textSize = (9, 1)
     explanation = {
-        "Mins": "minutes played",
         "2PtM": "2-point shots made",
         "2PtA": "2-point shots attempted",
         "2Pt%": "2-point shots percentage",
@@ -127,6 +126,8 @@ def helpAnalyseBoxScore_menu(cols):
     # layout2 = [
     #     [sg.Text(word)]
     # ]
+    if cols[0] == 'Team':
+        del cols[0]
     if cols[0] == 'Mins':
         del cols[0]
     layout = [
@@ -136,19 +137,31 @@ def helpAnalyseBoxScore_menu(cols):
 
 def analyseBoxScore_menu(table, game):
     auxTable = create_table(table, "Player")
+    indentation = (1,1)
     layout = [
         [ sg.Button('Help') ],
         [ sg.Table(values=auxTable.values.tolist(), headings=auxTable.columns.tolist(), num_rows=len(auxTable), alternating_row_color = 'gray', hide_vertical_scroll = True) ],
         [ sg.Text("Filter:") ],
-        [ sg.Input(key='Filter condition') ],
-        [
+        [ 
+            sg.Text("", size=indentation),
+            sg.Input(key='Filter condition'),
             sg.Radio('Filter by players', "RADIO1", key="Pla", tooltip="Format: player1, player2, player3, ..."),
             sg.Radio('Filter by categories', "RADIO1", key="Cat", tooltip="Format: category1, category2, category3, ..."),
             sg.Radio('Filter by value', "RADIO1", key="Val", tooltip="Format: category1: value1, category2: value2, category3: value3, ..."),
             sg.Button('Filter')
         ],
-        [sg.Text("Save:")],
+        [ 
+            sg.Text("", size=indentation),
+            sg.Text("Categories"),
+            sg.Input(key='Top categories', tooltip="Format: category1, category2, category3, ..."),
+            sg.Text("#players"),
+            sg.Input(key='n', size=(3,1)),
+            sg.Combo(("maximum","minimum"), default_value="maximum", tooltip="whether the lowest or the highest values are desired", key='Condition'),
+            sg.Button('Get top')
+        ],
+        [ sg.Text("Save:") ],
         [
+            sg.Text("", size=indentation),
             sg.Text("The box score will be saved in: " + game.home + "_" + game.away + "_" + convert_date_match(game.date) + "_BS_"),
             sg.Input(key='SaveFile', size = (15,1)),
             sg.Text(".csv"),
@@ -415,7 +428,12 @@ def analyseBoxScore(game, table):
 
     while True:
         event, values = window.read()
-        if event == 'Filter':
+        if event == 'Help':
+            helpWindow = helpAnalyseBoxScore_menu(table.columns.tolist())
+            helpEvent, _ = helpWindow.read()
+            if helpEvent == sg.WIN_CLOSED:
+                helpWindow.close()
+        elif event == 'Filter':
             window.close()
             try:
                 if values['Pla']:
@@ -443,11 +461,13 @@ def analyseBoxScore(game, table):
                 break
             except:
                 sg.popup_error("There was an error in your input. Please check the syntax you need to use")
-        elif event == 'Help':
-            helpWindow = helpAnalyseBoxScore_menu(table.columns.tolist())
-            helpEvent, _ = helpWindow.read()
-            if helpEvent == sg.WIN_CLOSED:
-                helpWindow.close()
+        elif event == 'Get top':
+            cats = values['Top categories']
+            cats = cats.split(", ")
+            print(values['Condition']=="maximum")
+            table = game.top_players(table, cats, n=int(values['n']), max=values['Condition']=="maximum")
+            window.close()
+            analyseBoxScore(game, table)
         elif event == 'Save':
             game.save_box_score(table, name=values['SaveFile'])
             analyseBoxScore(game, table)

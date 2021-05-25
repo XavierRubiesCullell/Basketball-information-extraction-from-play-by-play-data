@@ -141,7 +141,7 @@ class Match():
             table = table.loc[table[cat] >= val]
         return table
 
-    def top_players(self, table, categories, n=None, max=False):
+    def top_players(self, table, categories, n=None, max=True):
         '''
         This function returns the top n players having the maximum/minimum value in var
         - var: category(ies) we are interested in (string)
@@ -156,7 +156,7 @@ class Match():
         table = table[categories]
         if "TOTAL" in table.index:
             table = table.drop(index = ["TOTAL"])
-        table = table.sort_values(by=categories, ascending=max)
+        table = table.sort_values(by=categories, ascending=not max)
         if n is not None:
             table = table[:n]
         return table
