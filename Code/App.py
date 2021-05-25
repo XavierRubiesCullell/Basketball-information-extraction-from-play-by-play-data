@@ -2,7 +2,6 @@ import PySimpleGUI as sg
 import pandas as pd
 import numpy as np
 import datetime
-import os
 
 from MatchClass import Match
 from SeasonClass import Season
@@ -180,6 +179,7 @@ def matchStatistics_menu(game):
     ]
 
     table2 = pd.DataFrame(np.array((
+        ["Greatest difference"]+list(game.greatest_difference()),
         ["Longest drought"]+list(game.longest_drought()),
         ["Greatest partial"]+list(game.greatest_partial()),
         ["Greatest streak"]+list(game.greatest_streak()))
@@ -322,7 +322,6 @@ def helpTextPbP_menu():
     return sg.Window("Help Menu", layout)
 
 def textPbP_menu(game):
-    os.chdir(os.path.dirname(__file__))
     with open(game.PbPFile, encoding="utf-8") as f:
         lines = f.readlines()
 
@@ -376,12 +375,13 @@ def analyseSeason_menu():
 
 
 def statisticElection_menu():
-    radioSize = (10,1)
+    radioSize = (13,1)
     layout = [
         [ sg.Text("Statistic election menu") ],
-        [ sg.Radio('Streak', "RADIO1", size=radioSize, key='Streak') ],
-        [ sg.Radio('Partial', "RADIO1", size=radioSize, key='Partial') ],
-        [ sg.Radio('Drought', "RADIO1", size=radioSize, key='Drought') ],
+        [ sg.Radio('Greatest difference', "RADIO1", size=radioSize, key='Difference') ],
+        [ sg.Radio('Greatest streak', "RADIO1", size=radioSize, key='Streak') ],
+        [ sg.Radio('Greatest partial', "RADIO1", size=radioSize, key='Partial') ],
+        [ sg.Radio('Longest drought', "RADIO1", size=radioSize, key='Drought') ],
         [ sg.Radio('Box score', "RADIO1", size=radioSize, key='BS'),
             sg.Text("Category"),
             sg.Input(key='Category', size=(7,1)),
@@ -826,12 +826,14 @@ def statisticElection(season):
                 player = None
             table = season.get_table(statistic, category, player)
         else:
+            if values['Difference']:
+                statistic = "greatest difference"
             if values['Streak']:
-                statistic = "streak"
+                statistic = "greatest streak"
             elif values['Partial']:
-                statistic = "partial"
+                statistic = "greatest partial"
             elif values['Drought']:
-                statistic = "drought"
+                statistic = "longest drought"
             table = season.get_table(statistic)     
             category = player = None
         

@@ -5,6 +5,7 @@ from Functions import *
 from StandardPbPObtention import main as StandardPbPObtention_main
 from BoxScores import main as BoxScores_main
 from QuarterScorings import main as QuarterScorings_main
+from GreatestDifference import main as GreatestDifference_main
 from LongestDrought import main as LongestDrought_main
 from GreatestPartial import main as GreatestPartial_main
 from GreatestStreak import main as GreatestStreak_main
@@ -171,6 +172,13 @@ class Match():
             end = self.get_lastQ()+":00:00"
         return QuarterScorings_main(self.PbPFile, self.home, self.away, end)
 
+    def greatest_difference(self):
+        '''
+        This function returns the greatest difference in favour of each team
+        Output: list of integers
+        '''
+        return GreatestDifference_main(self.PbPFile)
+
     def longest_drought(self):
         '''
         This function returns the longest time for each team without scoring
@@ -277,7 +285,7 @@ class Match():
         elif extension == 'html':
             path += ".html"
             matrix.to_html(path, encoding="utf8")
-        
+
 
     def playing_intervals(self):
         '''
