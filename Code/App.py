@@ -134,30 +134,14 @@ def helpAnalyseBoxScore_menu(cols):
     ]
     return sg.Window("Help Menu", layout)
 
-def analyseBoxScore_menu(table, game):
+def analyseBoxScore_menu(game, table):
     auxTable = create_table(table, "Player")
     indentation = (1,1)
     layout = [
         [ sg.Button('Help') ],
         [ sg.Table(values=auxTable.values.tolist(), headings=auxTable.columns.tolist(), num_rows=len(auxTable), alternating_row_color = 'gray', hide_vertical_scroll = True) ],
         [ sg.Text("Filter:") ],
-        [ 
-            sg.Text("", size=indentation),
-            sg.Input(key='Filter condition'),
-            sg.Radio('Filter by players', "RADIO1", key="Pla", tooltip="Format: player1, player2, player3, ..."),
-            sg.Radio('Filter by categories', "RADIO1", key="Cat", tooltip="Format: category1, category2, category3, ..."),
-            sg.Radio('Filter by value', "RADIO1", key="Val", tooltip="Format: category1: value1, category2: value2, category3: value3, ..."),
-            sg.Button('Filter')
-        ],
-        [ 
-            sg.Text("", size=indentation),
-            sg.Text("Categories"),
-            sg.Input(key='Top categories', tooltip="Format: category1, category2, category3, ..."),
-            sg.Text("#players"),
-            sg.Input(key='n', size=(3,1)),
-            sg.Combo(("maximum","minimum"), default_value="maximum", tooltip="whether the lowest or the highest values are desired", key='Condition'),
-            sg.Button('Get top')
-        ],
+        [ sg.Button('Filter by players'), sg.Button('Filter by categories'), sg.Button('Filter by values'), sg.Button('Get top players') ],
         [ sg.Text("Save:") ],
         [
             sg.Text("", size=indentation),
@@ -171,11 +155,51 @@ def analyseBoxScore_menu(table, game):
     ]
     return sg.Window("Box score menu", layout)
 
+def filterByPlayers_menu(game, table):
+    layout = [
+        [ sg.Text("List of players") ],
+        [ sg.Input(key='Filter condition', tooltip="Format: player1, player2, player3, ..."), sg.Button('Filter') ]
+    ]
+    return sg.Window("Filter by players Menu", layout)
+
+def filterByCategories_menu(game, table):
+    layout = [
+        [ sg.Text("List of categories") ],
+        [ sg.Input(key='Filter condition', tooltip="Format: category1, category2, category3, ..."), sg.Button('Filter') ]
+    ]
+    return sg.Window("Filter by categories Menu", layout)
+
+def filterByValues_menu(game, table):
+    layout = [
+        [ sg.Text("List of categories and their corresponding values") ],
+        [ sg.Input(key='Filter condition', tooltip="Format: category1: value1, category2: value2, category3: value3, ..."), sg.Button('Filter') ]
+    ]
+    return sg.Window("Filter by values Menu", layout)
+
+def filterByTop_menu(game, table):
+    layout = [
+        [ sg.Text("Returns the n players with the maximum/minimum values in the introduced categories") ],
+        [ sg.Text("List of categories"),
+        sg.Input(key='Filter condition', tooltip="Format: category1, category2, category3, ..."),
+        sg.Text("  n"),
+        sg.Input(key='n', size=(3,1)),
+        sg.Text(" "),
+        sg.Combo(("maximum","minimum"), default_value="maximum", readonly=True, tooltip="whether the lowest or the highest values are desired", key='Condition'),
+        sg.Button('Filter') ]
+    ]
+    return sg.Window("Filter top players Menu", layout)
+
 ### 1.2. Match statistics
 def matchStatistics_menu(game):
     table1 = create_table(game.quarter_scorings(), " ")
     layout1 = [
-        [sg.Table(values=table1.values.tolist(), headings=table1.columns.tolist(), col_widths = [5]*len(table1.columns), auto_size_columns = False, num_rows=len(table1), hide_vertical_scroll = True, row_height = 20)]
+        [ sg.Table(values=table1.values.tolist(),
+        headings = table1.columns.tolist(),
+        col_widths = [5]*len(table1.columns),
+        auto_size_columns = False,
+        num_rows=len(table1),
+        hide_vertical_scroll = True,
+        row_height = 20) ]
     ]
 
     table2 = pd.DataFrame(np.array((
@@ -185,18 +209,18 @@ def matchStatistics_menu(game):
         ["Longest drought"]+list(game.longest_drought())
         )), columns = ("Statistic", game.home, game.away))
     layout2 = [
-        [sg.Table(values=table2.values.tolist(), headings=table2.columns.tolist(), num_rows=len(table2), hide_vertical_scroll = True, row_height = 20)]
+        [ sg.Table(values=table2.values.tolist(), headings=table2.columns.tolist(), num_rows=len(table2), hide_vertical_scroll = True, row_height = 20) ]
     ]
     
     layout = [
-        [sg.Text("Match Statistics Menu")],
-        [sg.Text("Quarter scorings:")],
+        [ sg.Text("Match Statistics Menu") ],
+        [ sg.Text("Quarter scorings:") ],
         layout1,
-        [sg.Text("")],
-        [sg.Text("Match statistics:")],
+        [ sg.Text("") ],
+        [ sg.Text("Match statistics:") ],
         layout2,
         [ sg.Text("")],
-        [sg.Button('Back')]
+        [ sg.Button('Back') ]
     ]
 
     return sg.Window("Match Statistics Menu", layout)
@@ -362,7 +386,6 @@ def defineSeason_menu():
     ]
     return sg.Window("Define Season Menu", layout)
 
-
 def analyseSeason_menu():
     buttonSize = (20,1)
     layout = [
@@ -372,7 +395,6 @@ def analyseSeason_menu():
         [ sg.Button('Back')]
     ]
     return sg.Window("Analyse Season Menu", layout)
-
 
 def statisticElection_menu():
     radioSize = (13,1)
@@ -394,7 +416,6 @@ def statisticElection_menu():
     ]
     return sg.Window("Statistic Evolution Menu", layout)
 
-
 def statisticAnalysis_menu():
     buttonSize = (20,1)
     layout = [
@@ -405,7 +426,6 @@ def statisticAnalysis_menu():
         [ sg.Button('Back') ]
     ]
     return sg.Window("Statistic Analysis Menu", layout)
-
 
 def statisticTable_menu(season, table, statistic):
     auxTable = create_table(table, "Match")
@@ -418,13 +438,66 @@ def statisticTable_menu(season, table, statistic):
     ]
     return sg.Window("Statistic Table Menu", layout)
 
-
 # ----------------------------------------------------------------------------------
 # INTERACTIVE FUNCTIONS
 
 ### 1.1. Box score
+def filterByPlayers(game, table, BSWindow):
+    filterWindow = filterByPlayers_menu(game, table)
+    event, values = filterWindow.read()
+    if event == 'Filter':
+        players = values['Filter condition']
+        players = players.split(", ")
+        table = game.filter_by_players(table, players)
+        filterWindow.close()
+        BSWindow.close()
+        analyseBoxScore(game, table)
+
+
+def filterByCategories(game, table, BSWindow):
+    filterWindow = filterByCategories_menu(game, table)
+    event, values = filterWindow.read()
+    if event == 'Filter':
+        cats = values['Filter condition']
+        if not (isinstance(cats,str) and cats in ("simple", "shooting", "rebounding")):
+            cats = cats.split(", ")
+        table = game.filter_by_categories(table, cats)
+        filterWindow.close()
+        BSWindow.close()
+        analyseBoxScore(game, table)
+
+
+def filterByValues(game, table, BSWindow):
+    filterWindow = filterByValues_menu(game, table)
+    event, values = filterWindow.read()
+    if event == 'Filter':
+        cats = values['Filter condition']
+        auxCats = cats.split(", ")
+        auxCats = list(map(lambda x: x.split(": "), auxCats))
+        cats = {}
+        for cat in auxCats:
+            cats[cat[0]] = int(cat[1])
+
+        table = game.filter_by_value(table, cats)
+        filterWindow.close()
+        BSWindow.close()
+        analyseBoxScore(game, table)
+
+
+def filterByTop(game, table, BSWindow):
+    filterWindow = filterByTop_menu(game, table)
+    event, values = filterWindow.read()
+    if event == 'Filter':
+        cats = values['Filter condition']
+        cats = cats.split(", ")
+        table = game.top_players(table, cats, n=int(values['n']), max=values['Condition']=="maximum")
+        filterWindow.close()
+        BSWindow.close()
+        analyseBoxScore(game, table)
+
+
 def analyseBoxScore(game, table):
-    window = analyseBoxScore_menu(table, game)
+    window = analyseBoxScore_menu(game, table)
 
     while True:
         event, values = window.read()
@@ -433,44 +506,19 @@ def analyseBoxScore(game, table):
             helpEvent, _ = helpWindow.read()
             if helpEvent == sg.WIN_CLOSED:
                 helpWindow.close()
-        elif event == 'Filter':
-            window.close()
-            try:
-                if values['Pla']:
-                    players = values['Filter condition']
-                    players = players.split(", ")
-                    table = game.filter_by_players(table, players)
-                    analyseBoxScore(game, table)
-
-                elif values['Cat']:
-                    cats = values['Filter condition']
-                    if not (isinstance(cats,str) and cats in ("simple", "shooting", "rebounding")):
-                        cats = cats.split(", ")
-                    table = game.filter_by_categories(table, cats)
-                    analyseBoxScore(game, table)
-
-                elif values['Val']:
-                    cats = values['Filter condition']
-                    auxCats = cats.split(", ")
-                    auxCats = list(map(lambda x: x.split(": "), auxCats))
-                    cats = {}
-                    for cat in auxCats:
-                        cats[cat[0]] = int(cat[1])
-                    table = game.filter_by_value(table, cats)
-                    analyseBoxScore(game, table)
-                break
-            except:
-                sg.popup_error("There was an error in your input. Please check the syntax you need to use")
-        elif event == 'Get top':
-            cats = values['Top categories']
-            cats = cats.split(", ")
-            print(values['Condition']=="maximum")
-            table = game.top_players(table, cats, n=int(values['n']), max=values['Condition']=="maximum")
-            window.close()
-            analyseBoxScore(game, table)
+        elif event == 'Filter by players':
+            filterByPlayers(game, table, window)
+        elif event == 'Filter by categories':
+            filterByCategories(game, table, window)
+        elif event == 'Filter by values':
+            filterByValues(game, table, window)
+        elif event == 'Get top players':
+            filterByTop(game, table, window)
         elif event == 'Save':
             game.save_box_score(table, name=values['SaveFile'])
+            window.close()
             analyseBoxScore(game, table)
+            break
         elif event == 'Back':
             window.close()
             chooseBoxScore(game)
