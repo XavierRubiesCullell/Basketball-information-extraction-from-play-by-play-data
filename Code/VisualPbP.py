@@ -53,7 +53,8 @@ def show_header(t, score, window):
         print(t, score, sep="        ")
     else:
         window['Clock'].update(value=t)
-        window['Score'].update(value=score)
+        window['Score1'].update(value=score[0])
+        window['Score2'].update(value=score[1])
 
 def show_action(action, window, imageFolder):
     if action == "black":
@@ -95,6 +96,18 @@ def update_score(line, score):
             score[team-1] += points
 
 
+def pause(window):
+    window['Pause/Resume'].update("Resume")
+    while True:
+        event, _ = window.read()
+        if event == 'Pause/Resume':
+            window['Pause/Resume'].update("Pause")
+            break
+        elif event == sg.WIN_CLOSED:
+            window.close()
+            break
+
+
 def treat_second(tNow, prevAction, lineId, lines, score, lastQ, window, imageFolder):
     nLines = len(lines)
     if lineId == 0:
@@ -110,7 +123,12 @@ def treat_second(tNow, prevAction, lineId, lines, score, lastQ, window, imageFol
     t = interval(clockBefore, clockNext)
     time.sleep(t)
     if prevAction != "black":
-        time.sleep(1)
+        start = time.time()
+        while time.time() - start < 2:
+            if window is not None:
+                event, _ = window.read(timeout=25)
+                if event == 'Pause/Resume':
+                    pause(window)
 
     show_header(tNow, score, window)
     if tNow == clockNext and lineId < nLines:
@@ -138,11 +156,13 @@ def main(file, lastQ, window=None, imageFolder="VisualPbPImages"):
 
     while time_from_string(tNow) >= time_from_string(lastQ+":00:00"):
         if window is not None:
-            event, values = window.read(timeout=25)
-            if event in (None, 'Exit', 'Cancel'):
+            event, _ = window.read(timeout=25)
+            if event == 'Pause/Resume':
+                pause(window)
+            elif event in (sg.WIN_CLOSED, 'Exit', 'Cancel'):
                 window.close()
                 return False
-            if event == 'Back to play-by-play menu':
+            elif event == 'Back to play-by-play menu':
                 window.close()
                 return True
         tNow, lineId, action = treat_second(tNow, action, lineId, lines, score, lastQ, window, imageFolder)

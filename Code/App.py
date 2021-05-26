@@ -363,12 +363,17 @@ def textPbP_menu(game):
     ]
     return sg.Window("Text play-by-play Menu", layout)
 
-def visualPbP_menu():
+def visualPbP_menu(game):
     layout = [
-        [sg.Text(key="ActionText", size=(40,1))],
-        [sg.Image(key="ActionImage")],
-        [sg.Text("", size=(20,1), key="Clock"), sg.Text("", size=(10,1), key="Score")],
-        [sg.Button('Back')]
+        [ sg.Button("Pause", key='Pause/Resume') ],
+        [ sg.Text(key="ActionText", size=(40,1)) ],
+        [ sg.Image(key="ActionImage") ],
+        [ sg.Text("", size=(10,1), key="Clock"),
+            sg.Text(game.home),
+            sg.Text("", size=(3,1), key="Score1"),
+            sg.Text(game.away),
+            sg.Text("", size=(2,1), key="Score2") ],
+        [ sg.Button('Back') ]
     ]
     return sg.Window("Visual PbP", layout)
 
@@ -556,11 +561,12 @@ def chooseBoxScore(game):
 ### 1.2. Match statistics
 def matchStatistics(game):
     window = matchStatistics_menu(game)
-    event, values = window.read()
+    event, _ = window.read()
 
     if event == 'Back':
         window.close()
         analyseMatch(game)
+
 
 ### 1.3. Playing times
 def playingTimes(game):
@@ -610,7 +616,7 @@ def playingTimes(game):
 ### 1.4. Shooting statistics
 def shootingStatisticsTable(game, team):
     window = shootingStatisticsTable_menu(game, team)
-    event, values = window.read()
+    event, _ = window.read()
     if event == 'Save':
         window.close()
         game.save_shooting_table(team)
@@ -641,7 +647,7 @@ def shootingStatisticsTableElection(game):
 
 def shootingStatisticsPlot(game, team):
     window = statisticsPlot_menu()
-    event, values = window.read()
+    event, _ = window.read()
 
     if event == 'Show plot':
         plot = game.get_shooting_plot(team)
@@ -676,7 +682,7 @@ def shootingStatisticsPlotElection(game):
 
 def shootingStatistics(game):
     window = shootingStatistics_menu()
-    event, values = window.read()
+    event, _ = window.read()
 
     if event == 'Shooting statistics table':
         window.close()
@@ -693,7 +699,7 @@ def shootingStatistics(game):
 def assistStatisticsMatrix(game, team):
     window = assistStatisticsMatrix_menu(game, team)
     print("hola, aqui falla")
-    event, values = window.read()
+    event, _ = window.read()
     if event == 'Save':
         window.close()
         game.save_assist_matrix(team)
@@ -723,7 +729,7 @@ def assistStatisticsMatrixElection(game):
 
 def assistStatisticsPlot(game, team):
     window = statisticsPlot_menu()
-    event, values = window.read()
+    event, _ = window.read()
 
     if event == 'Show plot':
         plot = game.get_assist_plot(team)
@@ -759,7 +765,7 @@ def assistStatisticsPlotElection(game):
 
 def assistStatistics(game):
     window = assistStatistics_menu()
-    event, values = window.read()
+    event, _ = window.read()
 
     if event == 'Assist statistics matrix':
         window.close()
@@ -776,12 +782,11 @@ def assistStatistics(game):
 
 ### 1.6. PbP
 def visualPbP(game):
-    window = visualPbP_menu()
-    event, values = window.read(timeout=25)
-
+    window = visualPbP_menu(game)
     back = game.visual_PbP(window)
     if back:
         seePbP(game)
+
 
 def textPbP(game):
     window = textPbP_menu(game)
@@ -805,7 +810,7 @@ def textPbP(game):
 
 def seePbP(game):
     window = seePbP_menu()
-    event, values = window.read()
+    event, _ = window.read()
 
     if event == 'Text mode':
         window.close()
@@ -820,7 +825,7 @@ def seePbP(game):
 ## 1. Analyse match
 def analyseMatch(game):
     window = analyseMatch_menu()
-    event, values = window.read()
+    event, _ = window.read()
 
     if event == 'Box scores':
         window.close()
@@ -860,7 +865,7 @@ def defineMatch():
 ## 2. Analyse season
 def statisticTable(season, table, statistic, category, player):
     window = statisticTable_menu(season, table, statistic)
-    event, values = window.read()
+    event, _ = window.read()
 
     if event == 'Save':
         window.close()
@@ -877,7 +882,7 @@ def statisticTable(season, table, statistic, category, player):
 
 def statisticAnalysis(season, table, statistic, category, player):
     window = statisticAnalysis_menu()
-    event, values = window.read()
+    event, _ = window.read()
 
     if event == 'See table':
         window.close()
@@ -932,7 +937,7 @@ def statisticElection(season):
 
 def analyseSeason(season):
     window = analyseSeason_menu()
-    event, values = window.read()
+    event, _ = window.read()
 
     if event == 'Statistic evolution':
         window.close()
@@ -958,7 +963,7 @@ def defineSeason():
 
 def main():
     window = main_menu()
-    event, values = window.read()
+    event, _ = window.read()
 
     if event == 'Analyse match':
         window.close()
