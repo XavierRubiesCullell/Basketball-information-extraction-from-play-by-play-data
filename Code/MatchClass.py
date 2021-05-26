@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import altair as alt
 
 from Functions import *
 from StandardPbPObtention import main as StandardPbPObtention_main
@@ -94,6 +95,8 @@ class Match():
         elif extension == 'html':
             path += ".html"
             table.to_html(path, encoding="utf8")
+        else:
+            raise NameError(f"Extension {extension} is not correct. It must be csv or html")
 
     def filter_by_players(self, table, players):
         '''
@@ -200,13 +203,17 @@ class Match():
         '''
         return GreatestStreak_main(self.PbPFile)
 
-    def get_shooting_table(self, shots=None):
+    def get_shooting_table(self, team=None, shots=None):
         '''
         This function returns the table with the shots for every distance from hoop for each team
+        - team: team id (integer)
         - shots: shooting table in case the shooting values are meant to be added to it (pandas.DataFrame)
         Output: list of pandas.DataFrame
         '''
-        return ShootingStatisticsTable_main(self.PbPFile, shots)
+        if team is None:
+            return ShootingStatisticsTable_main(self.PbPFile, shots)
+        else:
+            return ShootingStatisticsTable_main(self.PbPFile, shots)[team-1]
 
     def save_shooting_table(self, team, extension='csv', folder=None):
         '''
@@ -215,28 +222,30 @@ class Match():
         - extension: type of the file where the table will be saved. It can either be csv or html (string)
         - folder: folder where the table will be saved (string)
         '''
-        table = self.get_shooting_table()[team-1]
+        table = self.get_shooting_table(team)
         if folder is None:
             folder = self.path
         if team == 1:
             teamName = self.home
         else:
             teamName = self.away
-        path = folder + self.matchName + "_shooting_table_" + teamName
+        path = folder + self.matchName + "_ShootingTable_" + teamName
         if extension == 'csv':
             path += ".csv"
             table.to_csv(path, sep = ";", encoding="utf8")
         elif extension == 'html':
             path += ".html"
             table.to_html(path, encoding="utf8")
+        else:
+            raise NameError(f"Extension {extension} is not correct. It must be csv or html")
 
     def get_shooting_plot(self, team):
         '''
         This function returns the plot with the shots for every distance from hoop for each team
         - team: team id (integer)
         '''
-        shootingTables = self.get_shooting_table()
-        return ShootingStatisticsPlot_main(shootingTables[team-1])
+        shotTable = self.get_shooting_table(team)
+        return ShootingStatisticsPlot_main(shotTable)
     
     def save_shooting_plot(self, team, extension='svg', folder=None):
         '''
@@ -253,16 +262,22 @@ class Match():
         else:
             teamName = self.away
         if extension in ('svg', 'pdf', 'png', 'jpeg', 'webp'):
-            path = folder + self.matchName + "_shooting_plot_" + teamName + "." + extension
+            path = folder + self.matchName + "_ShootingPlot_" + teamName + "." + extension
             plot.write_image(path)
+        else:
+            raise NameError(f"Extension {extension} is not correct. It must be svg, pdf, png, jpeg or webp")
 
-    def get_assist_matrix(self, assists=None):
+    def get_assist_matrix(self, team=None, assists=None):
         '''
         This function draws the assists between each team members
+        - team: team id (integer)
         - assists: shooting table in case the assist values are meant to be added to it (pandas.DataFrame)
         Output: assist matrix (list of pandas.DataFrame). M[i][j] indicates the number of assists from player i to player j
         '''
-        return AssistStatisticsMatrix_main(self.PbPFile, assists)
+        if team is None:
+            return ShootingStatisticsTable_main(self.PbPFile, assists)
+        else:
+            return AssistStatisticsMatrix_main(self.PbPFile, assists)[team-1]
     
     def save_assist_matrix(self, team, extension='csv', folder=None):
         '''
@@ -271,21 +286,67 @@ class Match():
         - extension: type of the file where the table will be saved. It can either be csv or html (string)
         - folder: folder where the table will be saved (string)
         '''
-        matrix = self.get_assist_matrix()[team-1]
+        matrix = self.get_assist_matrix(team)
         if folder is None:
             folder = self.path
         if team == 1:
             teamName = self.home
         else:
             teamName = self.away
-        path = folder + self.matchName + "_assist_matrix_" + teamName
+        path = folder + self.matchName + "_AssistMatrix_" + teamName
         if extension == 'csv':
             path += ".csv"
             matrix.to_csv(path, sep = ";", encoding="utf8")
         elif extension == 'html':
             path += ".html"
             matrix.to_html(path, encoding="utf8")
+        else:
+            raise NameError(f"Extension {extension} is not correct. It must be csv or html")
 
+    def get_assist_plot(self, team):
+        '''
+        This function returns the assist statistics plot of the desired team
+        - team: team id (integer)
+        Output: altair plot
+        '''
+        assistMatrix = self.get_assist_matrix(team)
+
+        # dataframe conversion:
+        cols = ['Passer', 'Receiver', '# Assists']
+        assistTable = pd.DataFrame(columns=cols)
+        for i in range(len(assistMatrix.index)):
+            for j in range(len(assistMatrix.columns)):
+                if assistMatrix.index[i] != "TOTAL" and assistMatrix.columns[j] != "TOTAL":
+                    row = pd.Series([assistMatrix.index[i], assistMatrix.index[j], assistMatrix.iloc[i,j]], index=cols)
+                    assistTable = assistTable.append(row, ignore_index=True)
+    
+        chart = alt.Chart(assistTable).mark_rect().encode(
+            x='Receiver:N',
+            y='Passer:N',
+            color='# Assists:Q'
+        )
+        if team == 1:
+            teamName = self.home
+        else:
+            teamName = self.away
+        return alt.layer(chart, title = teamName + " assists")
+
+    def save_assist_plot(self, team, folder=None):
+        '''
+        This function saves the assist statistics plot of the desired team
+        - team: team id (integer)
+        - folder: folder where the plot will be saved (string)
+        '''
+        plot = self.get_assist_plot(team)
+        if folder is None:
+            folder = self.path
+        if team == 1:
+            teamName = self.home
+        else:
+            teamName = self.away
+
+        path = folder + self.matchName + "_AssistPlot_" + teamName + ".html"
+        plot.save(path)
 
     def playing_intervals(self):
         '''

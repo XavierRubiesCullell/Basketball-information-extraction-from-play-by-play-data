@@ -254,15 +254,15 @@ def shootingStatisticsTable_menu(game, team):
     ]
     return sg.Window("Shooting statistics table Menu", layout)
 
-def shootingStatisticsPlot_menu():
+def statisticsPlot_menu():
     layout = [
-        [ sg.Text("Shooting statistics plot Menu") ],
+        [ sg.Text("Statistics plot Menu") ],
         [ sg.Button('Show plot') ],
         [ sg.Button('Save plot') ],
         [ sg.Text("") ],
         [ sg.Button('Back') ]
     ]
-    return sg.Window("Shooting statistics plot Menu", layout)
+    return sg.Window("Statistics plot Menu", layout)
 
 def shootingStatistics_menu():
     layout = [
@@ -276,14 +276,14 @@ def shootingStatistics_menu():
 
 ### 1.5. Assist statistics
 def assistStatisticsMatrix_menu(game, team):
-    table = game.get_assist_matrix()[team-1]
+    table = game.get_assist_matrix(team)
     table = create_table(table, " ")
     layout = [
         [ sg.Button('Save') ],
         [ sg.Table(values=table.values.tolist(), headings=table.columns.tolist(), num_rows=len(table), hide_vertical_scroll = True) ],
         [ sg.Button('Back') ]
     ]
-    return sg.Window("Assist statistics table Menu", layout)
+    return sg.Window("Assist statistics matrix Menu", layout)
 
 def assistStatistics_menu():
     layout = [
@@ -592,7 +592,7 @@ def shootingStatisticsTableElection(game):
 
 
 def shootingStatisticsPlot(game, team):
-    window = shootingStatisticsPlot_menu()
+    window = statisticsPlot_menu()
     event, values = window.read()
 
     if event == 'Show plot':
@@ -644,6 +644,7 @@ def shootingStatistics(game):
 ### 1.5. Assist statistics
 def assistStatisticsMatrix(game, team):
     window = assistStatisticsMatrix_menu(game, team)
+    print("hola, aqui falla")
     event, values = window.read()
     if event == 'Save':
         window.close()
@@ -672,6 +673,42 @@ def assistStatisticsMatrixElection(game):
         assistStatistics(game)
 
 
+def assistStatisticsPlot(game, team):
+    window = statisticsPlot_menu()
+    event, values = window.read()
+
+    if event == 'Show plot':
+        plot = game.get_assist_plot(team)
+        plot.show()
+        window.close()
+        assistStatisticsPlot(game, team)
+    elif event == 'Save plot':
+        game.save_assist_plot(team)
+        window.close()
+        assistStatisticsPlot(game, team)
+    elif event == 'Back':
+        window.close()
+        assistStatisticsPlotElection(game)
+
+
+def assistStatisticsPlotElection(game):
+    window = teamElection_menu()
+    event, values = window.read()
+
+    if event == 'OK':
+        window.close()
+        if values['Local']:
+            window.close()
+            assistStatisticsPlot(game, 1)
+        elif values['Visiting']:
+            window.close()
+            assistStatisticsPlot(game, 2)
+
+    elif event == 'Back':
+        window.close()
+        assistStatistics(game)
+
+
 def assistStatistics(game):
     window = assistStatistics_menu()
     event, values = window.read()
@@ -682,7 +719,7 @@ def assistStatistics(game):
     
     elif event == 'Assist statistics plot':
         window.close()
-        analyseMatch(game)
+        assistStatisticsPlotElection(game)
 
     elif event == 'Back':
         window.close()

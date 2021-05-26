@@ -91,11 +91,15 @@ print("away")
 print(shotStats[1])
 
 game.save_shooting_table(1)
+game.save_shooting_table(2)
 
 plot = game.get_shooting_plot(1)
 plot.show()
+plot = game.get_shooting_plot(2)
+plot.show()
 
 game.save_shooting_plot(1)
+game.save_shooting_plot(2)
 
 print("\n\nassist_map")
 assists = game.get_assist_matrix()
@@ -105,6 +109,15 @@ print("away")
 print(assists[1])
 
 game.save_assist_matrix(1)
+game.save_assist_matrix(2)
+
+plot = game.get_assist_plot(1)
+plot.show()
+plot = game.get_assist_plot(2)
+plot.show()
+
+game.save_assist_plot(1)
+game.save_assist_plot(2)
 
 
 # VISUAL PBP
