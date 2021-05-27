@@ -80,7 +80,7 @@ class Match():
         table = boxs[0].append(boxs[1])
         return table[['Team'] + table.columns.tolist()[:-1]]
     
-    def save_box_score(self, table, name="", extension='csv', folder=None):
+    def save_box_score(self, table, name="", extension='html', folder=None):
         '''
         This function saves the box scores in a CSV
         - folder: relative path to the folder where the box score will be saved (string)
@@ -236,7 +236,7 @@ class Match():
         else:
             return ShootingStatisticsTable_main(self.PbPFile, shots)[team-1]
 
-    def save_shooting_table(self, team, extension='csv', folder=None):
+    def save_shooting_table(self, team, extension='html', folder=None):
         '''
         This function saves the shooting statistics table of the desired team
         - team: team id (integer)
@@ -296,11 +296,11 @@ class Match():
         Output: assist matrix (list of pandas.DataFrame). M[i][j] indicates the number of assists from player i to player j
         '''
         if team is None:
-            return ShootingStatisticsTable_main(self.PbPFile, assists)
+            return AssistStatisticsMatrix_main(self.PbPFile, assists)
         else:
             return AssistStatisticsMatrix_main(self.PbPFile, assists)[team-1]
     
-    def save_assist_matrix(self, team, extension='csv', folder=None):
+    def save_assist_matrix(self, team, extension='html', folder=None):
         '''
         This function saves the assist statistics matrix of the desired team
         - team: team id (integer)
