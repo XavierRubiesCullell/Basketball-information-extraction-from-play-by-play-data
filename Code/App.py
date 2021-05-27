@@ -591,8 +591,7 @@ def playingTimes(game):
                 team = 1
             elif get_team(team) == game.away:
                 team = 2
-            playerIntervals = game.playing_intervals()[0][team-1]
-            window['Player output'].update(playerIntervals.get(values['Player input'], "Not present"))
+            window['Player output'].update(game.intervals_of_player(team, values['Player input']))
 
         elif event == 'Five OK':
             team = values['Team five input']
@@ -601,7 +600,7 @@ def playingTimes(game):
             elif get_team(team) == game.away:
                 team = 2
             players = values['Five input'].split(", ")
-            intervals = game.fives_intervals(team-1, players)
+            intervals = game.intervals_of_five(team, players)
             window['Five output'].update(intervals)
 
         elif event == 'Back':

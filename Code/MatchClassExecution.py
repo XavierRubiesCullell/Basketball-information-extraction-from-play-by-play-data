@@ -84,9 +84,12 @@ for team in range(1,3):
     else:
         print(f'There was a change at that time. The previous team is {fives[team-1][0]} and the next one is {fives[team-1][1]}')
 
-print("\n\nfives_intervals")
+print("\n\nintervals of player")
+print(game.intervals_of_player(1, "M. Morris"))
+
+print("\n\nintervals of five")
 five = list(oncourtIntervals[1].values())[0]
-print(game.fives_intervals(1, five))
+print(game.intervals_of_five(2, five))
 
 
 # SHOOTING AND ASSIST STATISTICS

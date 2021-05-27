@@ -16,7 +16,6 @@ from ShootingStatisticsPlot import main as ShootingStatisticsPlot_main
 from AssistStatisticsMatrix import main as AssistStatisticsMatrix_main
 from PlayingIntervals import main as PlayingIntervals_main
 from FiveOnCourt import main as FiveOnCourt_main
-from FivesIntervals import main as FivesIntervals_main
 from VisualPbP import main as VisualPbP_main
 
 
@@ -386,15 +385,31 @@ class Match():
         Output: either one five or two fives (list: [set or list of sets])
         '''
         return FiveOnCourt_main(self.playing_intervals()[1], clock)
-    
-    def fives_intervals(self, team, five):
+
+    def intervals_of_player(self, team, player):
         '''
-        This function returns the intervals an introduced five played
-        - team: players' team (integer)
+        This function returns the intervals an introduced player played
+        - team: five's team id (integer)
         - five: list of players (list)
         Output: list of the intervals (list: [(start, end)])
         '''
-        return FivesIntervals_main(self.playing_intervals()[1][team], five)
+        playerIntervals = self.playing_intervals()[0][team-1]
+        return playerIntervals.get(player, [])
+    
+    def intervals_of_five(self, team, five):
+        '''
+        This function returns the intervals an introduced five played
+        - team: five's team id (integer)
+        - five: list of players (list)
+        Output: list of the intervals (list: [(start, end)])
+        '''
+        oncourtintervals = self.playing_intervals()[1][team-1]
+        five = set(five)
+        intervals = []
+        for interval in oncourtintervals:
+            if oncourtintervals[interval] == five:
+                intervals.append(interval)
+        return intervals
     
     def visual_PbP(self, window=None):
         '''

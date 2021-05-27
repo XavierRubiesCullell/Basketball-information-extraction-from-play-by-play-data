@@ -2,6 +2,8 @@ import time
 import datetime
 import math
 import PIL.Image
+import PIL.ImageDraw
+import PIL.ImageFont
 import base64
 import io
 import PySimpleGUI as sg
@@ -34,15 +36,14 @@ def next_time(t):
     clock -= datetime.timedelta(seconds=1)
     return quarter + ":" + clock.strftime("%M:%S")
 
-def convert_to_bytes(file_or_bytes, resize=None):
-    if isinstance(file_or_bytes, str):
-        img = PIL.Image.open(file_or_bytes)
-
-    cur_width, cur_height = img.size
+def convert_to_bytes(img, resize=None):
+    if isinstance(img, str):
+        img = PIL.Image.open(img)
     if resize:
-        new_width, new_height = resize
-        scale = min(new_height/cur_height, new_width/cur_width)
-        img = img.resize((int(cur_width*scale), int(cur_height*scale)), PIL.Image.ANTIALIAS)
+        curWidth, curHeight = img.size
+        newWidth, newHeight = resize
+        scale = min(newHeight/curHeight, newWidth/curWidth)
+        img = img.resize((int(curWidth*scale), int(curHeight*scale)), PIL.Image.ANTIALIAS)
     with io.BytesIO() as bio:
         img.save(bio, format="PNG")
         del img
@@ -56,33 +57,74 @@ def show_header(t, score, window):
         window['Score1'].update(value=score[0])
         window['Score2'].update(value=score[1])
 
-def show_action(action, window, imageFolder):
+def show_action(action, prevAction, home, away, window, imageFolder):
+    imageSize = (400, 400)
     if action == "black":
         if window is None:
             print("\n")
         else:
-            window['ActionText'].update(str(""))
-            window['ActionImage'].update(data=convert_to_bytes(f"{imageFolder}/Black.jpg", resize=(200,200)))
+            if prevAction != "black":
+                window['ActionText'].update(str(""))
+                window['ActionImage'].update(data=convert_to_bytes(f"{imageFolder}/Black.jpg", resize=imageSize))
     else:
         if window is None:
             print(action.strip().split(", ")[1:], "\n")
         else:
-            window['ActionText'].update(str(action.strip().split(", ")[1:]))
-            actionType = action.strip().split(", ")[3]
+            action = action.strip().split(", ")
+            actionType = action[3]
             if actionType == "S":
-                window['ActionImage'].update(data=convert_to_bytes(f"{imageFolder}/Bryant.jpg", resize=(200,200)))
+                team, player, points = action[1], action[2], int(action[4])
+                distGiven = action[5] != "I" and action[5] != "O" # true if it is not I or O, so in this position we have the distance
+                result = action[5+distGiven] #in/out
+                if len(action) == 8+distGiven and action[6+distGiven] == "A": # there is an assist
+                    window['ActionText'].update(str(action[1:]))
+                    window['ActionImage'].update(data=convert_to_bytes(f"{imageFolder}/Bryant.jpg", resize=imageSize))
+                else:
+                    if points == 1:
+                        text = f"free throw"
+                    else:
+                        text = f"{points}-pointer"
+                        if distGiven:
+                            text += f" from {action[5]} ft"
+                    if result == "I":
+                        text += " that went in"
+                    else:
+                        text += " that went out"
+                    window['ActionText'].update(text)
+                    image = f"{imageFolder}/Shot.png"
+                    myImage = PIL.Image.open(image)
+                    imageEditable = PIL.ImageDraw.Draw(myImage)
+                    print(player)
+                    data="UTF-8 data"
+                    udata=player.decode("UTF-8")
+                    player=udata.encode("latin-1","ignore")
+                    imageEditable.text((60,245), player, (0, 0, 0))
+                    if team == "1":
+                        teamName = home
+                    else:
+                        teamName = away
+                    imageEditable.text((80,265), teamName, (0, 0, 0))
+                    # titleFont = PIL.ImageFont.truetype('playfair/playfair-font.ttf', 20)
+                    # imageEditable.text((100,15), titleText, (256, 256, 256), font=titleFont)
+                    window['ActionImage'].update(data=convert_to_bytes(myImage, resize=imageSize))
             elif actionType == "R":
-                window['ActionImage'].update(data=convert_to_bytes(f"{imageFolder}/Bryant.jpg", resize=(200,200)))
+                window['ActionText'].update(str(action[1:]))
+                window['ActionImage'].update(data=convert_to_bytes(f"{imageFolder}/Rebound.png", resize=imageSize))
             elif actionType == "T":
-                window['ActionImage'].update(data=convert_to_bytes(f"{imageFolder}/Bryant.jpg", resize=(200,200)))
+                window['ActionText'].update(str(action[1:]))
+                window['ActionImage'].update(data=convert_to_bytes(f"{imageFolder}/Bryant.jpg", resize=imageSize))
             elif actionType == "St":
-                window['ActionImage'].update(data=convert_to_bytes(f"{imageFolder}/Bryant.jpg", resize=(200,200)))
+                window['ActionText'].update(str(action[1:]))
+                window['ActionImage'].update(data=convert_to_bytes(f"{imageFolder}/Steal.png", resize=imageSize))
             elif actionType == "B":
-                window['ActionImage'].update(data=convert_to_bytes(f"{imageFolder}/Bryant.jpg", resize=(200,200)))
+                window['ActionText'].update(str(action[1:]))
+                window['ActionImage'].update(data=convert_to_bytes(f"{imageFolder}/Block.png", resize=imageSize))
             elif actionType == "F":
-                window['ActionImage'].update(data=convert_to_bytes(f"{imageFolder}/Bryant.jpg", resize=(200,200)))
+                window['ActionText'].update(str(action[1:]))
+                window['ActionImage'].update(data=convert_to_bytes(f"{imageFolder}/Foul.png", resize=imageSize))
             elif actionType == "C":
-                window['ActionImage'].update(data=convert_to_bytes(f"{imageFolder}/Bryant.jpg", resize=(200,200)))
+                window['ActionText'].update(str(action[1:]))
+                window['ActionImage'].update(data=convert_to_bytes(f"{imageFolder}/Change.png", resize=imageSize))
 
 
 def update_score(line, score):
@@ -108,7 +150,7 @@ def pause(window):
             break
 
 
-def treat_second(tNow, prevAction, lineId, lines, score, lastQ, window, imageFolder):
+def treat_second(tNow, prevAction, lineId, lines, score, home, away, lastQ, window, imageFolder):
     nLines = len(lines)
     if lineId == 0:
         clockBefore = "1Q:12:00"
@@ -121,7 +163,7 @@ def treat_second(tNow, prevAction, lineId, lines, score, lastQ, window, imageFol
         clockNext = get_clock(lineId, lines)
 
     t = interval(clockBefore, clockNext)
-    time.sleep(t)
+    time.sleep(t/2)
     if prevAction != "black":
         start = time.time()
         while time.time() - start < 2:
@@ -129,6 +171,9 @@ def treat_second(tNow, prevAction, lineId, lines, score, lastQ, window, imageFol
                 event, _ = window.read(timeout=25)
                 if event == 'Pause/Resume':
                     pause(window)
+                elif event == sg.WIN_CLOSED:
+                    window.close()
+                    break
 
     show_header(tNow, score, window)
     if tNow == clockNext and lineId < nLines:
@@ -137,7 +182,7 @@ def treat_second(tNow, prevAction, lineId, lines, score, lastQ, window, imageFol
         lineId += 1
     else:
         action = "black"
-    show_action(action, window, imageFolder)
+    show_action(action, prevAction, home, away, window, imageFolder)
         
     if lineId >= nLines-1 or get_clock(lineId-1, lines) != get_clock(lineId, lines):
         tNow = next_time(tNow)
@@ -145,7 +190,7 @@ def treat_second(tNow, prevAction, lineId, lines, score, lastQ, window, imageFol
     return tNow, lineId, action
 
 
-def main(file, lastQ, window=None, imageFolder="VisualPbPImages"):
+def main(file, home, away, lastQ, window=None, imageFolder="VisualPbPImages"):
     os.chdir(os.path.dirname(__file__))
     with open(file, encoding="utf-8") as f:
         lines = f.readlines()
@@ -165,4 +210,4 @@ def main(file, lastQ, window=None, imageFolder="VisualPbPImages"):
             elif event == 'Back to play-by-play menu':
                 window.close()
                 return True
-        tNow, lineId, action = treat_second(tNow, action, lineId, lines, score, lastQ, window, imageFolder)
+        tNow, lineId, action = treat_second(tNow, action, lineId, lines, score, home, away, lastQ, window, imageFolder)
