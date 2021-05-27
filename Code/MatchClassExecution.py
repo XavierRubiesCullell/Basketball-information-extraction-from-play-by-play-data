@@ -43,6 +43,13 @@ print(game.top_players(table, ['Pts', 'TR'], n=5))
 print("\n\nquarter_scorings")
 print(game.quarter_scorings("3Q:10:01"))
 
+print("\n\nresult")
+print(game.result())
+
+print("\n\nwinner")
+print(game.winner(True))
+print(game.winner(False))
+
 print("\n\ngreatest_difference")
 print(game.greatest_difference())
 

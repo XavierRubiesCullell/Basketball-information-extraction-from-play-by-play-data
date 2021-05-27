@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import altair as alt
+import numpy as np
 
 from Functions import *
 from StandardPbPObtention import main as StandardPbPObtention_main
@@ -174,6 +175,27 @@ class Match():
         if end is None:
             end = self.get_lastQ()+":00:00"
         return QuarterScorings_main(self.PbPFile, self.home, self.away, end)
+
+    def result(self):
+        '''
+        This function returns the result of the match
+        Output: list
+        '''
+        quarterScorings = self.quarter_scorings()
+        finalScore = quarterScorings["T"]
+        return finalScore.tolist()
+
+    def winner(self, id=False):
+        '''
+        This function returns the winner of the match
+        - id: Bool stating whether the id or the name of the winner is desired
+        Output: either string (id=False) or integer (else)
+        '''
+        score = self.result()
+        winner = np.argmax(score)+1
+        if id:
+            return winner
+        return (self.home, self.away)[winner-1]
 
     def greatest_difference(self):
         '''
