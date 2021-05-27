@@ -4,7 +4,8 @@ import urllib.request
 import altair as alt
 
 from Functions import *
-from GetTable import main as GetTable_main
+from StatisticEvolutionTable import main as StatisticEvolutionTable_main
+from StatisticEvolutionPlot import main as StatisticEvolutionPlot_main
 
 class Season():
     def __init__(self, team, season, fileFolder="Files/"):
@@ -31,64 +32,54 @@ class Season():
         self.matchList = soup.find_all('tr')
     
 
-    def get_table(self, statistic, category=None, player=None):
+    def get_statistic_evolution_table(self, statistic, category=None, player=None):
         '''
+        This function returns the table of the evolution of a statistic during the season
         - statistic: statistic that we want to study (string)
-        - category: category we want to study in case the statistic is boxscore (string)
-        - player: player we want to study in case the statistic is boxscore (string)
+        - category: category we want to study in case the statistic is "box score" (string)
+        - player: player we want to study in case the statistic is "box score" (string)
         '''
-        return GetTable_main(self.team, self.season, self.matchList, statistic, category, player)
+        return StatisticEvolutionTable_main(self.team, self.season, self.matchList, statistic, category, player)
 
 
-    def save_table(self, table, name):
+    def save_statistic_evolution_table(self, table, name, extension='html', folder=None):
         '''
-        This function saves the plot 'plot' in FileDirectory/Seasons/seasonName:
-        - plot: altair plot object (altair.vegalite.v4.api.LayerChart)
-        - name: name we want for the chart. Chart will be saved in (string)
+        This function saves the table 'table'. This function has the argument table instead of calling get_evolution_table.
+        This is due to the fact that get_evolution_table can be very slow. In case we already executed, we can simply use the result
+        sending it to this function instead of calling it once again
+        - table: data table (pandas.DataFrame)
+        - name: name we want for the file (string). The table will be saved in Team_Season_name
         '''
-        table.to_csv(self.path + self.seasonName + "_" + name + ".csv", sep = ";", encoding="utf8")
-
-
-    def plot_line(self, table, statistic, category=None, player=None):
-        '''
-        - table: values we want to plat (pandas.DataFrame)
-        - statistic: statistic that we want to plot, in order to use it as an axis name (string)
-        '''
-        chart = alt.Chart(
-            table.reset_index().dropna()
-        ).mark_line(
-            point=True
-        ).encode(
-            x = alt.X('index:T', title = "match"),
-            y = alt.Y('Value:Q', title = "value"),
-            tooltip = ['Date:T', 'Opponent:N']
-        ).add_selection(
-            alt.selection_single()
-        )
-        if statistic == "box score":
-            statistic = category
-            author = player
+        if folder is None:
+            folder = self.path
+        path = folder + self.seasonName + "_" + name
+        if extension == 'csv':
+            path += ".csv"
+            table.to_csv(path, sep = ";", encoding="utf8")
+        elif extension == 'html':
+            path += ".html"
+            table.to_html(path, encoding="utf8")
         else:
-            author = self.team
-            if statistic == "streak":
-                statistic = "Greatest scoring streak"
-            elif statistic == "partial":
-                statistic = "Greatest partial"
-            elif statistic == "drought":
-                statistic = "Longest scoring drought"
-            
-        chart = alt.layer(chart, title = statistic + " along the " + self.season + " season by " + author)
-
-        rule = alt.Chart(table).mark_rule(color='darkblue').encode(
-            y = alt.Y('mean(Value):Q')
-        )
-        return (chart + rule).properties(width=750)
+            raise NameError(f"Extension {extension} is not correct. It must be csv or html")
 
 
-    def save_plot(self, plot, name):
+    def get_statistic_evolution_plot(self, statistic, category=None, player=None, table=None):
+        '''
+        This function returns the plot of the evolution of a statistic during the season
+        - statistic: statistic that we want to plot, in order to use it as an axis name (string)
+        - category: category we want to study in case the statistic is "box score" (string)
+        - player: player we want to study in case the statistic is "box score" (string)
+        - table: values we want to plat (pandas.DataFrame)
+        '''
+        if table is None:
+            table = self.get_statistic_evolution_table(statistic, category, player)
+        return StatisticEvolutionPlot_main(self.team, self.season, statistic, category, player, table)
+
+
+    def save_statistic_evolution_plot(self, plot, name):
         '''
         This function saves the plot 'plot' in FileDirectory/Seasons/seasonName:
         - plot: altair plot object (altair.vegalite.v4.api.LayerChart)
-        - name: name we want for the chart. Chart will be saved in (string)
+        - name: name we want for the file (string). The plot will be saved in Team_Season_name
         '''
         plot.save(self.path + self.seasonName + "_" + name + ".html")

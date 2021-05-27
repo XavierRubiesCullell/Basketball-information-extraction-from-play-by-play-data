@@ -52,9 +52,9 @@ def defineMatch_menu():
         [ sg.Text("Home", size=buttonSize), sg.Input(key='Home', size=inputSize, tooltip="You can write the location, the club name, both or the abbreviation\nFor example: Denver, Nuggets, Denver Nuggets or DEN")],
         [ sg.Text("Away", size=buttonSize), sg.Input(key='Away', size=inputSize, tooltip="You can write the location, the club name, both or the abbreviation\nFor example: Denver, Nuggets, Denver Nuggets or DEN")],
         [ sg.Text("Date", size=buttonSize), sg.Input(key='Date', size=(15,1), tooltip="Use the ISO standard: YYYY/MM/DD"), sg.CalendarButton(button_text="Calendar", format = "%Y/%m/%d", target='Date', begin_at_sunday_plus=1)],
-        [ sg.Button('OK')],
+        [ sg.Button('OK', size=buttonSize)],
         [ sg.Text("")],
-        [ sg.Button('Back')]
+        [ sg.Button('Back', size=buttonSize)]
     ]
     return sg.Window("Define Match Menu", layout)
 
@@ -379,15 +379,16 @@ def visualPbP_menu(game):
 
 ## 2. Analyse season
 def defineSeason_menu():
+    buttonSize = (5,1)
     textSize = (7,1)
     inputSize = (25,1)
     layout = [
         [ sg.Text("Season definition menu") ],
         [ sg.Text("Team", size=textSize), sg.Input(key='Team', size=inputSize, tooltip="You can write the location, the club name, both or the abbreviation\nFor example: Denver, Nuggets, Denver Nuggets or DEN") ],
         [ sg.Text("Season", size=textSize), sg.Input(key='Season', size=inputSize, tooltip="Indicate the season in format YYYY-YYYY") ],
-        [ sg.Button('OK')],
+        [ sg.Button('OK', size=buttonSize)],
         [ sg.Text("")],
-        [ sg.Button('Back')]
+        [ sg.Button('Back', size=buttonSize)]
     ]
     return sg.Window("Define Season Menu", layout)
 
@@ -402,6 +403,7 @@ def analyseSeason_menu():
     return sg.Window("Analyse Season Menu", layout)
 
 def statisticElection_menu():
+    buttonSize = (5,1)
     radioSize = (13,1)
     layout = [
         [ sg.Text("Statistic election menu") ],
@@ -414,10 +416,10 @@ def statisticElection_menu():
             sg.Input(key='Category', size=(7,1)),
             sg.Text("Player"),
             sg.Input(key='Player', size=(20,1), tooltip="If no input is given, team value is considered") ],
-        [ sg.Button('OK') ],
+        [ sg.Button('OK', size=buttonSize) ],
         [ sg.Text("*Box score is slow (takes about 2 minutes) and program may warn it is not answering, but just let it work") ],
         [ sg.Text("") ],
-        [ sg.Button('Back') ]
+        [ sg.Button('Back', size=buttonSize) ]
     ]
     return sg.Window("Statistic Evolution Menu", layout)
 
@@ -426,6 +428,7 @@ def statisticAnalysis_menu():
     layout = [
         [ sg.Text("Statistic analysis menu") ],
         [ sg.Button('See table', size = buttonSize) ],
+        [ sg.Button('See plot', size = buttonSize) ],
         [ sg.Button('Save plot', size = buttonSize) ],
         [ sg.Text("") ],
         [ sg.Button('Back') ]
@@ -435,10 +438,10 @@ def statisticAnalysis_menu():
 def statisticTable_menu(season, table, statistic):
     auxTable = create_table(table, "Match")
     layout = [
+        [ sg.Button('Save') ],
         [   sg.Table(values=auxTable.values.tolist(),
             headings=auxTable.columns.tolist(),
             alternating_row_color = 'gray') ],
-        [ sg.Button('Save') ],
         [ sg.Button('Back') ]
     ]
     return sg.Window("Statistic Table Menu", layout)
@@ -872,7 +875,7 @@ def statisticTable(season, table, statistic, category, player):
             name = category + "_" + player
         else:
             name = statistic
-        season.save_table(table, name)
+        season.save_statistic_evolution_table(table, name)
         statisticTable(season, table, statistic, category, player)
     elif event == 'Back':
         window.close()
@@ -886,14 +889,22 @@ def statisticAnalysis(season, table, statistic, category, player):
     if event == 'See table':
         window.close()
         statisticTable(season, table, statistic, category, player)
-
+    if event == 'See plot':
+        window.close()
+        season.get_statistic_evolution_plot(statistic, category, player, table).show()
+        statisticAnalysis(season, table, statistic, category, player)
     elif event == 'Save plot':
-        plot = season.plot_line(table, statistic, category, player)
+        plot = season.get_statistic_evolution_plot(statistic, category, player, table)
         if statistic == "box score":
-            name = category + "_" + player
+            auxPlayer = player.replace(" ", "")
+            name = category + "-" + auxPlayer
         else:
-            name = statistic
-        season.save_plot(plot, name)
+            # "greatest streak" -> "GreatestStreak"
+            auxStatistic = statistic.split()
+            auxStatistic = list(map(lambda x: x.capitalize(), auxStatistic))
+            auxStatistic = ("").join(auxStatistic)
+            name = auxStatistic
+        season.save_statistic_evolution_plot(plot, name)
         window.close()
         statisticAnalysis(season, table, statistic, category, player)
     
@@ -913,7 +924,7 @@ def statisticElection(season):
             player = values['Player']
             if player == "":
                 player = None
-            table = season.get_table(statistic, category, player)
+            table = season.get_statistic_evolution_table(statistic, category, player)
         else:
             if values['Difference']:
                 statistic = "greatest difference"
@@ -923,7 +934,7 @@ def statisticElection(season):
                 statistic = "greatest partial"
             elif values['Drought']:
                 statistic = "longest drought"
-            table = season.get_table(statistic)     
+            table = season.get_statistic_evolution_table(statistic)     
             category = player = None
         
         window.close()
