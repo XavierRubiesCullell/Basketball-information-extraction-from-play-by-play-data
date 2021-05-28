@@ -147,7 +147,7 @@ def analyseBoxScore_menu(game, table):
             sg.Text("", size=indentation),
             sg.Text("The box score will be saved in: " + game.home + "_" + game.away + "_" + convert_date_match(game.date) + "_BS_"),
             sg.Input(key='SaveFile', size = (15,1)),
-            sg.Text(".csv"),
+            sg.Text(".html"),
             sg.Button('Save')
         ],
         [ sg.Text("")],
@@ -415,6 +415,17 @@ def calendar_menu(season):
     ]
     return sg.Window("Calendar Menu", layout)
 
+def results_menu():
+    buttonSize = (20,1)
+    layout = [
+        [ sg.Text("Results analysis menu") ],
+        [ sg.Button('See results table', size = buttonSize) ],
+        [ sg.Button('Results plot', size = buttonSize) ],
+        [ sg.Text("") ],
+        [ sg.Button('Back') ]
+    ]
+    return sg.Window("Statistic Analysis Menu", layout)
+
 def results_table_menu(season):
     auxTable = create_table(season.get_results_table(), " ", 5)
     layout = [
@@ -425,6 +436,17 @@ def results_table_menu(season):
         [ sg.Button('Back') ]
     ]
     return sg.Window("Results table Menu", layout)
+
+def results_plot_menu():
+    layout = [
+        [ sg.Text("Results plot menu") ],
+        [ sg.Combo(("Team","Opponent team", "Both", "Difference"), default_value="Team", readonly=True, key='Condition') ],
+        [ sg.Button('Show plot') ],
+        [ sg.Button('Save plot') ],
+        [ sg.Text("") ],
+        [ sg.Button('Back') ]
+    ]
+    return sg.Window("Results plot Menu", layout)
 
 def statisticElection_menu():
     buttonSize = (5,1)
@@ -452,7 +474,7 @@ def statisticAnalysis_menu():
     layout = [
         [ sg.Text("Statistic analysis menu") ],
         [ sg.Button('See table', size = buttonSize) ],
-        [ sg.Button('See plot', size = buttonSize) ],
+        [ sg.Button('Show plot', size = buttonSize) ],
         [ sg.Button('Save plot', size = buttonSize) ],
         [ sg.Text("") ],
         [ sg.Button('Back') ]
@@ -540,17 +562,20 @@ def analyseBoxScore(game, table):
                 helpWindow.close()
         elif event == 'Filter by players':
             filterByPlayers(game, table, window)
+            break
         elif event == 'Filter by categories':
             filterByCategories(game, table, window)
+            break
         elif event == 'Filter by values':
             filterByValues(game, table, window)
+            break
         elif event == 'Get top players':
             filterByTop(game, table, window)
+            break
         elif event == 'Save':
             game.save_box_score(table, name=values['SaveFile'])
-            window.close()
-            analyseBoxScore(game, table)
-            break
+            sg.PopupTimed("Table saved", auto_close_duration=1, button_type=5)
+            window.FindElement('SaveFile').Update('')
         elif event == 'Back':
             window.close()
             chooseBoxScore(game)
@@ -642,15 +667,17 @@ def playingTimes(game):
 ### 1.4. Shooting statistics
 def shootingStatisticsTable(game, team):
     window = shootingStatisticsTable_menu(game, team)
-    event, _ = window.read()
-    if event == 'Save':
-        window.close()
-        game.save_shooting_table(team)
-        shootingStatisticsTable(game, team)
+    
+    while True:
+        event, _ = window.read()
+        if event == 'Save':
+            game.save_shooting_table(team)
+            sg.PopupTimed("Table saved", auto_close_duration=1, button_type=5)
 
-    elif event == 'Back':
-        window.close()
-        shootingStatisticsTableElection(game)
+        elif event == 'Back':
+            window.close()
+            shootingStatisticsTableElection(game)
+            break
 
 
 def shootingStatisticsTableElection(game):
@@ -673,20 +700,20 @@ def shootingStatisticsTableElection(game):
 
 def shootingStatisticsPlot(game, team):
     window = statisticsPlot_menu()
-    event, _ = window.read()
 
-    if event == 'Show plot':
-        plot = game.get_shooting_plot(team)
-        plot.show()
-        window.close()
-        shootingStatisticsPlot(game, team)
-    elif event == 'Save plot':
-        game.save_shooting_plot(team)
-        window.close()
-        shootingStatisticsPlot(game, team)
-    elif event == 'Back':
-        window.close()
-        shootingStatisticsPlotElection(game)
+    while True:
+        event, _ = window.read()
+
+        if event == 'Show plot':
+            plot = game.get_shooting_plot(team)
+            plot.show()
+        elif event == 'Save plot':
+            game.save_shooting_plot(team)
+            sg.PopupTimed("Plot saved", auto_close_duration=1, button_type=5)
+        elif event == 'Back':
+            window.close()
+            shootingStatisticsPlotElection(game)
+            break
 
 def shootingStatisticsPlotElection(game):
     window = teamElection_menu()
@@ -724,15 +751,16 @@ def shootingStatistics(game):
 ### 1.5. Assist statistics
 def assistStatisticsMatrix(game, team):
     window = assistStatisticsMatrix_menu(game, team)
-    print("hola, aqui falla")
-    event, _ = window.read()
-    if event == 'Save':
-        window.close()
-        game.save_assist_matrix(team)
-        assistStatisticsMatrix(game, team)
-    elif event == 'Back':
-        window.close()
-        assistStatisticsMatrixElection(game)
+    
+    while True:
+        event, _ = window.read()
+        if event == 'Save':
+            game.save_assist_matrix(team)
+            sg.PopupTimed("Table saved", auto_close_duration=1, button_type=5)
+        elif event == 'Back':
+            window.close()
+            assistStatisticsMatrixElection(game)
+            break
 
 
 def assistStatisticsMatrixElection(game):
@@ -755,20 +783,20 @@ def assistStatisticsMatrixElection(game):
 
 def assistStatisticsPlot(game, team):
     window = statisticsPlot_menu()
-    event, _ = window.read()
 
-    if event == 'Show plot':
-        plot = game.get_assist_plot(team)
-        plot.show()
-        window.close()
-        assistStatisticsPlot(game, team)
-    elif event == 'Save plot':
-        game.save_assist_plot(team)
-        window.close()
-        assistStatisticsPlot(game, team)
-    elif event == 'Back':
-        window.close()
-        assistStatisticsPlotElection(game)
+    while True:
+        event, _ = window.read()
+
+        if event == 'Show plot':
+            plot = game.get_assist_plot(team)
+            plot.show()
+        elif event == 'Save plot':
+            game.save_assist_plot(team)
+            sg.PopupTimed("Plot saved", auto_close_duration=1, button_type=5)
+        elif event == 'Back':
+            window.close()
+            assistStatisticsPlotElection(game)
+            break
 
 
 def assistStatisticsPlotElection(game):
@@ -891,57 +919,64 @@ def defineMatch():
 ## 2. Analyse season
 def statisticTable(season, table, statistic, category, player):
     window = statisticTable_menu(season, table, statistic)
-    event, _ = window.read()
 
-    if event == 'Save':
-        window.close()
-        if statistic == "box score":
-            auxPlayer = player.replace(" ", "")
-            name = category + "-" + auxPlayer
-        else:
-            # "greatest streak" -> "GreatestStreak"
-            auxStatistic = statistic.split()
-            auxStatistic = list(map(lambda x: x.capitalize(), auxStatistic))
-            auxStatistic = ("").join(auxStatistic)
-            name = auxStatistic
-        name += "Table"
-        season.save_statistic_evolution_table(table, name)
-        statisticTable(season, table, statistic, category, player)
-    elif event == 'Back':
-        window.close()
-        statisticAnalysis(season, table, statistic, category, player)
+    while True:
+        event, _ = window.read()
+
+        if event == 'Save':
+            if statistic == "box score":
+                auxPlayer = player.replace(" ", "")
+                name = category + "-" + auxPlayer
+            else:
+                # "greatest streak" -> "GreatestStreak"
+                auxStatistic = statistic.split()
+                auxStatistic = list(map(lambda x: x.capitalize(), auxStatistic))
+                auxStatistic = ("").join(auxStatistic)
+                name = auxStatistic
+            name += "Table"
+            season.save_statistic_evolution_table(table, name)
+            sg.PopupTimed("Table saved", auto_close_duration=1, button_type=5)
+            
+        elif event == 'Back':
+            window.close()
+            statisticAnalysis(season, table, statistic, category, player)
+            break
 
 
 def statisticAnalysis(season, table, statistic, category, player):
     window = statisticAnalysis_menu()
-    event, _ = window.read()
 
-    if event == 'See table':
-        window.close()
-        statisticTable(season, table, statistic, category, player)
-    if event == 'See plot':
-        window.close()
-        season.get_statistic_evolution_plot(statistic, category, player, table).show()
-        statisticAnalysis(season, table, statistic, category, player)
-    elif event == 'Save plot':
-        plot = season.get_statistic_evolution_plot(statistic, category, player, table)
-        if statistic == "box score":
-            auxPlayer = player.replace(" ", "")
-            name = category + "-" + auxPlayer
-        else:
-            # "greatest streak" -> "GreatestStreak"
-            auxStatistic = statistic.split()
-            auxStatistic = list(map(lambda x: x.capitalize(), auxStatistic))
-            auxStatistic = ("").join(auxStatistic)
-            name = auxStatistic
-        name += "Plot"
-        season.save_statistic_evolution_plot(plot, name)
-        window.close()
-        statisticAnalysis(season, table, statistic, category, player)
-    
-    elif event == 'Back':
-        window.close()
-        statisticElection(season)
+    while True:
+        event, _ = window.read()
+
+        if event == 'See table':
+            window.close()
+            statisticTable(season, table, statistic, category, player)
+            break
+
+        if event == 'Show plot':
+            window.close()
+            season.get_statistic_evolution_plot(statistic, category, player, table).show()
+
+        elif event == 'Save plot':
+            plot = season.get_statistic_evolution_plot(statistic, category, player, table)
+            if statistic == "box score":
+                auxPlayer = player.replace(" ", "")
+                name = category + "-" + auxPlayer
+            else:
+                # "greatest streak" -> "GreatestStreak":
+                auxStatistic = statistic.split()
+                auxStatistic = list(map(lambda x: x.capitalize(), auxStatistic))
+                auxStatistic = ("").join(auxStatistic)
+                name = auxStatistic
+            name += "Plot"
+            season.save_statistic_evolution_plot(plot, name)
+            sg.PopupTimed("Plot saved", auto_close_duration=1, button_type=5)
+        
+        elif event == 'Back':
+            window.close()
+            statisticElection(season)
+            break
 
 
 def statisticElection(season):
@@ -978,27 +1013,72 @@ def statisticElection(season):
 
 def calendar(season):
     window = calendar_menu(season)
-    event, _ = window.read()
 
-    if event == 'Save':
-        window.close()
-        season.save_calendar()
-        calendar(season)
-    elif event == 'Back':
-        window.close()
-        analyseSeason(season)
+    while True:
+        event, _ = window.read()
+        if event == 'Save':
+            season.save_calendar()
+            sg.PopupTimed("Table saved", auto_close_duration=1, button_type=5)
+        elif event == 'Back':
+            window.close()
+            analyseSeason(season)
+            break
+
 
 def results_table(season):
     window = results_table_menu(season)
-    event, _ = window.read()
 
-    if event == 'Save':
+    while True:
+        event, _ = window.read()
+        if event == 'Save':
+            season.save_results_table()
+            sg.PopupTimed("Table saved", auto_close_duration=1, button_type=5)
+        elif event == 'Back':
+            window.close()
+            results(season)
+            break
+
+
+def results_plot(season):
+    window = results_plot_menu()
+
+    while True:
+        event, values = window.read()
+
+        if values['Condition'] == "Team":
+            plotId = 1
+        elif values['Condition'] == "Opponent team":
+            plotId = 2
+        elif values['Condition'] == "Both":
+            plotId = 3
+        else:
+            plotId = 4
+
+        if event == 'Show plot':
+            plot = season.get_results_plot(plotId)
+            plot.show()
+        elif event == 'Save plot':
+            season.save_results_plot(plotId)
+            sg.PopupTimed("Plot saved", auto_close_duration=1, button_type=5)
+        elif event == 'Back':
+            window.close()
+            results(season)
+            break
+
+
+def results(season):
+    window = results_menu()
+    event, _ = window.read()
+    if event == 'See results table':
         window.close()
-        season.save_results_table()
         results_table(season)
+    elif event == 'Results plot':
+        window.close()
+        results_plot(season)
     elif event == 'Back':
         window.close()
         analyseSeason(season)
+
 
 def analyseSeason(season):
     window = analyseSeason_menu()
@@ -1012,7 +1092,7 @@ def analyseSeason(season):
         calendar(season)
     if event == 'See results':
         window.close()
-        results_table(season)
+        results(season)
     elif event == 'Back':
         window.close()
         defineSeason()

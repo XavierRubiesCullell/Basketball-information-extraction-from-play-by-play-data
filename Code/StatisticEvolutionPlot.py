@@ -3,6 +3,8 @@ import altair as alt
 def main(team, season, statistic, category, player, table):
     '''
     This function returns the plot of the evolution of a statistic during the season
+    - team: team (string)
+    - season: season (string)
     - statistic: statistic that we want to plot, in order to use it as an axis name (string)
     - category: category we want to study in case the statistic is "box score" (string)
     - player: player we want to study in case the statistic is "box score" (string)

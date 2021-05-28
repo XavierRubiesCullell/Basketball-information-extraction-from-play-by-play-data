@@ -8,6 +8,7 @@ from Functions import *
 from StatisticEvolutionTable import main as StatisticEvolutionTable_main
 from StatisticEvolutionPlot import main as StatisticEvolutionPlot_main
 from ResultsTable import main as ResultsTable_main
+from ResultsPlot import main as ResultsPlot_main
 
 def convert_date_season(date):
     '''
@@ -127,6 +128,43 @@ class Season():
             table.to_html(path, encoding="utf8")
         else:
             raise ValueError(f"Extension {extension} is not correct. It must be csv or html")
+
+    def get_results_plot(self, plotId):
+        '''
+        This function creates the season results plot
+        - plotId: Type of the plot we want:
+          · 1: team
+          · 2: opponent team
+          · 3: both teams
+          · 4: difference
+        '''
+        table = self.get_results_table()
+        return ResultsPlot_main(self.team, self.season, table, plotId)
+
+    def save_results_plot(self, plotId, folder=None):
+        '''
+        This function creates the season results plot
+        - plotId: Type of the plot we want:
+          · 1: team
+          · 2: opponent team
+          · 3: both teams
+          · 4: difference
+        - folder: directory where to save the plot (string)
+        '''
+        if folder is None:
+            folder = self.path
+        path = folder + self.seasonName + "_ResultsPlot"
+        plot = self.get_results_plot(plotId)
+        if plotId == 1:
+            path += "Team"
+        elif plotId == 2:
+            path += "Opponent"
+        elif plotId == 3:
+            path += "Both"
+        elif plotId == 4:
+            path += "Difference"
+        path += ".html"
+        plot.save(path)
 
     def get_statistic_evolution_table(self, statistic, category=None, player=None):
         '''

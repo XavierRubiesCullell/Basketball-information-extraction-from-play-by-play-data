@@ -4,7 +4,7 @@ import pandas as pd
 import altair as alt
 
 from Functions import *
-from MatchClass import *
+from MatchClass import Match
 
 
 def treat_match(i, row, team, table):
