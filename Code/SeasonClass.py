@@ -7,6 +7,7 @@ import pandas as pd
 from Functions import *
 from StatisticEvolutionTable import main as StatisticEvolutionTable_main
 from StatisticEvolutionPlot import main as StatisticEvolutionPlot_main
+from ResultsTable import main as ResultsTable_main
 
 def convert_date_season(date):
     '''
@@ -24,7 +25,7 @@ def treat_matches(team, matchList):
     - table: table with played matches
     - percentage: played percentage of the projected season
     '''
-    table = pd.DataFrame(columns=["Home", "Away", "Date"])
+    table = pd.DataFrame(columns=['Date', 'Home', 'Away'])
     totalNum = 0
     playedNum = 0
     for row in matchList:
@@ -46,8 +47,8 @@ def treat_matches(team, matchList):
                 else:
                     home = team
                     away = opTeam
-                row = [home, away, date]
-                row = pd.Series(row, index=["Home", "Away", "Date"])
+                row = [date, home, away]
+                row = pd.Series(row, index=["Date", "Home", "Away"])
                 table = table.append(row, ignore_index=True)
     return table, round(playedNum/totalNum*100,2)
 
@@ -92,13 +93,38 @@ class Season():
         '''
         if folder is None:
             folder = self.path
-        path = folder + self.seasonName + "_calendar"
+        path = folder + self.seasonName + "_Calendar"
         if extension == 'csv':
             path += ".csv"
             self.matchTable.to_csv(path, sep = ";", encoding="utf8")
         elif extension == 'html':
             path += ".html"
             self.matchTable.to_html(path, encoding="utf8")
+        else:
+            raise ValueError(f"Extension {extension} is not correct. It must be csv or html")
+
+    def get_results_table(self):
+        '''
+        This function creates the season results table
+        '''
+        return ResultsTable_main(self.team, self.matchTable)
+
+    def save_results_table(self, extension='html', folder=None):
+        '''
+        This function saves the results of the played matches of the season
+        - extension: type of the file where the table will be saved. It can either be csv or html (string)
+        - folder: directory where to save the plot (string)
+        '''
+        if folder is None:
+            folder = self.path
+        path = folder + self.seasonName + "_ResultsTable"
+        table = self.get_results_table()
+        if extension == 'csv':
+            path += ".csv"
+            table.to_csv(path, sep = ";", encoding="utf8")
+        elif extension == 'html':
+            path += ".html"
+            table.to_html(path, encoding="utf8")
         else:
             raise ValueError(f"Extension {extension} is not correct. It must be csv or html")
 
@@ -109,7 +135,7 @@ class Season():
         - category: category we want to study in case the statistic is "box score" (string)
         - player: player we want to study in case the statistic is "box score" (string)
         '''
-        return StatisticEvolutionTable_main(self.team, self.matchList, statistic, category, player)
+        return StatisticEvolutionTable_main(self.team, self.matchTable, statistic, category, player)
 
 
     def save_statistic_evolution_table(self, table, name, extension='html', folder=None):

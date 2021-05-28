@@ -17,17 +17,17 @@ def convert_date_match(date):
     date = datetime.datetime.strptime(date, "%Y/%m/%d")
     return date.strftime("%Y%m%d")
 
-def convert(name):
-    diff = 4 - len(name)
+def convert(name, size):
+    diff = size - len(name)
     if diff > 0:
         half = int(diff/2)
         return " "*(diff-half) + name + " "*half
     return name
 
-def create_table(table, indexCol):
+def create_table(table, indexCol, size):
     auxTable = table.copy()
     auxTable[indexCol] = auxTable.index
-    auxTable = auxTable.rename(convert, axis="columns")
+    auxTable.columns = [convert(x, size) for x in auxTable.columns]
     cols = auxTable.columns.tolist()
     cols = cols[-1:] + cols[:-1]
     return auxTable[cols]
@@ -135,7 +135,7 @@ def helpAnalyseBoxScore_menu(cols):
     return sg.Window("Help Menu", layout)
 
 def analyseBoxScore_menu(game, table):
-    auxTable = create_table(table, "Player")
+    auxTable = create_table(table, "Player", 4)
     indentation = (1,1)
     layout = [
         [ sg.Button('Help') ],
@@ -191,7 +191,7 @@ def filterByTop_menu(game, table):
 
 ### 1.2. Match statistics
 def matchStatistics_menu(game):
-    table1 = create_table(game.quarter_scorings(), " ")
+    table1 = create_table(game.quarter_scorings(), " ", 4)
     layout1 = [
         [ sg.Table(values=table1.values.tolist(),
         headings = table1.columns.tolist(),
@@ -270,7 +270,7 @@ def teamElection_menu():
 
 def shootingStatisticsTable_menu(game, team):
     table = game.get_shooting_table()[team-1]
-    table = create_table(table, "Distance (ft)")
+    table = create_table(table, "Distance (ft)", 4)
     layout = [
         [ sg.Button('Save') ],
         [ sg.Table(values=table.values.tolist(), headings=table.columns.tolist(), num_rows=len(table), hide_vertical_scroll = True) ],
@@ -301,7 +301,7 @@ def shootingStatistics_menu():
 ### 1.5. Assist statistics
 def assistStatisticsMatrix_menu(game, team):
     table = game.get_assist_matrix(team)
-    table = create_table(table, " ")
+    table = create_table(table, " ", 4)
     layout = [
         [ sg.Button('Save') ],
         [ sg.Table(values=table.values.tolist(), headings=table.columns.tolist(), num_rows=len(table), hide_vertical_scroll = True) ],
@@ -397,6 +397,7 @@ def analyseSeason_menu():
     layout = [
         [ sg.Text("Season analysis menu") ],
         [ sg.Button('See calendar', size = buttonSize)],
+        [ sg.Button('See results', size = buttonSize)],
         [ sg.Button('Statistic evolution', size = buttonSize)],
         [ sg.Text("")],
         [ sg.Button('Back')]
@@ -404,7 +405,7 @@ def analyseSeason_menu():
     return sg.Window("Analyse Season Menu", layout)
 
 def calendar_menu(season):
-    auxTable = create_table(season.matchTable, "Player")
+    auxTable = create_table(season.matchTable, " ", 5)
     layout = [
         [ sg.Button('Save') ],
         [   sg.Table(values=auxTable.values.tolist(),
@@ -413,6 +414,17 @@ def calendar_menu(season):
         [ sg.Button('Back') ]
     ]
     return sg.Window("Calendar Menu", layout)
+
+def results_table_menu(season):
+    auxTable = create_table(season.get_results_table(), " ", 5)
+    layout = [
+        [ sg.Button('Save') ],
+        [   sg.Table(values=auxTable.values.tolist(),
+            headings=auxTable.columns.tolist(),
+            alternating_row_color = 'gray') ],
+        [ sg.Button('Back') ]
+    ]
+    return sg.Window("Results table Menu", layout)
 
 def statisticElection_menu():
     buttonSize = (5,1)
@@ -448,7 +460,7 @@ def statisticAnalysis_menu():
     return sg.Window("Statistic Analysis Menu", layout)
 
 def statisticTable_menu(season, table, statistic):
-    auxTable = create_table(table, "Match")
+    auxTable = create_table(table, "Match", 4)
     layout = [
         [ sg.Button('Save') ],
         [   sg.Table(values=auxTable.values.tolist(),
@@ -976,6 +988,17 @@ def calendar(season):
         window.close()
         analyseSeason(season)
 
+def results_table(season):
+    window = results_table_menu(season)
+    event, _ = window.read()
+
+    if event == 'Save':
+        window.close()
+        season.save_results_table()
+        results_table(season)
+    elif event == 'Back':
+        window.close()
+        analyseSeason(season)
 
 def analyseSeason(season):
     window = analyseSeason_menu()
@@ -987,6 +1010,9 @@ def analyseSeason(season):
     if event == 'See calendar':
         window.close()
         calendar(season)
+    if event == 'See results':
+        window.close()
+        results_table(season)
     elif event == 'Back':
         window.close()
         defineSeason()

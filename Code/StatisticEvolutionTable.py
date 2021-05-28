@@ -48,7 +48,7 @@ def get_value(game, statistic, team, category, player):
 def treat_match(row, team, table, statistic, category, player):
     '''
     This function treats all the matches in a season and does the desired computation for each of them
-    - row: row in the season table (bs4.element.Tag)
+    - row: row in the season table (pandas.Series)
     - team: name of the team (string)
     - table: table where the value of the match will be added (pandas.DataFrame)
     - statistic: statistic that we want to study (string)
@@ -72,7 +72,7 @@ def main(team, matchTable, statistic, category=None, player=None):
     '''
     This function returns the information desired for all the matches of a team during a season
     - team: name of the team (string)
-    - matchTable: list of matches (BeautifulSoup object)
+    - matchTable: table of matches (pandas.DataFrame)
     - statistic: statistic that we want to study (string)
     - category: category we want to study in case the statistic is boxscore (string)
     - player: player we want to study in case the statistic is boxscore (string)

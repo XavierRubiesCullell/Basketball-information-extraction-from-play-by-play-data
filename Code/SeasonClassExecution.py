@@ -4,6 +4,11 @@ team = "Memphis"
 season = "2020-2021"
 seasonObject = Season(team, season)
 
+seasonObject.save_calendar()
+
+print(seasonObject.get_results_table())
+
+seasonObject.save_results_table()
 
 statistic = "greatest streak"
 table = seasonObject.get_statistic_evolution_table(statistic, category=None, player=None)
