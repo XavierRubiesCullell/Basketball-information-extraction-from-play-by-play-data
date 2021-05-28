@@ -2,10 +2,70 @@ import os
 from bs4 import BeautifulSoup
 import urllib.request
 import altair as alt
+import pandas as pd
 
 from Functions import *
 from StatisticEvolutionTable import main as StatisticEvolutionTable_main
 from StatisticEvolutionPlot import main as StatisticEvolutionPlot_main
+
+def convert_date_season(date):
+    '''
+    This functions receives a date in format "weekday, month day, year" and returns it in format "YYYYMMDD"
+    '''
+    date = datetime.datetime.strptime(date, "%a, %b %d, %Y")
+    return date.strftime("%Y/%m/%d")
+
+def treat_matches(team, matchList):
+    '''
+    This function treats all the matches in a season and checks whether they were played
+    - team: name of the team (string)
+    - matchList: web object with the matches (bs4.element.ResultSet)
+    Output:
+    - table: table with played matches
+    - percentage: played percentage of the projected season
+    '''
+    table = pd.DataFrame(columns=["Home", "Away", "Date"])
+    totalNum = 0
+    playedNum = 0
+    for row in matchList:
+        cols = row.find_all('td')
+        if len(cols) == 14:
+            totalNum += 1
+            date = cols[0].text
+            played = cols[3].text == "Box Score"
+            location = cols[4].text
+            opTeam = get_team(cols[5].text)
+
+            if played:
+                playedNum += 1
+                date = convert_date_season(date)
+                teamIsAway = (location == "@")
+                if teamIsAway:
+                    home = opTeam
+                    away = team
+                else:
+                    home = team
+                    away = opTeam
+                row = [home, away, date]
+                row = pd.Series(row, index=["Home", "Away", "Date"])
+                table = table.append(row, ignore_index=True)
+    return table, round(playedNum/totalNum*100,2)
+
+
+def matches_retrieval(team, season):
+    '''
+    This function returns the played matches of a season of a team
+    - team: short name of a team (string)
+    - season: season name (string)
+    '''
+    season = season.split("-")[1]
+    webpage = f"https://www.basketball-reference.com/teams/{team}/{season}_games.html"
+    response = urllib.request.urlopen(webpage)
+    htmlDoc = response.read()
+    soup = BeautifulSoup(htmlDoc, 'html.parser')
+    matchList = soup.find_all('tr')
+    return treat_matches(team, matchList)
+
 
 class Season():
     def __init__(self, team, season, fileFolder="Files/"):
@@ -22,14 +82,7 @@ class Season():
         self.path = path + "/" + fileFolder + "Seasons/" + self.seasonName + "/"
         if not os.path.isdir(self.path):
             os.mkdir(self.path)
-
-        # information retrieval:
-        season = self.season.split("-")[1]
-        webpage = f"https://www.basketball-reference.com/teams/{self.team}/{season}_games.html"
-        response = urllib.request.urlopen(webpage)
-        htmlDoc = response.read()
-        soup = BeautifulSoup(htmlDoc, 'html.parser')
-        self.matchList = soup.find_all('tr')
+        self.matchList, self.progress = matches_retrieval(self.team, self.season)
     
 
     def get_statistic_evolution_table(self, statistic, category=None, player=None):
@@ -39,7 +92,7 @@ class Season():
         - category: category we want to study in case the statistic is "box score" (string)
         - player: player we want to study in case the statistic is "box score" (string)
         '''
-        return StatisticEvolutionTable_main(self.team, self.season, self.matchList, statistic, category, player)
+        return StatisticEvolutionTable_main(self.team, self.matchList, statistic, category, player)
 
 
     def save_statistic_evolution_table(self, table, name, extension='html', folder=None):

@@ -872,9 +872,15 @@ def statisticTable(season, table, statistic, category, player):
     if event == 'Save':
         window.close()
         if statistic == "box score":
-            name = category + "_" + player
+            auxPlayer = player.replace(" ", "")
+            name = category + "-" + auxPlayer
         else:
-            name = statistic
+            # "greatest streak" -> "GreatestStreak"
+            auxStatistic = statistic.split()
+            auxStatistic = list(map(lambda x: x.capitalize(), auxStatistic))
+            auxStatistic = ("").join(auxStatistic)
+            name = auxStatistic
+        name += "Table"
         season.save_statistic_evolution_table(table, name)
         statisticTable(season, table, statistic, category, player)
     elif event == 'Back':
@@ -904,6 +910,7 @@ def statisticAnalysis(season, table, statistic, category, player):
             auxStatistic = list(map(lambda x: x.capitalize(), auxStatistic))
             auxStatistic = ("").join(auxStatistic)
             name = auxStatistic
+        name += "Plot"
         season.save_statistic_evolution_plot(plot, name)
         window.close()
         statisticAnalysis(season, table, statistic, category, player)
