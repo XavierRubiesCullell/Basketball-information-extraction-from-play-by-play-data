@@ -82,9 +82,11 @@ class Match():
     
     def save_box_score(self, table, name="", extension='html', folder=None):
         '''
-        This function saves the box scores in a CSV
-        - folder: relative path to the folder where the box score will be saved (string)
+        This function saves the box score
+        - table: box score (pandas.DataFrame)
         - name: name specification for the file (string)
+        - extension: type of the file where the table will be saved. It can either be csv or html (string)
+        - folder: relative path to the folder where the box score will be saved (string)
         '''
         if folder is None:
             folder = self.path
@@ -96,7 +98,7 @@ class Match():
             path += ".html"
             table.to_html(path, encoding="utf8")
         else:
-            raise NameError(f"Extension {extension} is not correct. It must be csv or html")
+            raise ValueError(f"Extension {extension} is not correct. It must be csv or html")
 
     def filter_by_players(self, table, players):
         '''
@@ -258,7 +260,7 @@ class Match():
             path += ".html"
             table.to_html(path, encoding="utf8")
         else:
-            raise NameError(f"Extension {extension} is not correct. It must be csv or html")
+            raise ValueError(f"Extension {extension} is not correct. It must be csv or html")
 
     def get_shooting_plot(self, team):
         '''
@@ -286,7 +288,7 @@ class Match():
             path = folder + self.matchName + "_ShootingPlot_" + teamName + "." + extension
             plot.write_image(path)
         else:
-            raise NameError(f"Extension {extension} is not correct. It must be svg, pdf, png, jpeg or webp")
+            raise ValueError(f"Extension {extension} is not correct. It must be svg, pdf, png, jpeg or webp")
 
     def get_assist_matrix(self, team=None, assists=None):
         '''
@@ -322,7 +324,7 @@ class Match():
             path += ".html"
             matrix.to_html(path, encoding="utf8")
         else:
-            raise NameError(f"Extension {extension} is not correct. It must be csv or html")
+            raise ValueError(f"Extension {extension} is not correct. It must be csv or html")
 
     def get_assist_plot(self, team):
         '''

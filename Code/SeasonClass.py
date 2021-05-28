@@ -82,8 +82,25 @@ class Season():
         self.path = path + "/" + fileFolder + "Seasons/" + self.seasonName + "/"
         if not os.path.isdir(self.path):
             os.mkdir(self.path)
-        self.matchList, self.progress = matches_retrieval(self.team, self.season)
+        self.matchTable, self.progress = matches_retrieval(self.team, self.season)
     
+    def save_calendar(self, extension='html', folder=None):
+        '''
+        This function saves the calendar of the played matches of the season
+        - extension: type of the file where the table will be saved. It can either be csv or html (string)
+        - folder: directory where to save the plot (string)
+        '''
+        if folder is None:
+            folder = self.path
+        path = folder + self.seasonName + "_calendar"
+        if extension == 'csv':
+            path += ".csv"
+            self.matchTable.to_csv(path, sep = ";", encoding="utf8")
+        elif extension == 'html':
+            path += ".html"
+            self.matchTable.to_html(path, encoding="utf8")
+        else:
+            raise ValueError(f"Extension {extension} is not correct. It must be csv or html")
 
     def get_statistic_evolution_table(self, statistic, category=None, player=None):
         '''
@@ -102,6 +119,8 @@ class Season():
         sending it to this function instead of calling it once again
         - table: data table (pandas.DataFrame)
         - name: name we want for the file (string). The table will be saved in Team_Season_name
+        - extension: type of the file where the table will be saved. It can either be csv or html (string)
+        - folder: directory where to save the plot (string)
         '''
         if folder is None:
             folder = self.path
@@ -113,7 +132,7 @@ class Season():
             path += ".html"
             table.to_html(path, encoding="utf8")
         else:
-            raise NameError(f"Extension {extension} is not correct. It must be csv or html")
+            raise ValueError(f"Extension {extension} is not correct. It must be csv or html")
 
 
     def get_statistic_evolution_plot(self, statistic, category=None, player=None, table=None):
@@ -129,10 +148,14 @@ class Season():
         return StatisticEvolutionPlot_main(self.team, self.season, statistic, category, player, table)
 
 
-    def save_statistic_evolution_plot(self, plot, name):
+    def save_statistic_evolution_plot(self, plot, name, folder=None):
         '''
         This function saves the plot 'plot' in FileDirectory/Seasons/seasonName:
         - plot: altair plot object (altair.vegalite.v4.api.LayerChart)
         - name: name we want for the file (string). The plot will be saved in Team_Season_name
+        - folder: directory where to save the plot (string)
         '''
-        plot.save(self.path + self.seasonName + "_" + name + ".html")
+        if folder is None:
+            folder = self.path
+        path = folder + self.seasonName + "_" + name + ".html"
+        plot.save(path)

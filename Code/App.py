@@ -396,11 +396,23 @@ def analyseSeason_menu():
     buttonSize = (20,1)
     layout = [
         [ sg.Text("Season analysis menu") ],
+        [ sg.Button('See calendar', size = buttonSize)],
         [ sg.Button('Statistic evolution', size = buttonSize)],
         [ sg.Text("")],
         [ sg.Button('Back')]
     ]
     return sg.Window("Analyse Season Menu", layout)
+
+def calendar_menu(season):
+    auxTable = create_table(season.matchTable, "Player")
+    layout = [
+        [ sg.Button('Save') ],
+        [   sg.Table(values=auxTable.values.tolist(),
+            headings=auxTable.columns.tolist(),
+            alternating_row_color = 'gray') ],
+        [ sg.Button('Back') ]
+    ]
+    return sg.Window("Calendar Menu", layout)
 
 def statisticElection_menu():
     buttonSize = (5,1)
@@ -952,6 +964,19 @@ def statisticElection(season):
         analyseSeason(season)
 
 
+def calendar(season):
+    window = calendar_menu(season)
+    event, _ = window.read()
+
+    if event == 'Save':
+        window.close()
+        season.save_calendar()
+        calendar(season)
+    elif event == 'Back':
+        window.close()
+        analyseSeason(season)
+
+
 def analyseSeason(season):
     window = analyseSeason_menu()
     event, _ = window.read()
@@ -959,7 +984,9 @@ def analyseSeason(season):
     if event == 'Statistic evolution':
         window.close()
         statisticElection(season)
-    
+    if event == 'See calendar':
+        window.close()
+        calendar(season)
     elif event == 'Back':
         window.close()
         defineSeason()
