@@ -16,7 +16,7 @@ def get_table(team, table):
     return auxTable
 
 
-def get_plot(team, season, table, variable, colors):
+def get_plot(table, variable, colors):
     if variable == 'Difference':
         yAxisTitle = "Difference"
     else:
@@ -68,7 +68,7 @@ def main(team, season, table, plotId):
     table = get_table(team, table)    
     
     if plotId == 1:
-        plot, rule = get_plot(team, season, table, 'TeamScore', ["#4682b4", "darkblue"])
+        plot, rule = get_plot(table, 'TeamScore', ["#4682b4", "darkblue"])
         chart = (plot + rule).properties(width=750)
         title = "Scoring along the " + season + " season by " + team
 
@@ -76,7 +76,7 @@ def main(team, season, table, plotId):
         return chart
 
     if plotId == 2:
-        plot, rule = get_plot(team, season, table, 'OpponentScore', ["#4682b4", "darkblue"])
+        plot, rule = get_plot(table, 'OpponentScore', ["#4682b4", "darkblue"])
         chart = (plot + rule).properties(width=750)
         title = "Scoring along the " + season + " season by the opponents of " + team
 
@@ -84,10 +84,10 @@ def main(team, season, table, plotId):
         return chart
 
     if plotId == 3:
-        plot1, rule1 = get_plot(team, season, table, 'TeamScore', ["#4682b4", "darkblue"])
+        plot1, rule1 = get_plot(table, 'TeamScore', ["#4682b4", "darkblue"])
         chart1 = (plot1 + rule1)
 
-        plot2, rule2 = get_plot(team, season, table, 'OpponentScore', ["indianred", "darkred"])
+        plot2, rule2 = get_plot(table, 'OpponentScore', ["indianred", "darkred"])
         chart2 = (plot2 + rule2)
 
         chart = (chart1 + chart2).properties(width=750)
@@ -97,7 +97,7 @@ def main(team, season, table, plotId):
         return chart
 
     if plotId == 4:
-        chart, rule = get_plot(team, season, table, 'Difference', ["#4682b4", "darkblue"])
+        chart, rule = get_plot(table, 'Difference', ["#4682b4", "darkblue"])
         chart = (chart + rule).properties(width=750)
         title = "Scoring difference along the " + season + " by " + team
 
