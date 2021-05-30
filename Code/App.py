@@ -290,10 +290,14 @@ def statisticsPlot_menu():
     return sg.Window("Statistics plot Menu", layout)
 
 def shootingStatistics_menu():
+    buttonSize = (25,1)
     layout = [
         [ sg.Text("Shooting statistics Menu") ],
-        [ sg.Button('Shooting statistics table') ],
-        [ sg.Button('Shooting statistics plot') ],
+        [ sg.Radio("Local", "RADIO1", default=True, key='Local') ],
+        [ sg.Radio("Visiting", "RADIO1", key='Visiting') ],
+        [ sg.Text("") ],
+        [ sg.Button('Shooting statistics table', size=buttonSize) ],
+        [ sg.Button('Shooting statistics plot', size=buttonSize) ],
         [ sg.Text("") ],
         [ sg.Button('Back') ]
     ]
@@ -311,10 +315,14 @@ def assistStatisticsMatrix_menu(game, team):
     return sg.Window("Assist statistics matrix Menu", layout)
 
 def assistStatistics_menu():
+    buttonSize = (25,1)
     layout = [
         [ sg.Text("Assist statistics Menu") ],
-        [ sg.Button('Assist statistics matrix') ],
-        [ sg.Button('Assist statistics plot') ],
+        [ sg.Radio("Local", "RADIO1", default=True, key='Local') ],
+        [ sg.Radio("Visiting", "RADIO1", key='Visiting') ],
+        [ sg.Text("") ],
+        [ sg.Button('Assist statistics matrix', size=buttonSize) ],
+        [ sg.Button('Assist statistics plot', size=buttonSize) ],
         [ sg.Text("") ],
         [ sg.Button('Back') ]
     ]
@@ -333,16 +341,16 @@ def seePbP_menu():
     return sg.Window("Play-by-play Menu", layout)
 
 def helpTextPbP_menu():
-    textSize = (12, 1)
+    textSize = (20, 1)
     layout = [
         [ sg.Text("S, 2, 5, O:", size=textSize), sg.Text("2-point shot from 5ft that went out") ],
-        [ sg.Text("S, 2, 5, I A 23:", size=textSize), sg.Text("2-point shot from 5ft that went in, assisted by #23") ],
-        [ sg.Text("R, O/D:", size=textSize), sg.Text("offensive/deffensive rebound") ],
-        [ sg.Text("T:", size=textSize), sg.Text("turnover") ],
-        [ sg.Text("St, 23:", size=textSize), sg.Text("steal, the ball was stolen from #23") ],
-        [ sg.Text("B, 23:", size=textSize), sg.Text("block, #23 was its receiver") ],
-        [ sg.Text("F, 23:", size=textSize), sg.Text("foul, drawn by #23") ],
-        [ sg.Text("C, 23:", size=textSize), sg.Text("change, #23 is the one that enters the game") ]
+        [ sg.Text("S, 2, 5, I, A, N. Surname:", size=textSize), sg.Text("2-point shot from 5ft that went in, assisted by N. Surname") ],
+        [ sg.Text("R, O/D:", size=textSize), sg.Text("Offensive/Deffensive rebound") ],
+        [ sg.Text("T:", size=textSize), sg.Text("Turnover") ],
+        [ sg.Text("St, N. Surname:", size=textSize), sg.Text("Steal, the ball was stolen from N. Surname") ],
+        [ sg.Text("B, N. Surname:", size=textSize), sg.Text("Block, N. Surname was its receiver") ],
+        [ sg.Text("F, N. Surname:", size=textSize), sg.Text("Foul, drawn by N. Surname") ],
+        [ sg.Text("C, N. Surname:", size=textSize), sg.Text("Change, N. Surname is the one that enters the game") ]
     ]
     return sg.Window("Help Menu", layout)
 
@@ -354,12 +362,12 @@ def textPbP_menu(game):
     plays = pd.DataFrame(columns=cols)
     for line in lines:
         action = line.strip().split(", ")
-        row = [action[0], action[1], action[2], action[3], ",".join(action[4:])]
+        row = [action[0], action[1], action[2], action[3], ", ".join(action[4:])]
         row = pd.Series(row, index=cols)
         plays = plays.append(row, ignore_index=True)
     layout = [
         [ sg.Text("Text play-by-play Menu", size=(66,1)), sg.Button('Help') ],
-        [ sg.Table(values=plays.values.tolist(), headings=cols, justification="left", num_rows=20, row_height=15) ],
+        [ sg.Table(values=plays.values.tolist(), headings=cols, justification="left", num_rows=20, row_height=20) ],
         [ sg.Button('Back') ]
     ]
     return sg.Window("Text play-by-play Menu", layout)
@@ -586,9 +594,7 @@ def analyseBoxScore(game, table):
         event, values = window.read()
         if event == 'Help':
             helpWindow = helpAnalyseBoxScore_menu(table.columns.tolist())
-            helpEvent, _ = helpWindow.read()
-            if helpEvent == sg.WIN_CLOSED:
-                helpWindow.close()
+            _, _ = helpWindow.read()
         elif event == 'Filter by players':
             filterByPlayers(game, table, window)
             break
@@ -610,7 +616,6 @@ def analyseBoxScore(game, table):
             chooseBoxScore(game)
             break
         elif event == sg.WIN_CLOSED:
-            window.close()
             break
 
 
@@ -690,7 +695,6 @@ def playingTimes(game):
             break
 
         elif event == sg.WIN_CLOSED:
-            window.close()
             break
 
 ### 1.4. Shooting statistics
@@ -702,29 +706,12 @@ def shootingStatisticsTable(game, team):
         if event == 'Save':
             game.save_shooting_table(team)
             sg.PopupTimed("Table saved", auto_close_duration=1, button_type=5)
-
         elif event == 'Back':
             window.close()
-            shootingStatisticsTableElection(game)
+            shootingStatistics(game)
             break
-
-
-def shootingStatisticsTableElection(game):
-    window = teamElection_menu()
-    event, values = window.read()
-
-    if event == 'OK':
-        window.close()
-        if values['Local']:
-            window.close()
-            shootingStatisticsTable(game, 1)
-        elif values['Visiting']:
-            window.close()
-            shootingStatisticsTable(game, 2)
-
-    elif event == 'Back':
-        window.close()
-        shootingStatistics(game)
+        elif event == sg.WIN_CLOSED:
+            break
 
 
 def shootingStatisticsPlot(game, team):
@@ -741,37 +728,27 @@ def shootingStatisticsPlot(game, team):
             sg.PopupTimed("Plot saved", auto_close_duration=1, button_type=5)
         elif event == 'Back':
             window.close()
-            shootingStatisticsPlotElection(game)
+            shootingStatistics(game)
             break
-
-def shootingStatisticsPlotElection(game):
-    window = teamElection_menu()
-    event, values = window.read()
-
-    if event == 'OK':
-        window.close()
-        if values['Local']:
-            window.close()
-            shootingStatisticsPlot(game, 1)
-        elif values['Visiting']:
-            window.close()
-            shootingStatisticsPlot(game, 2)
-
-    elif event == 'Back':
-        window.close()
-        shootingStatistics(game)
+        elif event == sg.WIN_CLOSED:
+            break
 
 
 def shootingStatistics(game):
     window = shootingStatistics_menu()
-    event, _ = window.read()
+    event, values = window.read()
+
+    if values['Local']:
+        team = 1
+    elif values['Visiting']:
+        team = 2
 
     if event == 'Shooting statistics table':
         window.close()
-        shootingStatisticsTableElection(game)
+        shootingStatisticsTable(game, team)
     elif event == 'Shooting statistics plot':
         window.close()
-        shootingStatisticsPlotElection(game)
+        shootingStatisticsPlot(game, team)
     elif event == 'Back':
         window.close()
         analyseMatch(game)
@@ -788,26 +765,10 @@ def assistStatisticsMatrix(game, team):
             sg.PopupTimed("Table saved", auto_close_duration=1, button_type=5)
         elif event == 'Back':
             window.close()
-            assistStatisticsMatrixElection(game)
+            assistStatistics(game)
             break
-
-
-def assistStatisticsMatrixElection(game):
-    window = teamElection_menu()
-    event, values = window.read()
-
-    if event == 'OK':
-        window.close()
-        if values['Local']:
-            window.close()
-            assistStatisticsMatrix(game, 1)
-        elif values['Visiting']:
-            window.close()
-            assistStatisticsMatrix(game, 2)
-
-    elif event == 'Back':
-        window.close()
-        assistStatistics(game)
+        elif event == sg.WIN_CLOSED:
+            break
 
 
 def assistStatisticsPlot(game, team):
@@ -824,40 +785,27 @@ def assistStatisticsPlot(game, team):
             sg.PopupTimed("Plot saved", auto_close_duration=1, button_type=5)
         elif event == 'Back':
             window.close()
-            assistStatisticsPlotElection(game)
+            assistStatistics(game)
             break
-
-
-def assistStatisticsPlotElection(game):
-    window = teamElection_menu()
-    event, values = window.read()
-
-    if event == 'OK':
-        window.close()
-        if values['Local']:
-            window.close()
-            assistStatisticsPlot(game, 1)
-        elif values['Visiting']:
-            window.close()
-            assistStatisticsPlot(game, 2)
-
-    elif event == 'Back':
-        window.close()
-        assistStatistics(game)
+        elif event == sg.WIN_CLOSED:
+            break
 
 
 def assistStatistics(game):
     window = assistStatistics_menu()
-    event, _ = window.read()
+    event, values = window.read()
+
+    if values['Local']:
+        team = 1
+    elif values['Visiting']:
+        team = 2
 
     if event == 'Assist statistics matrix':
         window.close()
-        assistStatisticsMatrixElection(game)
-    
+        assistStatisticsMatrix(game, team)
     elif event == 'Assist statistics plot':
         window.close()
-        assistStatisticsPlotElection(game)
-
+        assistStatisticsPlot(game, team)
     elif event == 'Back':
         window.close()
         analyseMatch(game)
@@ -877,17 +825,12 @@ def textPbP(game):
         event, _ = window.read()
         if event == 'Help':
             helpWindow = helpTextPbP_menu()
-            helpEvent, _ = helpWindow.read()
-            if helpEvent == sg.WIN_CLOSED:
-                helpWindow.close()
-
+            _, _ = helpWindow.read()
         elif event == 'Back':
             window.close()
             seePbP(game)
             break
-
         elif event == sg.WIN_CLOSED:
-            window.close()
             break
 
 
@@ -970,9 +913,8 @@ def statisticTable(season, table, statistic, category, player):
             window.close()
             statisticAnalysis(season, table, statistic, category, player)
             break
-        elif event == 'Back':
-            window.close()
-            statisticAnalysis(season, table, statistic, category, player)
+
+        elif event == sg.WIN_CLOSED:
             break
 
 
@@ -1009,6 +951,9 @@ def statisticAnalysis(season, table, statistic, category, player):
         elif event == 'Back':
             window.close()
             statisticElection(season)
+            break
+
+        elif event == sg.WIN_CLOSED:
             break
 
 
@@ -1056,6 +1001,8 @@ def calendar(season):
             window.close()
             analyseSeason(season)
             break
+        elif event == sg.WIN_CLOSED:
+            break
 
 
 def results_table(season):
@@ -1069,6 +1016,8 @@ def results_table(season):
         elif event == 'Back':
             window.close()
             results(season)
+            break
+        elif event == sg.WIN_CLOSED:
             break
 
 
@@ -1096,6 +1045,8 @@ def results_plot(season):
         elif event == 'Back':
             window.close()
             results(season)
+            break
+        elif event == sg.WIN_CLOSED:
             break
 
 
