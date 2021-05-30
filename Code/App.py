@@ -75,6 +75,7 @@ def analyseMatch_menu():
 
 ### 1.1. Box score
 def chooseBoxScore_menu():
+    buttonSize = (5,1)
     inputSize = (15,1)
     layout = [
         [ sg.Text("Choose the time interval you desire:") ],
@@ -82,10 +83,10 @@ def chooseBoxScore_menu():
          sg.Input(key='End', size=inputSize, tooltip="Introduce the time in format quarter:MM:SS\nquarter can be '1Q','2Q','3Q','4Q','xOT\nIf nothing is written, the end of the match will be considered")],
         [ sg.Text("Choose the box score you desire:") ],
         #[ sg.Button('Local'), sg.Button('Visiting'), sg.Button('Both')],
-        [ sg.Checkbox("Local", key = 'Local'), sg.Checkbox("Visiting", key = 'Visiting')],
-        [ sg.Button('OK')],
+        [ sg.Checkbox("Local", default = True, key = 'Local'), sg.Checkbox("Visiting", default = True, key = 'Visiting')],
+        [ sg.Button('OK', size=buttonSize)],
         [ sg.Text("")],
-        [ sg.Button('Back')]
+        [ sg.Button('Back', size=buttonSize)]
     ]
     return sg.Window("Box score election menu", layout)
 
@@ -502,10 +503,17 @@ def filterByPlayers(game, table, BSWindow):
     if event == 'Filter':
         players = values['Filter condition']
         players = players.split(", ")
-        table = game.filter_by_players(table, players)
-        filterWindow.close()
-        BSWindow.close()
-        analyseBoxScore(game, table)
+
+        newTable = game.filter_by_players(table, players)
+        if newTable is None or len(newTable) == 0:
+            sg.PopupTimed("There are no records that meet the introduced conditions", auto_close_duration=3, button_type=5)
+            filterWindow.close()
+            BSWindow.close()
+            analyseBoxScore(game, table)
+        else:
+            filterWindow.close()
+            BSWindow.close()
+            analyseBoxScore(game, newTable)
 
 
 def filterByCategories(game, table, BSWindow):
@@ -515,10 +523,18 @@ def filterByCategories(game, table, BSWindow):
         cats = values['Filter condition']
         if not (isinstance(cats,str) and cats in ("simple", "shooting", "rebounding")):
             cats = cats.split(", ")
-        table = game.filter_by_categories(table, cats)
-        filterWindow.close()
-        BSWindow.close()
-        analyseBoxScore(game, table)
+
+        newTable = game.filter_by_categories(table, cats)
+
+        if newTable is None or len(newTable) == 0:
+            sg.PopupTimed("There are no records that meet the introduced conditions", auto_close_duration=3, button_type=5)
+            filterWindow.close()
+            BSWindow.close()
+            analyseBoxScore(game, table)
+        else:
+            filterWindow.close()
+            BSWindow.close()
+            analyseBoxScore(game, newTable)
 
 
 def filterByValues(game, table, BSWindow):
@@ -532,10 +548,16 @@ def filterByValues(game, table, BSWindow):
         for cat in auxCats:
             cats[cat[0]] = int(cat[1])
 
-        table = game.filter_by_value(table, cats)
-        filterWindow.close()
-        BSWindow.close()
-        analyseBoxScore(game, table)
+        newTable = game.filter_by_value(table, cats)
+        if newTable is None or len(newTable) == 0:
+            sg.PopupTimed("There are no records that meet the introduced conditions", auto_close_duration=3, button_type=5)
+            filterWindow.close()
+            BSWindow.close()
+            analyseBoxScore(game, table)
+        else:
+            filterWindow.close()
+            BSWindow.close()
+            analyseBoxScore(game, newTable)
 
 
 def filterByTop(game, table, BSWindow):
@@ -544,10 +566,17 @@ def filterByTop(game, table, BSWindow):
     if event == 'Filter':
         cats = values['Filter condition']
         cats = cats.split(", ")
-        table = game.top_players(table, cats, n=int(values['n']), max=values['Condition']=="maximum")
-        filterWindow.close()
-        BSWindow.close()
-        analyseBoxScore(game, table)
+
+        newTable = game.top_players(table, cats, n=int(values['n']), max=values['Condition']=="maximum")
+        if newTable is None or len(newTable) == 0:
+            sg.PopupTimed("There are no records that meet the introduced conditions", auto_close_duration=3, button_type=5)
+            filterWindow.close()
+            BSWindow.close()
+            analyseBoxScore(game, table)
+        else:
+            filterWindow.close()
+            BSWindow.close()
+            analyseBoxScore(game, newTable)
 
 
 def analyseBoxScore(game, table):
@@ -937,6 +966,10 @@ def statisticTable(season, table, statistic, category, player):
             season.save_statistic_evolution_table(table, name)
             sg.PopupTimed("Table saved", auto_close_duration=1, button_type=5)
             
+        elif event == 'Back':
+            window.close()
+            statisticAnalysis(season, table, statistic, category, player)
+            break
         elif event == 'Back':
             window.close()
             statisticAnalysis(season, table, statistic, category, player)
