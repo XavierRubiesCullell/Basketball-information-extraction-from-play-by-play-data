@@ -23,10 +23,9 @@ def draw_plotly_court(fig, shots, fig_width=600, margins=0):
     fig.update_yaxes(range=[-52.5 - margins, 417.5 + margins])
 
     threept_break_y = 89.47765084
-    # three_line_col = "#777777"
-    three_line_col = "white"
-    # main_line_col = "#777777"
-    main_line_col = "white"
+    # mainLineCol = "#777777"
+    mainLineCol = "white"
+    lineWidth = 3
 
     fig.update_layout(
         # Line Horizontal
@@ -55,39 +54,39 @@ def draw_plotly_court(fig, shots, fig_width=600, margins=0):
             # half court
             dict(
                 type="rect", x0=-250, y0=-52.5, x1=250, y1=417.5,
-                line=dict(color=main_line_col, width=2),
+                line=dict(color=mainLineCol, width=lineWidth),
                 # fillcolor='#333333',
                 layer='below'
             ),
             # zone
             dict(
                 type="rect", x0=-80, y0=-52.5, x1=80, y1=137.5,
-                line=dict(color=main_line_col, width=2),
+                line=dict(color=mainLineCol, width=lineWidth),
                 # fillcolor='#333333',
                 layer='below'
             ),
             # inner zone
             dict(
                 type="rect", x0=-60, y0=-52.5, x1=60, y1=137.5,
-                line=dict(color=main_line_col, width=2),
+                line=dict(color=mainLineCol, width=lineWidth),
                 layer='below'
             ),
             # free throw circle
             dict(
                 type="circle", x0=-60, y0=77.5, x1=60, y1=197.5, xref="x", yref="y",
-                line=dict(color=main_line_col, width=2),
+                line=dict(color=mainLineCol, width=lineWidth),
                 layer='below'
             ),
             # hoop support
             dict(
                 type="rect", x0=-2, y0=-7.25, x1=2, y1=-12.5,
-                line=dict(color="#ec7607", width=2),
+                line=dict(color="#ec7607", width=1),
                 fillcolor='#ec7607',
             ),
             # hoop
             dict(
                 type="circle", x0=-7.5, y0=-7.5, x1=7.5, y1=7.5, xref="x", yref="y",
-                line=dict(color="#ec7607", width=2),
+                line=dict(color="#ec7607", width=1),
             ),
             # board
             dict(
@@ -98,86 +97,86 @@ def draw_plotly_court(fig, shots, fig_width=600, margins=0):
             dict(
                 type="path",
                 path=circumference_arc(r=40, start_angle=0, end_angle=np.pi),
-                line=dict(color=main_line_col, width=2),
+                line=dict(color=mainLineCol, width=lineWidth),
                 layer='below'
             ),
             # three point semicircle
             dict(
                 type="path",
                 path=circumference_arc(r=237.5, start_angle=0.386283101, end_angle=np.pi - 0.386283101),
-                line=dict(color=main_line_col, width=2),
+                line=dict(color=mainLineCol, width=lineWidth),
                 layer='below'
             ),
             # three point left line
             dict(
                 type="line", x0=-220, y0=-52.5, x1=-220, y1=threept_break_y,
-                line=dict(color=three_line_col, width=2),
+                line=dict(color=mainLineCol, width=lineWidth),
                 layer='below'
             ),
             # three point right line
             dict(
                 type="line", x0=220, y0=-52.5, x1=220, y1=threept_break_y,
-                line=dict(color=three_line_col, width=2),
+                line=dict(color=mainLineCol, width=lineWidth),
                 layer='below'
             ),
             # left timeout line
             dict(
                 type="line", x0=-250, y0=227.5, x1=-220, y1=227.5,
-                line=dict(color=main_line_col, width=2),
+                line=dict(color=mainLineCol, width=lineWidth),
                 layer='below'
             ),
             # right timeout line
             dict(
                 type="line", x0=250, y0=227.5, x1=220, y1=227.5,
-                line=dict(color=main_line_col, width=2),
+                line=dict(color=mainLineCol, width=lineWidth),
                 layer='below'
             ),
             # lateral lines in the zone: 
             dict(
                 type="line", x0=-90, y0=17.5, x1=-80, y1=17.5,
-                line=dict(color=main_line_col, width=2),
+                line=dict(color=mainLineCol, width=lineWidth),
                 layer='below'
             ),
             dict(
                 type="line", x0=-90, y0=27.5, x1=-80, y1=27.5,
-                line=dict(color=main_line_col, width=2),
+                line=dict(color=mainLineCol, width=lineWidth),
                 layer='below'
             ),
             dict(
                 type="line", x0=-90, y0=57.5, x1=-80, y1=57.5,
-                line=dict(color=main_line_col, width=2),
+                line=dict(color=mainLineCol, width=lineWidth),
                 layer='below'
             ),
             dict(
                 type="line", x0=-90, y0=87.5, x1=-80, y1=87.5,
-                line=dict(color=main_line_col, width=2),
+                line=dict(color=mainLineCol, width=lineWidth),
                 layer='below'
             ),
             dict(
                 type="line", x0=90, y0=17.5, x1=80, y1=17.5,
-                line=dict(color=main_line_col, width=2),
+                line=dict(color=mainLineCol, width=lineWidth),
                 layer='below'
             ),
             dict(
                 type="line", x0=90, y0=27.5, x1=80, y1=27.5,
-                line=dict(color=main_line_col, width=2),
+                line=dict(color=mainLineCol, width=lineWidth),
                 layer='below'
             ),
             dict(
                 type="line", x0=90, y0=57.5, x1=80, y1=57.5,
-                line=dict(color=main_line_col, width=2),
+                line=dict(color=mainLineCol, width=lineWidth),
                 layer='below'
             ),
             dict(
                 type="line", x0=90, y0=87.5, x1=80, y1=87.5,
-                line=dict(color=main_line_col, width=2),
+                line=dict(color=mainLineCol, width=lineWidth),
                 layer='below'
             ),
             # logo semicircle
             dict(
                 type="path",
                 path=circumference_arc(y_center=417.5, r=60, start_angle=-0, end_angle=-np.pi),
-                line=dict(color=main_line_col, width=2),
+                line=dict(color=mainLineCol, width=lineWidth),
                 layer='below'
             )
         ] + shots
@@ -185,41 +184,41 @@ def draw_plotly_court(fig, shots, fig_width=600, margins=0):
     return fig
 
 
-def color_election(row):
-    ratio = row[0]/row[1]
-    if ratio < 0.1:
+def color_election(acc):
+    if acc < 10:
         return '#DEEDCF'
-    if ratio < 0.2:
+    if acc < 20:
         return '#BFE1B0'
-    if ratio < 0.3:
+    if acc < 30:
         return '#99D492'
-    if ratio < 0.4:
+    if acc < 40:
         return '#74C67A'
-    if ratio < 0.5:
+    if acc < 50:
         return '#56B870'
-    if ratio < 0.6:
+    if acc < 60:
         return '#39A96B'
-    if ratio < 0.7:
+    if acc < 70:
         return '#1D9A6C'
-    if ratio < 0.8:
+    if acc < 80:
         return '#0C9462'
-    if ratio < 0.9:
+    if acc < 90:
         return '#008B57'
-    if ratio < 1:
+    if acc < 100:
         return '#007E4B'
     return '#006C3E'
 
 
 def shot_line(row, total):
     # 22 ft == 237.5
-    d = int(row.name)*237.5/22
+    # 25 ft == 240
+    d = int(row.name)*240/25
     return dict(
         type="path",
         path=circumference_arc(r=d, start_angle=0, end_angle=np.pi),
         # line=dict(color="green", width=1), # same colour and width
         # line=dict(color="green", width=0.15*row[1]), # same colour
         # line=dict(color=color_election(row), width=1), # same width
-        line=dict(color=color_election(row), width=np.sqrt(row[1]/total*100)),
+        line=dict(color=color_election(row[2]), width=np.sqrt(row[1]/total*100)),
         layer='below'
     )
 

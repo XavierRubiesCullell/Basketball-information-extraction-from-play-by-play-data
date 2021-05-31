@@ -32,7 +32,7 @@ def main(file, shots=None):
     Output: shooting table (pandas.DataFrame)
     '''
     if shots is None:
-        shots = [ pd.DataFrame(columns=['Shots made', 'Shots attempted']) ]*2
+        shots = [ pd.DataFrame(columns=['Shots made', 'Shots attempted', 'Accuracy (%)']) ]*2
         shots[0].index.name = 'Distance (ft)'
         shots[1].index.name = 'Distance (ft)'
     else:
@@ -48,5 +48,6 @@ def main(file, shots=None):
     for team in range(1,3):
         shots[team-1].sort_index(inplace=True)
         shots[team-1].loc["TOTAL"] = shots[team-1].apply(np.sum)
+        shots[team-1]['Accuracy (%)'] = round(shots[team-1]['Shots made']/shots[team-1]['Shots attempted']*100, 2)
     
     return shots
