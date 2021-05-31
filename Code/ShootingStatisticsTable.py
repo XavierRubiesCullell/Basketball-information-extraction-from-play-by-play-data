@@ -33,11 +33,10 @@ def main(file, shots=None):
     '''
     if shots is None:
         shots = [ pd.DataFrame(columns=['Shots made', 'Shots attempted', 'Accuracy (%)']) ]*2
-        shots[0].index.name = 'Distance (ft)'
-        shots[1].index.name = 'Distance (ft)'
+        shots[0].index.name = shots[1].index.name = 'Distance (ft)'
     else:
-        shots[0] = shots[0].drop(index = ["TOTAL"])
-        shots[1] = shots[1].drop(index = ["TOTAL"])
+        shots[0] = shots[0].drop(index = ["TOTAL"], errors='ignore')
+        shots[1] = shots[1].drop(index = ["TOTAL"], errors='ignore')
 
     with open(file, encoding="utf-8") as f:
         lines = f.readlines()
@@ -49,5 +48,5 @@ def main(file, shots=None):
         shots[team-1].sort_index(inplace=True)
         shots[team-1].loc["TOTAL"] = shots[team-1].apply(np.sum)
         shots[team-1]['Accuracy (%)'] = round(shots[team-1]['Shots made']/shots[team-1]['Shots attempted']*100, 2)
-    
+        shots[team-1] = shots[team-1].astype({'Shots made': 'int32', 'Shots attempted': 'int32'})
     return shots

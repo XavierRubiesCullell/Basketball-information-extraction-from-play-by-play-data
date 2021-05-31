@@ -1,10 +1,7 @@
-import os
-import datetime
 import pandas as pd
-import altair as alt
 
 from Functions import *
-from MatchClass import *
+from MatchClass import Match
 
 def treat_drought(drought):
     '''
