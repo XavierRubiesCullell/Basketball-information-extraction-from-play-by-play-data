@@ -17,7 +17,9 @@ def treat_match(row, team, shots):
     if team == home:
         shots = game.get_shooting_table(shots=shots)
     if team == away:
-        shots = game.get_shooting_table(shots=[shots[1], shots[0]])
+        shots1, shots0 = game.get_shooting_table(shots=[shots[1], shots[0]])
+        shots = [shots0, shots1] # shots = game.get_shooting_table(shots=shots)
+    return shots
 
 
 def main(team, matchTable):
@@ -32,7 +34,7 @@ def main(team, matchTable):
         shots[iTeam-1].index.name = 'Distance (ft)'
 
     for row in matchTable.itertuples():
-        treat_match(row, team, shots)
+        shots = treat_match(row, team, shots)
 
     shots[0] = shots[0].astype({'Shots made': 'int32', 'Shots attempted': 'int32'})
     shots[1] = shots[1].astype({'Shots made': 'int32', 'Shots attempted': 'int32'})

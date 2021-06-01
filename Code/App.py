@@ -269,12 +269,14 @@ def teamElection_menu():
     ]
     return sg.Window("Team election Menu", layout)
 
-def shootingStatisticsTable_menu(game, team):
-    table = game.get_shooting_table()[team-1]
+def shootingStatisticsTable_menu(game, team, table):
     table = create_table(table, "Distance (ft)", 4)
     layout = [
         [ sg.Button('Save') ],
-        [ sg.Table(values=table.values.tolist(), headings=table.columns.tolist(), num_rows=len(table), hide_vertical_scroll = True) ],
+        [ sg.Table(values=table.values.tolist(), 
+        headings=table.columns.tolist(),
+        num_rows=min(len(table), 30),
+        hide_vertical_scroll = len(table) < 30) ],
         [ sg.Button('Back') ]
     ]
     return sg.Window("Shooting statistics table Menu", layout)
@@ -289,12 +291,26 @@ def statisticsPlot_menu():
     ]
     return sg.Window("Statistics plot Menu", layout)
 
-def shootingStatistics_menu():
+def shootingStatisticsMatch_menu():
     buttonSize = (25,1)
     layout = [
         [ sg.Text("Shooting statistics Menu") ],
         [ sg.Radio("Local", "RADIO1", default=True, key='Local') ],
         [ sg.Radio("Visiting", "RADIO1", key='Visiting') ],
+        [ sg.Text("") ],
+        [ sg.Button('Shooting statistics table', size=buttonSize) ],
+        [ sg.Button('Shooting statistics plot', size=buttonSize) ],
+        [ sg.Text("") ],
+        [ sg.Button('Back') ]
+    ]
+    return sg.Window("Shooting statistics Menu", layout)
+
+def shootingStatisticsSeason_menu():
+    buttonSize = (25,1)
+    layout = [
+        [ sg.Text("Shooting statistics Menu") ],
+        [ sg.Radio("Own team", "RADIO1", default=True, key='Local') ],
+        [ sg.Radio("Opponents", "RADIO1", key='Visiting') ],
         [ sg.Text("") ],
         [ sg.Button('Shooting statistics table', size=buttonSize) ],
         [ sg.Button('Shooting statistics plot', size=buttonSize) ],
@@ -405,9 +421,11 @@ def analyseSeason_menu():
     buttonSize = (20,1)
     layout = [
         [ sg.Text("Season analysis menu") ],
-        [ sg.Button('See calendar', size = buttonSize)],
-        [ sg.Button('See results', size = buttonSize)],
-        [ sg.Button('Statistic evolution', size = buttonSize)],
+        [ sg.Button('See calendar', size = buttonSize) ],
+        [ sg.Button('See results', size = buttonSize) ],
+        [ sg.Button('Statistic evolution', size = buttonSize) ],
+        [ sg.Button('Shooting statistics', size = buttonSize) ],
+        [ sg.Button('Assist statistics', size = buttonSize) ],
         [ sg.Text("")],
         [ sg.Button('Back')]
     ]
@@ -698,60 +716,71 @@ def playingTimes(game):
             break
 
 ### 1.4. Shooting statistics
-def shootingStatisticsTable(game, team):
-    window = shootingStatisticsTable_menu(game, team)
+def shootingStatisticsTable(Event, team, tables):
+    window = shootingStatisticsTable_menu(Event, team, tables[team-1])
     
     while True:
         event, _ = window.read()
         if event == 'Save':
-            game.save_shooting_table(team)
+            Event.save_shooting_table(team, tables[team-1])
             sg.PopupTimed("Table saved", auto_close_duration=1, button_type=5)
         elif event == 'Back':
             window.close()
-            shootingStatistics(game)
+            shootingStatistics(Event, tables)
             break
         elif event == sg.WIN_CLOSED:
             break
 
 
-def shootingStatisticsPlot(game, team):
+def shootingStatisticsPlot(Event, team, tables):
     window = statisticsPlot_menu()
 
     while True:
         event, _ = window.read()
+        plot = Event.get_shooting_plot(team, tables[team-1])
 
         if event == 'Show plot':
-            plot = game.get_shooting_plot(team)
             plot.show()
         elif event == 'Save plot':
-            game.save_shooting_plot(team)
+            Event.save_shooting_plot(team, plot)
             sg.PopupTimed("Plot saved", auto_close_duration=1, button_type=5)
         elif event == 'Back':
             window.close()
-            shootingStatistics(game)
+            shootingStatistics(Event, tables)
             break
         elif event == sg.WIN_CLOSED:
             break
 
 
-def shootingStatistics(game):
-    window = shootingStatistics_menu()
+def shootingStatistics(Event, tables=[None, None]):
+    try:
+        Event.away
+        window = shootingStatisticsMatch_menu()
+    except:
+        window = shootingStatisticsSeason_menu()
     event, values = window.read()
 
-    if values['Local']:
+    if values.get('Local', False) or values.get('Own team', False):
         team = 1
-    elif values['Visiting']:
+    elif values.get('Visiting', False) or values.get('Opponents', False):
         team = 2
+    
+    if tables[team-1] is None:
+        tables[team-1] = Event.get_shooting_table(team)
 
     if event == 'Shooting statistics table':
         window.close()
-        shootingStatisticsTable(game, team)
+        shootingStatisticsTable(Event, team, tables)
     elif event == 'Shooting statistics plot':
         window.close()
-        shootingStatisticsPlot(game, team)
+        shootingStatisticsPlot(Event, team, tables)
     elif event == 'Back':
         window.close()
-        analyseMatch(game)
+        try:
+            Event.away
+            analyseMatch(Event)
+        except:
+            analyseSeason(Event)
 
 
 ### 1.5. Assist statistics
@@ -1077,6 +1106,9 @@ def analyseSeason(season):
     if event == 'See results':
         window.close()
         results(season)
+    if event == 'Shooting statistics':
+        window.close()
+        shootingStatistics(season)
     elif event == 'Back':
         window.close()
         defineSeason()
