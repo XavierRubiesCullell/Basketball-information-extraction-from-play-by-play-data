@@ -14,6 +14,7 @@ from GreatestStreak import main as GreatestStreak_main
 from ShootingStatisticsTable import main as ShootingStatisticsTable_main
 from ShootingStatisticsPlot import main as ShootingStatisticsPlot_main
 from AssistStatisticsMatrix import main as AssistStatisticsMatrix_main
+from AssistStatisticsPlot import main as AssistStatisticsPlot_main
 from PlayingIntervals import main as PlayingIntervals_main
 from FiveOnCourt import main as FiveOnCourt_main
 from VisualPbP import main as VisualPbP_main
@@ -307,14 +308,15 @@ class Match():
         else:
             return AssistStatisticsMatrix_main(self.PbPFile, assists)[team-1]
     
-    def save_assist_matrix(self, team, extension='html', folder=None):
+    def save_assist_matrix(self, team, matrix=None, extension='html', folder=None):
         '''
         This function saves the assist statistics matrix of the desired team
         - team: team id (integer)
         - extension: type of the file where the table will be saved. It can either be csv or html (string)
         - folder: folder where the table will be saved (string)
         '''
-        matrix = self.get_assist_matrix(team)
+        if matrix is None:
+            matrix = self.get_assist_matrix(team)
         if folder is None:
             folder = self.path
         if team == 1:
@@ -331,41 +333,30 @@ class Match():
         else:
             raise ValueError(f"Extension {extension} is not correct. It must be csv or html")
 
-    def get_assist_plot(self, team):
+    def get_assist_plot(self, team, matrix=None):
         '''
         This function returns the assist statistics plot of the desired team
         - team: team id (integer)
         Output: altair plot
         '''
-        assistMatrix = self.get_assist_matrix(team)
-
-        # dataframe conversion:
-        cols = ['Passer', 'Receiver', '# Assists']
-        assistTable = pd.DataFrame(columns=cols)
-        for i in range(len(assistMatrix.index)):
-            for j in range(len(assistMatrix.columns)):
-                if assistMatrix.index[i] != "TOTAL" and assistMatrix.columns[j] != "TOTAL":
-                    row = pd.Series([assistMatrix.index[i], assistMatrix.index[j], assistMatrix.iloc[i,j]], index=cols)
-                    assistTable = assistTable.append(row, ignore_index=True)
-    
-        chart = alt.Chart(assistTable).mark_rect().encode(
-            x='Receiver:N',
-            y='Passer:N',
-            color='# Assists:Q'
-        )
+        if matrix is None:
+            matrix = self.get_assist_matrix(team)
+        plot = AssistStatisticsPlot_main(matrix)
+        
         if team == 1:
             teamName = self.home
         else:
             teamName = self.away
-        return alt.layer(chart, title = teamName + " assists")
+        return alt.layer(plot, title = teamName + " assists")
 
-    def save_assist_plot(self, team, folder=None):
+    def save_assist_plot(self, team, plot=None, folder=None):
         '''
         This function saves the assist statistics plot of the desired team
         - team: team id (integer)
         - folder: folder where the plot will be saved (string)
         '''
-        plot = self.get_assist_plot(team)
+        if plot is None:
+            plot = self.get_assist_plot(team)
         if folder is None:
             folder = self.path
         if team == 1:
