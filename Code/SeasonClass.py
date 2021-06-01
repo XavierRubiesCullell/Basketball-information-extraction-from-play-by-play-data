@@ -9,6 +9,8 @@ from StatisticEvolutionTable import main as StatisticEvolutionTable_main
 from StatisticEvolutionPlot import main as StatisticEvolutionPlot_main
 from ResultsTable import main as ResultsTable_main
 from ResultsPlot import main as ResultsPlot_main
+from ShootingStatisticsTableSeason import main as ShootingStatisticsTableSeason_main
+from ShootingStatisticsPlot import main as ShootingStatisticsPlot_main
 
 def convert_date_season(date):
     '''
@@ -175,7 +177,6 @@ class Season():
         '''
         return StatisticEvolutionTable_main(self.team, self.matchTable, statistic, category, player)
 
-
     def save_statistic_evolution_table(self, table, name, extension='html', folder=None):
         '''
         This function saves the table 'table'. This function has the argument table instead of calling get_evolution_table.
@@ -198,7 +199,6 @@ class Season():
         else:
             raise ValueError(f"Extension {extension} is not correct. It must be csv or html")
 
-
     def get_statistic_evolution_plot(self, statistic, category=None, player=None, table=None):
         '''
         This function returns the plot of the evolution of a statistic during the season
@@ -211,7 +211,6 @@ class Season():
             table = self.get_statistic_evolution_table(statistic, category, player)
         return StatisticEvolutionPlot_main(self.team, self.season, statistic, category, player, table)
 
-
     def save_statistic_evolution_plot(self, plot, name, folder=None):
         '''
         This function saves the plot 'plot' in FileDirectory/Seasons/seasonName:
@@ -223,3 +222,73 @@ class Season():
             folder = self.path
         path = folder + self.seasonName + "_" + name + ".html"
         plot.save(path)
+
+    def get_shooting_table(self, team=None, shots=None):
+        '''
+        This function returns the table with the shots for every distance from hoop for each team
+        - team: team id (integer)
+        - shots: shooting table in case the shooting values are meant to be added to it (pandas.DataFrame)
+        Output: list of pandas.DataFrame
+        '''
+        if team is None:
+            return ShootingStatisticsTableSeason_main(self.team, self.matchTable)
+        else:
+            return ShootingStatisticsTableSeason_main(self.team, self.matchTable)[team-1]
+
+    def save_shooting_table(self, team, table=None, extension='html', folder=None):
+        '''
+        This function saves the shooting statistics table of the desired team
+        - team: team id (integer)
+        - table: table can be inputted in order to avoid recomputation (pandas.DataFrame)
+        - extension: type of the file where the table will be saved. It can either be csv or html (string)
+        - folder: folder where the table will be saved (string)
+        '''
+        if table is None:
+            table = self.get_shooting_table(team)
+        if folder is None:
+            folder = self.path
+        if team == 1:
+            teamName = "own"
+        else:
+            teamName = "opponents"
+        path = folder + self.seasonName + "_ShootingTable_" + teamName
+        if extension == 'csv':
+            path += ".csv"
+            table.to_csv(path, sep = ";", encoding="utf8")
+        elif extension == 'html':
+            path += ".html"
+            table.to_html(path, encoding="utf8")
+        else:
+            raise ValueError(f"Extension {extension} is not correct. It must be csv or html")
+
+    def get_shooting_plot(self, team, table=None):
+        '''
+        This function returns the plot with the shots for every distance from hoop for each team
+        - team: team id (integer)
+        - table: table can be inputted in order to avoid recomputation (pandas.DataFrame)
+        '''
+        if table is None:
+            table = self.get_shooting_table(team)
+        return ShootingStatisticsPlot_main(table)
+
+    def save_shooting_plot(self, team, plot=None, extension='svg', folder=None):
+        '''
+        This function saves the shooting statistics plot of the desired team
+        - team: team id (integer)
+        - plot: plot can be inputted in order to avoid recomputation (plotly.graph_objs._figure.Figure)
+        - extension: type of the file where the plot will be saved. It can be svg or pdf (vector), or png, jpeg or webp (raster)  (string)
+        - folder: folder where the plot will be saved (string)
+        '''
+        if plot is None:
+            plot = self.get_shooting_plot(team)
+        if folder is None:
+            folder = self.path
+        if team == 1:
+            teamName = "own"
+        else:
+            teamName = "opponents"
+        if extension in ('svg', 'pdf', 'png', 'jpeg', 'webp'):
+            path = folder + self.seasonName + "_ShootingPlot_" + teamName + "." + extension
+            plot.write_image(path)
+        else:
+            raise ValueError(f"Extension {extension} is not correct. It must be svg, pdf, png, jpeg or webp")

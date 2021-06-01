@@ -24,3 +24,11 @@ seasonObject.save_statistic_evolution_table(table, statistic)
 plot = seasonObject.get_statistic_evolution_plot(statistic, table)
 
 seasonObject.save_statistic_evolution_plot(plot, statistic)
+
+print(seasonObject.get_shooting_table(1))
+
+seasonObject.save_shooting_table(2)
+
+plot = seasonObject.get_shooting_plot(1)
+
+seasonObject.save_shooting_plot(1, plot=plot)
