@@ -238,14 +238,16 @@ class Match():
         else:
             return ShootingStatisticsTable_main(self.PbPFile, shots)[team-1]
 
-    def save_shooting_table(self, team, extension='html', folder=None):
+    def save_shooting_table(self, team, table=None, extension='html', folder=None):
         '''
         This function saves the shooting statistics table of the desired team
         - team: team id (integer)
+        - table: table can be inputted in order to avoid recomputation (pandas.DataFrame)
         - extension: type of the file where the table will be saved. It can either be csv or html (string)
         - folder: folder where the table will be saved (string)
         '''
-        table = self.get_shooting_table(team)
+        if table is None:
+            table = self.get_shooting_table(team)
         if folder is None:
             folder = self.path
         if team == 1:
@@ -262,22 +264,25 @@ class Match():
         else:
             raise ValueError(f"Extension {extension} is not correct. It must be csv or html")
 
-    def get_shooting_plot(self, team):
+    def get_shooting_plot(self, team, table=None):
         '''
         This function returns the plot with the shots for every distance from hoop for each team
         - team: team id (integer)
+        - table: table can be inputted in order to avoid recomputation (pandas.DataFrame)
         '''
-        shotTable = self.get_shooting_table(team)
-        return ShootingStatisticsPlot_main(shotTable)
+        if table is None:
+            table = self.get_shooting_table(team)
+        return ShootingStatisticsPlot_main(table)
     
-    def save_shooting_plot(self, team, extension='svg', folder=None):
+    def save_shooting_plot(self, team, plot=None, extension='svg', folder=None):
         '''
         This function saves the shooting statistics plot of the desired team
         - team: team id (integer)
         - extension: type of the file where the plot will be saved. It can be svg or pdf (vector), or png, jpeg or webp (raster)  (string)
         - folder: folder where the plot will be saved (string)
         '''
-        plot = self.get_shooting_plot(team)
+        if plot is None:
+            plot = self.get_shooting_plot(team)
         if folder is None:
             folder = self.path
         if team == 1:
@@ -418,4 +423,4 @@ class Match():
         This function executes the dynamic reproduction of the play-by-play
         - window: window in case we created a visual support (PySimpleGUI.PySimpleGUI.Window)
         '''
-        return VisualPbP_main(self.PbPFile, self.get_lastQ(), window)
+        return VisualPbP_main(self.PbPFile, self.home, self.away, self.get_lastQ(), window)

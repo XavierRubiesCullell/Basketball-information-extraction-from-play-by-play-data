@@ -3,26 +3,31 @@ import numpy as np
 import plotly.graph_objects as go
 
 # From: https://community.plot.ly/t/arc-shape-with-path/7205/5
-def circumference_arc(x_center=0.0, y_center=0.0, r=10.5, start_angle=0.0, end_angle=2*np.pi, N=200, closed=False):
-    t = np.linspace(start_angle, end_angle, N)
-    x = x_center + r * np.cos(t)
-    y = y_center + r * np.sin(t)
+def circumference_arc(xCenter=0.0, yCenter=0.0, r=10.5, startAngle=0.0, endAngle=2*np.pi):
+    '''
+    This function returns a circumference arc
+    - xCenter: x coordinate of the center
+    - yCenter: y coordinate of the center
+    - r: circumference radius
+    - startAngle: starting angle of the circumference
+    - endAngle: ending angle of the circumference
+    '''
+    t = np.linspace(startAngle, endAngle, 200)
+    x = xCenter + r * np.cos(t)
+    y = yCenter + r * np.sin(t)
     path = f'M {x[0]}, {y[0]}'
     for k in range(1, len(t)):
         path += f'L{x[k]}, {y[k]}'
-    if closed:
-        path += ' Z'
     return path
 
-def draw_plotly_court(fig, shots, fig_width=600, margins=0):        
-    fig_height = fig_width * (470 + 2 * margins) / (500 + 2 * margins)
-    fig.update_layout(title="Shooting accuracy", font_size=10,width=fig_width, height=fig_height)
+def draw_plotly_court(fig, shots, figWidth=600, margins=0):
+    fig_height = figWidth * (470 + 2 * margins) / (500 + 2 * margins)
+    fig.update_layout(title="Shooting accuracy", font_size=10, width=figWidth, height=fig_height)
 
     # Set axes ranges
     fig.update_xaxes(range=[-250 - margins, 250 + margins])
     fig.update_yaxes(range=[-52.5 - margins, 417.5 + margins])
 
-    threept_break_y = 89.47765084
     # mainLineCol = "#777777"
     mainLineCol = "white"
     lineWidth = 3
@@ -96,26 +101,26 @@ def draw_plotly_court(fig, shots, fig_width=600, margins=0):
             # semicircle
             dict(
                 type="path",
-                path=circumference_arc(r=40, start_angle=0, end_angle=np.pi),
+                path=circumference_arc(r=40, startAngle=0, endAngle=np.pi),
                 line=dict(color=mainLineCol, width=lineWidth),
                 layer='below'
             ),
             # three point semicircle
             dict(
                 type="path",
-                path=circumference_arc(r=237.5, start_angle=0.386283101, end_angle=np.pi - 0.386283101),
+                path=circumference_arc(r=237.5, startAngle=0.386283101, endAngle=np.pi - 0.386283101),
                 line=dict(color=mainLineCol, width=lineWidth),
                 layer='below'
             ),
             # three point left line
             dict(
-                type="line", x0=-220, y0=-52.5, x1=-220, y1=threept_break_y,
+                type="line", x0=-220, y0=-52.5, x1=-220, y1=89.47765084,
                 line=dict(color=mainLineCol, width=lineWidth),
                 layer='below'
             ),
             # three point right line
             dict(
-                type="line", x0=220, y0=-52.5, x1=220, y1=threept_break_y,
+                type="line", x0=220, y0=-52.5, x1=220, y1=89.47765084,
                 line=dict(color=mainLineCol, width=lineWidth),
                 layer='below'
             ),
@@ -175,7 +180,7 @@ def draw_plotly_court(fig, shots, fig_width=600, margins=0):
             # logo semicircle
             dict(
                 type="path",
-                path=circumference_arc(y_center=417.5, r=60, start_angle=-0, end_angle=-np.pi),
+                path=circumference_arc(yCenter=417.5, r=60, startAngle=-0, endAngle=-np.pi),
                 line=dict(color=mainLineCol, width=lineWidth),
                 layer='below'
             )
@@ -185,6 +190,10 @@ def draw_plotly_court(fig, shots, fig_width=600, margins=0):
 
 
 def color_election(acc):
+    '''
+    This function returns a colour code given a shooting accuracy
+    - acc: accuracy from a determined distance
+    '''
     if acc < 10:
         return '#DEEDCF'
     if acc < 20:
@@ -209,12 +218,17 @@ def color_election(acc):
 
 
 def shot_line(row, total):
+    '''
+    This function returns the line representing a shooting distance
+    - row: row of the shot table, representing the values from a distance (pandas.Series)
+    - total: total number of attempted shots (integer)
+    '''
     # 22 ft == 237.5
     # 25 ft == 240
     d = int(row.name)*240/25
     return dict(
         type="path",
-        path=circumference_arc(r=d, start_angle=0, end_angle=np.pi),
+        path=circumference_arc(r=d, startAngle=0, endAngle=np.pi),
         # line=dict(color="green", width=1), # same colour and width
         # line=dict(color="green", width=0.15*row[1]), # same colour
         # line=dict(color=color_election(row), width=1), # same width
@@ -224,6 +238,10 @@ def shot_line(row, total):
 
 
 def main(shotTable):
+    '''
+    This function returns a plot given a table of records
+    - shotTable: table with the shooting records
+    '''
     fig = go.Figure()
     total = shotTable.loc['TOTAL','Shots attempted']
     shotTable = shotTable.drop(index = ['TOTAL'], errors='ignore')
@@ -231,4 +249,4 @@ def main(shotTable):
     for _, row in shotTable.iterrows():
         shots.append(shot_line(row, total))
 
-    return draw_plotly_court(fig, shots, fig_width=600, margins=0)
+    return draw_plotly_court(fig, shots, figWidth=600, margins=0)
