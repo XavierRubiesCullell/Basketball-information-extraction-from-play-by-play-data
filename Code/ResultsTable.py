@@ -3,7 +3,6 @@ import datetime
 import pandas as pd
 import altair as alt
 
-from Functions import *
 from MatchClass import Match
 
 

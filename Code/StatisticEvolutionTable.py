@@ -1,6 +1,5 @@
 import pandas as pd
 
-from Functions import *
 from MatchClass import Match
 
 def treat_drought(drought):
