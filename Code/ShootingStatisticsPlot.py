@@ -21,6 +21,14 @@ def circumference_arc(xCenter=0.0, yCenter=0.0, r=10.5, startAngle=0.0, endAngle
     return path
 
 def draw_plotly_court(fig, shots, figWidth=600, margins=0):
+    '''
+    This function draws the basketball court and the shot lines
+    - fig: figure object (plotly.graph_objs._figure.Figure)
+    - shots: list of dictionaries, where each one represents a shot distance (list)
+    - figWidth: defines the width of the figure (integer)
+    - margins: defines the amount of padding around the sidelines (integer)
+    '''
+    print(type(fig))
     fig_height = figWidth * (470 + 2 * margins) / (500 + 2 * margins)
     fig.update_layout(title="Shooting accuracy", font_size=10, width=figWidth, height=fig_height)
 
@@ -225,7 +233,8 @@ def shot_line(row, total):
     '''
     # 22 ft == 237.5
     # 25 ft == 240
-    d = int(row.name)*240/25
+    # 22 ft == 220.5
+    d = int(row.name)*220.5/22
     return dict(
         type="path",
         path=circumference_arc(r=d, startAngle=0, endAngle=np.pi),

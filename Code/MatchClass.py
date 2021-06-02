@@ -230,7 +230,7 @@ class Match():
     def get_shooting_table(self, team=None, shots=None):
         '''
         This function returns the table with the shots for every distance from hoop for each team
-        - team: team id (integer)
+        - team: team id (either 1 or 2, integer)
         - shots: shooting table in case the shooting values are meant to be added to it (pandas.DataFrame)
         Output: list of pandas.DataFrame
         '''
@@ -242,7 +242,7 @@ class Match():
     def save_shooting_table(self, team, table=None, extension='html', folder=None):
         '''
         This function saves the shooting statistics table of the desired team
-        - team: team id (integer)
+        - team: team id (either 1 or 2, integer)
         - table: table can be inputted in order to avoid recomputation (pandas.DataFrame)
         - extension: type of the file where the table will be saved. It can either be csv or html (string)
         - folder: folder where the table will be saved (string)
@@ -268,7 +268,7 @@ class Match():
     def get_shooting_plot(self, team, table=None):
         '''
         This function returns the plot with the shots for every distance from hoop for each team
-        - team: team id (integer)
+        - team: team id (either 1 or 2, integer)
         - table: table can be inputted in order to avoid recomputation (pandas.DataFrame)
         '''
         if table is None:
@@ -278,7 +278,7 @@ class Match():
     def save_shooting_plot(self, team, plot=None, extension='svg', folder=None):
         '''
         This function saves the shooting statistics plot of the desired team
-        - team: team id (integer)
+        - team: team id (either 1 or 2, integer)
         - extension: type of the file where the plot will be saved. It can be svg or pdf (vector), or png, jpeg or webp (raster)  (string)
         - folder: folder where the plot will be saved (string)
         '''
@@ -299,7 +299,7 @@ class Match():
     def get_assist_matrix(self, team=None, assists=None):
         '''
         This function draws the assists between each team members
-        - team: team id (integer)
+        - team: team id (either 1 or 2, integer)
         - assists: shooting table in case the assist values are meant to be added to it (pandas.DataFrame)
         Output: assist matrix (list of pandas.DataFrame). M[i][j] indicates the number of assists from player i to player j
         '''
@@ -311,7 +311,7 @@ class Match():
     def save_assist_matrix(self, team, matrix=None, extension='html', folder=None):
         '''
         This function saves the assist statistics matrix of the desired team
-        - team: team id (integer)
+        - team: team id (either 1 or 2, integer)
         - extension: type of the file where the table will be saved. It can either be csv or html (string)
         - folder: folder where the table will be saved (string)
         '''
@@ -336,7 +336,7 @@ class Match():
     def get_assist_plot(self, team, matrix=None):
         '''
         This function returns the assist statistics plot of the desired team
-        - team: team id (integer)
+        - team: team id (either 1 or 2, integer)
         Output: altair plot
         '''
         if matrix is None:
@@ -352,7 +352,7 @@ class Match():
     def save_assist_plot(self, team, plot=None, folder=None):
         '''
         This function saves the assist statistics plot of the desired team
-        - team: team id (integer)
+        - team: team id (either 1 or 2, integer)
         - folder: folder where the plot will be saved (string)
         '''
         if plot is None:
@@ -387,7 +387,7 @@ class Match():
     def intervals_of_player(self, team, player):
         '''
         This function returns the intervals an introduced player played
-        - team: five's team id (integer)
+        - team: five's team id (either 1 or 2, integer)
         - five: list of players (list)
         Output: list of the intervals (list: [(start, end)])
         '''
@@ -397,7 +397,7 @@ class Match():
     def intervals_of_five(self, team, five):
         '''
         This function returns the intervals an introduced five played
-        - team: five's team id (integer)
+        - team: five's team id (either 1 or 2, integer)
         - five: list of players (list)
         Output: list of the intervals (list: [(start, end)])
         '''

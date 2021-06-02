@@ -22,7 +22,7 @@ def get_team(team):
 def other_team(team):
     '''
     Given a team, this function returns the other team
-    - team: id of a team (integer)
+    - team: team id (either 1 or 2, integer)
     Output: id of the other team (integer)
     '''
     return (team*5)%3
@@ -30,6 +30,8 @@ def other_team(team):
 def time_from_string(clock):
     '''
     This function returns a datetime.timedelta type value from a time represented as a string
+    - clock: It must have the structure quarter:MM:SS where quarter can be xQ (with x={1,2,3,4} or xOT).
+            MM:SS should be maximum 12:00 if the quarter is a Q and 5:00 if it is an OT
     '''
     quarter, minutes, seconds = clock.split(":")
     Q = int(quarter[0])
