@@ -7,10 +7,10 @@ from Functions import *
 from StandardPbPObtention import main as StandardPbPObtention_main
 from BoxScores import main as BoxScores_main
 from QuarterScorings import main as QuarterScorings_main
-from GreatestDifference import main as GreatestDifference_main
-from LongestDrought import main as LongestDrought_main
-from GreatestPartial import main as GreatestPartial_main
-from GreatestStreak import main as GreatestStreak_main
+from ScoringDifference import main as ScoringDifference_main
+from ScoringDrought import main as ScoringDrought_main
+from ScoringPartial import main as ScoringPartial_main
+from ScoringStreak import main as ScoringStreak_main
 from ShootingStatisticsTable import main as ShootingStatisticsTable_main
 from ShootingStatisticsPlot import main as ShootingStatisticsPlot_main
 from AssistStatisticsMatrix import main as AssistStatisticsMatrix_main
@@ -199,33 +199,33 @@ class Match():
             return winner
         return (self.home, self.away)[winner-1]
 
-    def greatest_difference(self):
+    def scoring_difference(self, timestamp=None):
         '''
         This function returns the greatest difference in favour of each team
         Output: list of integers
         '''
-        return GreatestDifference_main(self.PbPFile)
+        return ScoringDifference_main(self.PbPFile, timestamp)
 
-    def longest_drought(self):
+    def scoring_drought(self, timestamp=None):
         '''
         This function returns the longest time for each team without scoring
         Output: list of strings
         '''
-        return LongestDrought_main(self.PbPFile, self.get_lastQ())
+        return ScoringDrought_main(self.PbPFile, self.get_lastQ(), timestamp)
 
-    def greatest_partial(self):
+    def scoring_partial(self, timestamp=None):
         '''
         This function returns the greatest partial (consecutive points without the opponent scoring) for each team
         Output: list of integers
         '''
-        return GreatestPartial_main(self.PbPFile)
+        return ScoringPartial_main(self.PbPFile, timestamp)
     
-    def greatest_streak(self):
+    def scoring_streak(self, timestamp=None):
         '''
         This function returns the maximum amount of consecutive points without missing for each team
         Output: list of integers
         '''
-        return GreatestStreak_main(self.PbPFile)
+        return ScoringStreak_main(self.PbPFile, timestamp)
 
     def get_shooting_table(self, team=None, shots=None):
         '''

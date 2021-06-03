@@ -22,13 +22,13 @@ def get_value(game, statistic, team, category, player):
     - value of the corresponding match (integer/float)
     '''
     if statistic == "greatest difference":
-        return game.greatest_difference()[team-1]
+        return game.scoring_difference()[team-1]
     if statistic == "greatest streak":
-        return game.greatest_streak()[team-1]
+        return game.scoring_streak()[team-1]
     if statistic == "greatest partial":
-        return game.greatest_partial()[team-1]
+        return game.scoring_partial()[team-1]
     if statistic == "longest drought":
-        value = game.longest_drought()[team-1]
+        value = game.scoring_drought()[team-1]
         return treat_drought(value)
     if statistic == "box score":
         boxScore = game.box_scores()[team-1]
