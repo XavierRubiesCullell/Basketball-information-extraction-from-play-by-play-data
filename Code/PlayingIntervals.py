@@ -42,7 +42,7 @@ def check_oncourt(team, player, Q, oncourt, tempOncourtIntervals, oncourtInterva
                 del tempOncourtIntervals[team-1][interval]
 
 
-def quarter_end(Q, oncourt, playerIntervals, oncourtIntervals, lastChange):
+def quarter_end(Q, oncourt, playerIntervals, tempOncourtIntervals, oncourtIntervals, lastChange):
     '''
     This function is launched every time a quarter end is detected.
     It treats the quarter end as a change, as the five players can be completely new at the next quarter
@@ -56,18 +56,22 @@ def quarter_end(Q, oncourt, playerIntervals, oncourtIntervals, lastChange):
     clock = quarter_end_time(Q)
     clock = string_from_time(clock)
     for team in range(1,3):
+        for interval in tempOncourtIntervals[team-1]:
+            add_interval(oncourtIntervals[team-1], interval, tempOncourtIntervals[team-1][interval])
+            
         for player in oncourt[team-1]:
             if player not in playerIntervals[team-1].keys():
                 playerIntervals[team-1][player] = []
             playerIntervals[team-1][player].append((oncourt[team-1][player], clock))
         add_interval(oncourtIntervals[team-1], (lastChange[team-1], clock), set(oncourt[team-1]))
-
+        
         # we delete current variables as the five players can be completely new at the next quarter:
         oncourt[team-1].clear()
+        tempOncourtIntervals[team-1].clear()
         lastChange[team-1] = string_from_time(quarter_start_time(next_quarter(Q)))
 
 
-def quarter_check(action, prevQ, oncourt, playerIntervals, oncourtIntervals, lastChange):
+def quarter_check(action, prevQ, oncourt, playerIntervals, tempOncourtIntervals, oncourtIntervals, lastChange):
     '''
     This function is launched to detect a change of quarter. If it is the case, quarter_end is launched
     - action: play that we are going to study (list)
@@ -82,7 +86,7 @@ def quarter_check(action, prevQ, oncourt, playerIntervals, oncourtIntervals, las
     clock = action[0]
     Q = quarter_from_time(clock)
     if prevQ != Q:
-        quarter_end(prevQ, oncourt, playerIntervals, oncourtIntervals, lastChange)
+        quarter_end(prevQ, oncourt, playerIntervals, tempOncourtIntervals, oncourtIntervals, lastChange)
     return Q
 
 
@@ -133,7 +137,7 @@ def treat_line(line, prevQ, oncourt, playerIntervals, tempOncourtIntervals, onco
     '''
     action = line.split(", ")
 
-    Q = quarter_check(action, prevQ, oncourt, playerIntervals, oncourtIntervals, lastChange)
+    Q = quarter_check(action, prevQ, oncourt, playerIntervals, tempOncourtIntervals, oncourtIntervals, lastChange)
     if len(action) > 3 and action[3] == "S": # there can be either one or two players
         team, player = int(action[1]), action[2]
         check_oncourt(team, player, Q, oncourt, tempOncourtIntervals, oncourtIntervals)
@@ -181,6 +185,6 @@ def main(file):
     for line in lines:
         line = line.strip()
         Q = treat_line(line, Q, oncourt, playerIntervals, tempOncourtIntervals, oncourtIntervals, lastChange)
-    quarter_end(Q, oncourt, playerIntervals, oncourtIntervals, lastChange)
+    quarter_end(Q, oncourt, playerIntervals, tempOncourtIntervals, oncourtIntervals, lastChange)
 
     return playerIntervals, oncourtIntervals
