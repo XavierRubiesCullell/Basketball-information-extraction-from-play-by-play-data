@@ -189,8 +189,13 @@ def pause(window):
         if event == 'Pause/Resume':
             window['Pause/Resume'].update("Pause")
             break
+        elif event == 'Back':
+            global isBack
+            isBack = True
+            break
         elif event == sg.WIN_CLOSED:
-            window.close()
+            global isClosed
+            isClosed = True
             break
 
 
@@ -231,8 +236,13 @@ def treat_second(tNow, prevAction, lineId, lines, score, home, away, lastQ, wind
                 event, _ = window.read(timeout=25)
                 if event == 'Pause/Resume':
                     pause(window)
+                elif event == 'Back':
+                    global isBack
+                    isBack = True
+                    break
                 elif event == sg.WIN_CLOSED:
-                    window.close()
+                    global isClosed
+                    isClosed = True
                     break
 
     show_header(tNow, score, window)
@@ -274,15 +284,24 @@ def main(file, home, away, lastQ, window=False, imageFolder="VisualPbPImages"):
     else:
         window = None
 
+    global isBack
+    isBack = False
+    global isClosed
+    isClosed = False
+
     while time_from_string(tNow) >= time_from_string(lastQ+":00:00"):
         if window is not None:
             event, _ = window.read(timeout=25)
             if event == 'Pause/Resume':
                 pause(window)
-            elif event in (sg.WIN_CLOSED, 'Exit', 'Cancel'):
-                window.close()
-                return False
             elif event == 'Back':
+                isBack = True
+            elif event == sg.WIN_CLOSED:
+                isClosed = True
+
+            if isBack:
                 window.close()
                 return True
+            if isClosed:
+                return False
         tNow, lineId, action = treat_second(tNow, action, lineId, lines, score, home, away, lastQ, window, imageFolder)
