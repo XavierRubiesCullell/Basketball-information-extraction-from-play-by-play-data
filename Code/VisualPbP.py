@@ -10,12 +10,37 @@ import PySimpleGUI as sg
 
 from Functions import *
 
+def visualPbP_menu(home, away, imageFolder):
+    layout = [
+        [ sg.Button("Pause", key='Pause/Resume') ],
+        [ sg.Text(key="ActionText", size=(40,1)) ],
+        [ sg.Image(data=convert_to_bytes(f"{imageFolder}/Black.jpg", resize=(400,400)), key="ActionImage") ],
+        [ sg.Text("", size=(10,1), key="Clock"),
+            sg.Text(home),
+            sg.Text("", size=(3,1), key="Score1"),
+            sg.Text(away),
+            sg.Text("", size=(2,1), key="Score2") ],
+        [ sg.Button('Back') ]
+    ]
+    return sg.Window("Visual PbP", layout)
+
 def get_clock(i, lines):
+    '''
+    This function returns the clock of a play
+    - i: play index (integer)
+    - lines: list of plays of the match (list of string)
+    Output: clock (string)
+    '''
     action = lines[i]
     action = action.split(", ")
     return action[0]
 
 def interval(tBefore, tNow):
+    '''
+    This function computes the length of the sleep interval from a time interval
+    - tBefore, tNow: time instants (string)
+    Output: sleep length
+    '''
     tBefore = time_from_string(tBefore)
     tNow = time_from_string(tNow)
     diff = tBefore - tNow
@@ -24,6 +49,11 @@ def interval(tBefore, tNow):
     return math.exp(-math.pow(diff,2) / (2*math.pow(5,2)))
 
 def next_time(t):
+    '''
+    This function returns the instant that comes immediately after t
+    - t: time instant (string)
+    Output: time instant (string)
+    '''
     quarter, minutes, seconds = t.split(":")
     if minutes == "00" and seconds == "00":
         if quarter[1] == "O" or quarter[0] == "4":
@@ -37,6 +67,11 @@ def next_time(t):
     return quarter + ":" + clock.strftime("%M:%S")
 
 def convert_to_bytes(img, resize=None):
+    '''
+    This function returns an auxiliary image to be shown
+    - img: image file
+    - resize: size of the image if we resize it (tuple of size 2)
+    '''
     if isinstance(img, str):
         img = PIL.Image.open(img)
     if resize:
@@ -50,6 +85,12 @@ def convert_to_bytes(img, resize=None):
         return bio.getvalue()
 
 def show_header(t, score, window):
+    '''
+    This function updates the values of the clock and the scoreboard
+    - t: clock (string)
+    - score: current scoreboard values (list of integer)
+    - window: window where the plays are shown (PySimpleGUI.PySimpleGUI.Window)
+    '''
     if window is None:
         print(t, score, sep="        ")
     else:
@@ -58,6 +99,15 @@ def show_header(t, score, window):
         window['Score2'].update(value=score[1])
 
 def show_action(action, prevAction, home, away, window, imageFolder):
+    '''
+    This function updates the play image and the play description
+    - action: current play (string)
+    - prevAction: previous action (string)
+    - home: home team short name (string)
+    - away: away team short name (string)
+    - window: window where the plays are shown (PySimpleGUI.PySimpleGUI.Window)
+    - imageFolder: image directory in case window is True (string)
+    '''
     imageSize = (400, 400)
     if action == "black":
         if window is None:
@@ -91,22 +141,7 @@ def show_action(action, prevAction, home, away, window, imageFolder):
                     else:
                         text += " that went out"
                     window['ActionText'].update(text)
-                    image = f"{imageFolder}/Shot.png"
-                    myImage = PIL.Image.open(image)
-                    imageEditable = PIL.ImageDraw.Draw(myImage)
-                    print(player)
-                    data="UTF-8 data"
-                    udata=player.decode("UTF-8")
-                    player=udata.encode("latin-1","ignore")
-                    imageEditable.text((60,245), player, (0, 0, 0))
-                    if team == "1":
-                        teamName = home
-                    else:
-                        teamName = away
-                    imageEditable.text((80,265), teamName, (0, 0, 0))
-                    # titleFont = PIL.ImageFont.truetype('playfair/playfair-font.ttf', 20)
-                    # imageEditable.text((100,15), titleText, (256, 256, 256), font=titleFont)
-                    window['ActionImage'].update(data=convert_to_bytes(myImage, resize=imageSize))
+                    window['ActionImage'].update(data=convert_to_bytes(f"{imageFolder}/Shot.png", resize=imageSize))
             elif actionType == "R":
                 window['ActionText'].update(str(action[1:]))
                 window['ActionImage'].update(data=convert_to_bytes(f"{imageFolder}/Rebound.png", resize=imageSize))
@@ -128,6 +163,11 @@ def show_action(action, prevAction, home, away, window, imageFolder):
 
 
 def update_score(line, score):
+    '''
+    This function updates the current score
+    - line: current play (string)
+    - score: current scoreboard values (list of integer)
+    '''
     action = line.strip().split(", ")
     if len(action) > 3 and action[3] == "S":
         distGiven = action[5] != "I" and action[5] != "O" # true if it is not I or O, so in this position we have the distance
@@ -139,6 +179,10 @@ def update_score(line, score):
 
 
 def pause(window):
+    '''
+    This function treates the pauses in the match development
+    - window: window where the plays are shown (PySimpleGUI.PySimpleGUI.Window)
+    '''
     window['Pause/Resume'].update("Resume")
     while True:
         event, _ = window.read()
@@ -151,6 +195,22 @@ def pause(window):
 
 
 def treat_second(tNow, prevAction, lineId, lines, score, home, away, lastQ, window, imageFolder):
+    '''
+    - tNow: current time (string)
+    - prevAction: previous play (string)
+    - lineId: index in lines (integer)
+    - lines: list of plays of the match (list of string)
+    - score: current scoreboard values (list of integer)
+    - home: home team short name (string)
+    - away: away team short name (string)
+    - lastQ: last quarter of the match (string)
+    - window: window where the plays are shown (PySimpleGUI.PySimpleGUI.Window)
+    - imageFolder: image directory in case window is True (string)
+    Output:
+    - tNow: new time (string)
+    - lineId: index in lines. It may be the same or increased by 1 in case there was a play at tNow (integer)
+    - action: play (string)
+    '''
     nLines = len(lines)
     if lineId == 0:
         clockBefore = "1Q:12:00"
@@ -190,7 +250,17 @@ def treat_second(tNow, prevAction, lineId, lines, score, home, away, lastQ, wind
     return tNow, lineId, action
 
 
-def main(file, home, away, lastQ, window=None, imageFolder="VisualPbPImages"):
+def main(file, home, away, lastQ, window=False, imageFolder="VisualPbPImages"):
+    '''
+    This function launches play-by-play
+    - file: play-by-play input file (string)
+    - home: home team short name (string)
+    - away: away team short name (string)
+    - lastQ: last quarter of the match (string)
+    - window: whether we want a visual support or console printing (bool)
+    - imageFolder: image directory in case window is True (string)
+    Output: None if the match is finished, True if Back is selected or False if the window is closed
+    '''
     os.chdir(os.path.dirname(__file__))
     with open(file, encoding="utf-8") as f:
         lines = f.readlines()
@@ -198,6 +268,11 @@ def main(file, home, away, lastQ, window=None, imageFolder="VisualPbPImages"):
     score = [0, 0]
     lineId = 0
     action = "black"
+
+    if window:
+        window = visualPbP_menu("DEN", "DAL", imageFolder="VisualPbPImages")
+    else:
+        window = None
 
     while time_from_string(tNow) >= time_from_string(lastQ+":00:00"):
         if window is not None:
@@ -207,7 +282,7 @@ def main(file, home, away, lastQ, window=None, imageFolder="VisualPbPImages"):
             elif event in (sg.WIN_CLOSED, 'Exit', 'Cancel'):
                 window.close()
                 return False
-            elif event == 'Back to play-by-play menu':
+            elif event == 'Back':
                 window.close()
                 return True
         tNow, lineId, action = treat_second(tNow, action, lineId, lines, score, home, away, lastQ, window, imageFolder)

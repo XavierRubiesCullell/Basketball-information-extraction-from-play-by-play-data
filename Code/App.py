@@ -388,19 +388,6 @@ def textPbP_menu(game):
     ]
     return sg.Window("Text play-by-play Menu", layout)
 
-def visualPbP_menu(game):
-    layout = [
-        [ sg.Button("Pause", key='Pause/Resume') ],
-        [ sg.Text(key="ActionText", size=(40,1)) ],
-        [ sg.Image(key="ActionImage") ],
-        [ sg.Text("", size=(10,1), key="Clock"),
-            sg.Text(game.home),
-            sg.Text("", size=(3,1), key="Score1"),
-            sg.Text(game.away),
-            sg.Text("", size=(2,1), key="Score2") ],
-        [ sg.Button('Back') ]
-    ]
-    return sg.Window("Visual PbP", layout)
 
 ## 2. Analyse season
 def defineSeason_menu():
@@ -842,8 +829,7 @@ def assistStatistics(game):
 
 ### 1.6. PbP
 def visualPbP(game):
-    window = visualPbP_menu(game)
-    back = game.visual_PbP(window)
+    back = game.visual_PbP(True)
     if back:
         seePbP(game)
 

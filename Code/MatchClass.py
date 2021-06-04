@@ -409,9 +409,9 @@ class Match():
                 intervals.append(interval)
         return intervals
     
-    def visual_PbP(self, window=None):
+    def visual_PbP(self, window=False):
         '''
         This function executes the dynamic reproduction of the play-by-play
-        - window: window in case we created a visual support (PySimpleGUI.PySimpleGUI.Window)
+        - window: whether we want a visual support or console printing (bool)
         '''
         return VisualPbP_main(self.PbPFile, self.home, self.away, self.get_lastQ(), window)
