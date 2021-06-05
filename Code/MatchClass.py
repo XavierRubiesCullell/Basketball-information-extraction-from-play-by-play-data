@@ -271,7 +271,7 @@ class Match():
 
     def get_shooting_plot(self, team, table=None):
         '''
-        This function returns the plot with the shots for every distance from hoop for each team
+        This function returns the plot with the shots for every distance from hoop of the desired team
         - team: team id (either 1 or 2, integer)
         - table: table can be inputted in order to avoid recomputation (pandas.DataFrame)
         '''
@@ -304,7 +304,7 @@ class Match():
         '''
         This function draws the assists between each team members
         - team: team id (either 1 or 2, integer)
-        - assists: shooting table in case the assist values are meant to be added to it (pandas.DataFrame)
+        - assists: assist table in case the assist values are meant to be added to it (pandas.DataFrame)
         Output: assist matrix (list of pandas.DataFrame). M[i][j] indicates the number of assists from player i to player j
         '''
         if team is None:
@@ -316,6 +316,7 @@ class Match():
         '''
         This function saves the assist statistics matrix of the desired team
         - team: team id (either 1 or 2, integer)
+        - matrix: matrix can be inputted in order to avoid recomputation (pandas.DataFrame)
         - extension: type of the file where the table will be saved. It can either be csv or html (string)
         - folder: folder where the table will be saved (string)
         '''
@@ -341,6 +342,7 @@ class Match():
         '''
         This function returns the assist statistics plot of the desired team
         - team: team id (either 1 or 2, integer)
+        - matrix: matrix can be inputted in order to avoid recomputation (pandas.DataFrame)
         Output: altair plot
         '''
         if matrix is None:
@@ -357,6 +359,7 @@ class Match():
         '''
         This function saves the assist statistics plot of the desired team
         - team: team id (either 1 or 2, integer)
+        - plot: plot can be inputted in order to avoid recomputation
         - folder: folder where the plot will be saved (string)
         '''
         if plot is None:

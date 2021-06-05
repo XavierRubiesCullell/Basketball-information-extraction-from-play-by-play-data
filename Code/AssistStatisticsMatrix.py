@@ -47,10 +47,10 @@ def main(file, assists=None):
     if assists is None:
         assists = [pd.DataFrame(dtype=int), pd.DataFrame(dtype=int)]
     else:
-        assists[0] = assists[0].drop(index = ["TOTAL"])
-        assists[0] = assists[0].drop(columns = ["TOTAL"])
-        assists[1] = assists[1].drop(index = ["TOTAL"])
-        assists[1] = assists[1].drop(columns = ["TOTAL"])
+        assists[0] = assists[0].drop(index = ["TOTAL"], errors='ignore')
+        assists[0] = assists[0].drop(columns = ["TOTAL"], errors='ignore')
+        assists[1] = assists[1].drop(index = ["TOTAL"], errors='ignore')
+        assists[1] = assists[1].drop(columns = ["TOTAL"], errors='ignore')
 
     with open(file, encoding="utf-8") as f:
         lines = f.readlines()

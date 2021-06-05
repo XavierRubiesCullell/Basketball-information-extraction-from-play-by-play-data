@@ -18,13 +18,13 @@ def treat_match(row, team, shots):
         shots = game.get_shooting_table(shots=shots)
     if team == away:
         shots1, shots0 = game.get_shooting_table(shots=[shots[1], shots[0]])
-        shots = [shots0, shots1] # shots = game.get_shooting_table(shots=shots)
+        shots = [shots0, shots1]
     return shots
 
 
 def main(team, matchTable):
     '''
-    This function returns the information desired for all the matches of a team during a season
+    This function returns the table with the shots for every distance from hoop for the team and the opponents
     - team: name of the team (string)
     - matchTable: table of matches (pandas.DataFrame)
     '''
