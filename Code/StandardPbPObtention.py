@@ -249,8 +249,10 @@ def main(webpage, outFile):
     nonActions = []
     Q = "1Q"
     clock = "12:00.0"
-
-    response = urllib.request.urlopen(webpage)
+    try:
+        response = urllib.request.urlopen(webpage)
+    except:
+        raise Exception("Match does not exist")
     htmlDoc = response.read()
     soup = BeautifulSoup(htmlDoc, 'html.parser')
     res = soup.find_all('tr')

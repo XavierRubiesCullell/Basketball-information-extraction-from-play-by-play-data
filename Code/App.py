@@ -140,9 +140,17 @@ def analyseBoxScore_menu(game, table):
     indentation = (1,1)
     layout = [
         [ sg.Button('Help') ],
-        [ sg.Table(values=auxTable.values.tolist(), headings=auxTable.columns.tolist(), num_rows=len(auxTable), alternating_row_color = 'gray', hide_vertical_scroll = True) ],
+        [ sg.Table(values=auxTable.values.tolist(), 
+            headings=auxTable.columns.tolist(), 
+            num_rows=len(auxTable), 
+            alternating_row_color = 'gray', 
+            hide_vertical_scroll = True) ],
         [ sg.Text("Filter:") ],
-        [ sg.Button('Filter by players'), sg.Button('Filter by categories'), sg.Button('Filter by values'), sg.Button('Get top players') ],
+        [ sg.Text("", size=indentation), 
+            sg.Button('Filter by players'), 
+            sg.Button('Filter by categories'), 
+            sg.Button('Filter by values'), 
+            sg.Button('Get top players') ],
         [ sg.Text("Save:") ],
         [
             sg.Text("", size=indentation),
@@ -151,7 +159,6 @@ def analyseBoxScore_menu(game, table):
             sg.Text(".html"),
             sg.Button('Save')
         ],
-        [ sg.Text("")],
         [ sg.Button('Back')]
     ]
     return sg.Window("Box score menu", layout)
@@ -475,9 +482,9 @@ def statisticElection_menu():
             sg.Text("Category"),
             sg.Input(key='Category', size=(7,1)),
             sg.Text("Player"),
-            sg.Input(key='Player', size=(20,1), tooltip="If no input is given, team value is considered") ],
+            sg.Input(key='Player', size=(20,1), tooltip="Introduce the initial of the name, a dot and the surname\nExample: L. James\nIf no input is given, team value is considered") ],
         [ sg.Button('OK', size=buttonSize) ],
-        [ sg.Text("*Box score is slow (takes about 2 minutes) and program may warn it is not answering, but just let it work") ],
+        [ sg.Text("*Box score is slow (takes about 1 minute) and program may warn it is not answering, but just let it work") ],
         [ sg.Text("") ],
         [ sg.Button('Back', size=buttonSize) ]
     ]

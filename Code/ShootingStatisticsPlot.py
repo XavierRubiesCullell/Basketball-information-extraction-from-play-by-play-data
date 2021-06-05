@@ -28,9 +28,8 @@ def draw_plotly_court(fig, shots, figWidth=600, margins=0):
     - figWidth: defines the width of the figure (integer)
     - margins: defines the amount of padding around the sidelines (integer)
     '''
-    print(type(fig))
-    fig_height = figWidth * (470 + 2 * margins) / (500 + 2 * margins)
-    fig.update_layout(title="Shooting accuracy", font_size=10, width=figWidth, height=fig_height)
+    figHeight = figWidth * (470 + 2 * margins) / (500 + 2 * margins)
+    fig.update_layout(title="Shooting accuracy", font_size=10, width=figWidth, height=figHeight)
 
     # Set axes ranges
     fig.update_xaxes(range=[-250 - margins, 250 + margins])

@@ -46,7 +46,11 @@ class Match():
             os.mkdir(self.path)
         self.PbPFile = self.path + "/" + self.matchName + "_StandardPbP.txt"
         if not os.path.exists(self.PbPFile):
-            self.lastQ = StandardPbPObtention_main('https://www.basketball-reference.com/boxscores/pbp/'+convert_date_match(date)+'0'+self.home+'.html', outFile = self.PbPFile)
+            try:
+                self.lastQ = StandardPbPObtention_main('https://www.basketball-reference.com/boxscores/pbp/'+convert_date_match(date)+'0'+self.home+'.html', outFile = self.PbPFile)
+            except:
+                os.rmdir(self.path)
+                raise Exception("Match does not exist")
     
     def get_lastQ(self):
         '''
