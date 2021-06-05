@@ -11,6 +11,9 @@ from ResultsTable import main as ResultsTable_main
 from ResultsPlot import main as ResultsPlot_main
 from ShootingStatisticsTableSeason import main as ShootingStatisticsTableSeason_main
 from ShootingStatisticsPlot import main as ShootingStatisticsPlot_main
+from AssistStatisticsMatrixSeason import main as AssistStatisticsMatrixSeason_main
+from AssistStatisticsPlot import main as AssistStatisticsPlot_main
+
 
 def convert_date_season(date):
     '''
@@ -223,12 +226,11 @@ class Season():
         path = folder + self.seasonName + "_" + name + ".html"
         plot.save(path)
 
-    def get_shooting_table(self, team=None, shots=None):
+    def get_shooting_table(self, team=None):
         '''
-        This function returns the table with the shots for every distance from hoop for each team
-        - team: team id (integer)
-        - shots: shooting table in case the shooting values are meant to be added to it (pandas.DataFrame)
-        Output: list of pandas.DataFrame
+        This function returns the table with the shots for every distance from hoop for the team and the opponents
+        - team: team id (either 1: own or 2: opponents, integer) or None
+        Output: pandas.DataFrame or list of size 2 of pandas.DataFrame
         '''
         if team is None:
             return ShootingStatisticsTableSeason_main(self.team, self.matchTable)
@@ -237,8 +239,8 @@ class Season():
 
     def save_shooting_table(self, team, table=None, extension='html', folder=None):
         '''
-        This function saves the shooting statistics table of the desired team
-        - team: team id (integer)
+        This function saves the shooting statistics table of the desired team (either own or opponents)
+        - team: team id (either 1: own or 2: opponents, integer)
         - table: table can be inputted in order to avoid recomputation (pandas.DataFrame)
         - extension: type of the file where the table will be saved. It can either be csv or html (string)
         - folder: folder where the table will be saved (string)
@@ -263,9 +265,10 @@ class Season():
 
     def get_shooting_plot(self, team, table=None):
         '''
-        This function returns the plot with the shots for every distance from hoop for each team
-        - team: team id (integer)
+        This function returns the plot with the shots for every distance from hoop of the desired team (either own or opponents)
+        - team: team id (either 1: own or 2: opponents, integer)
         - table: table can be inputted in order to avoid recomputation (pandas.DataFrame)
+        Output: altair plot
         '''
         if table is None:
             table = self.get_shooting_table(team)
@@ -273,8 +276,8 @@ class Season():
 
     def save_shooting_plot(self, team, plot=None, extension='svg', folder=None):
         '''
-        This function saves the shooting statistics plot of the desired team
-        - team: team id (integer)
+        This function saves the shooting statistics plot of the desired team (either own or opponents)
+        - team: team id (either 1: own or 2: opponents, integer)
         - plot: plot can be inputted in order to avoid recomputation (plotly.graph_objs._figure.Figure)
         - extension: type of the file where the plot will be saved. It can be svg or pdf (vector), or png, jpeg or webp (raster)  (string)
         - folder: folder where the plot will be saved (string)
@@ -292,3 +295,55 @@ class Season():
             plot.write_image(path)
         else:
             raise ValueError(f"Extension {extension} is not correct. It must be svg, pdf, png, jpeg or webp")
+
+    def get_assist_matrix(self):
+        '''
+        This function returns the matrices describing the relation between passers and receivers
+        Output: pandas.DataFrame
+        '''
+        return AssistStatisticsMatrixSeason_main(self.team, self.matchTable)
+
+    def save_assist_matrix(self, matrix=None, extension='html', folder=None):
+        '''
+        This function saves the assist statistics matrix
+        - matrix: matrix can be inputted in order to avoid recomputation (pandas.DataFrame)
+        - extension: type of the file where the table will be saved. It can either be csv or html (string)
+        - folder: folder where the table will be saved (string)
+        '''
+        if matrix is None:
+            matrix = self.get_assist_matrix()
+        if folder is None:
+            folder = self.path
+        path = folder + self.seasonName + "_AssistMatrix"
+        if extension == 'csv':
+            path += ".csv"
+            matrix.to_csv(path, sep = ";", encoding="utf8")
+        elif extension == 'html':
+            path += ".html"
+            matrix.to_html(path, encoding="utf8")
+        else:
+            raise ValueError(f"Extension {extension} is not correct. It must be csv or html")
+
+    def get_assist_plot(self, matrix=None):
+        '''
+        This function returns the plot with the assist statistics
+        - matrix: matrix can be inputted in order to avoid recomputation (pandas.DataFrame)
+        '''
+        if matrix is None:
+            matrix = self.get_assist_matrix()
+        plot = AssistStatisticsPlot_main(matrix)
+        return alt.layer(plot, title = self.team + " assists along the season " + self.season)
+
+    def save_assist_plot(self, plot=None, folder=None):
+        '''
+        This function saves the assist statistics plot
+        - plot: plot can be inputted in order to avoid recomputation (altair plot)
+        - folder: folder where the plot will be saved (string)
+        '''
+        if plot is None:
+            plot = self.get_assist_plot()
+        if folder is None:
+            folder = self.path
+
+        path = folder + self.seasonName + "_AssistPlot.html"
+        plot.save(path)

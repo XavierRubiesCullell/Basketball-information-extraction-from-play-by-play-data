@@ -32,3 +32,14 @@ seasonObject.save_shooting_table(2)
 plot = seasonObject.get_shooting_plot(1)
 
 seasonObject.save_shooting_plot(1, plot=plot)
+
+assists = seasonObject.get_assist_matrix()
+print(assists)
+
+seasonObject.save_assist_matrix()
+
+plot = seasonObject.get_assist_plot(assists)
+plot.show()
+
+seasonObject.save_assist_plot()
+seasonObject.save_assist_plot(plot=plot)
