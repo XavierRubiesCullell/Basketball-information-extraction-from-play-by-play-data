@@ -198,8 +198,15 @@ def filterByTop_menu(game, table):
     return sg.Window("Filter top players Menu", layout)
 
 ### 1.2. Match statistics
-def matchStatistics_menu(game):
-    table1 = create_table(game.quarter_scorings(), " ", 4)
+def matchStatistics_menu(game, timestamp):
+    if timestamp == "":
+        timestamp = None
+        header1 = f"Quarter scorings:"
+        header2 = "Statistics (maximum values along the match):"
+    else:
+        header1 = f"Quarter scorings (until {timestamp}):"
+        header2 = f"Statistics (values at {timestamp}):"
+    table1 = create_table(game.quarter_scorings(timestamp), " ", 4)
     layout1 = [
         [ sg.Table(values=table1.values.tolist(),
         headings = table1.columns.tolist(),
@@ -207,20 +214,31 @@ def matchStatistics_menu(game):
         auto_size_columns = False,
         num_rows=len(table1),
         hide_vertical_scroll = True,
-        row_height = 20) ]
+        row_height = 20,
+        key = 'Table1') ]
     ]
 
-    table2 = game.match_statistics()
+    table2 = create_table(game.match_statistics(timestamp), "Statistic", 4)
     layout2 = [
-        [ sg.Table(values=table2.values.tolist(), headings=table2.columns.tolist(), num_rows=len(table2), hide_vertical_scroll = True, row_height = 20) ]
+        [ sg.Table(values=table2.values.tolist(),
+        headings=table2.columns.tolist(), 
+        num_rows=len(table2), 
+        hide_vertical_scroll = True, 
+        row_height = 20, 
+        key = 'Table2') ]
     ]
     
     layout = [
-        [ sg.Text("Match Statistics Menu") ],
-        [ sg.Text("Quarter scorings:") ],
+        [ sg.Text("Time"), 
+            sg.Input(size=(10,1), 
+                tooltip="Introduce the time in format quarter:MM:SS\nquarter can be '1Q','2Q','3Q','4Q','xOT\nIf no time is introduced, maximum values are given", 
+                key='Time'), 
+            sg.Button('OK') ],
+        [ sg.Text("") ],
+        [ sg.Text(header1) ],
         layout1,
         [ sg.Text("") ],
-        [ sg.Text("Match statistics:") ],
+        [ sg.Text(header2) ],
         layout2,
         [ sg.Text("")],
         [ sg.Button('Back') ]
@@ -677,11 +695,14 @@ def chooseBoxScore(game):
         analyseMatch(game)
 
 ### 1.2. Match statistics
-def matchStatistics(game):
-    window = matchStatistics_menu(game)
-    event, _ = window.read()
+def matchStatistics(game, timestamp=""):
+    window = matchStatistics_menu(game, timestamp)
+    event, values = window.read()
 
-    if event == 'Back':
+    if event == 'OK':
+        window.close()
+        matchStatistics(game, values['Time']) 
+    elif event == 'Back':
         window.close()
         analyseMatch(game)
 

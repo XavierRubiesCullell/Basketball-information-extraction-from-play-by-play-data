@@ -241,11 +241,12 @@ class Match():
         Output: pandas.DataFrame
         '''
         table = pd.DataFrame(
-            np.array(( ["Greatest difference"] + list(self.scoring_difference(timestamp)),
-                ["Greatest partial"] + list(self.scoring_partial(timestamp)),
-                ["Greatest streak"] + list(self.scoring_streak(timestamp)),
-                ["Longest drought"] + list(self.scoring_drought(timestamp)) )), 
-            columns = ("Statistic", self.home, self.away)
+            np.array((self.scoring_difference(timestamp),
+                self.scoring_partial(timestamp),
+                self.scoring_streak(timestamp),
+                self.scoring_drought(timestamp) )), 
+            columns = (self.home, self.away),
+            index = ("Scoring difference", "Partial", "Scoring streak", "Scoring drought")
         )
         return table
 
