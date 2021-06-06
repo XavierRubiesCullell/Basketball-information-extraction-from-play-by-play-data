@@ -54,8 +54,8 @@ def treat_matches(team, matchList):
                     home = team
                     away = opTeam
                 row = [date, home, away]
-                row = pd.Series(row, index=["Date", "Home", "Away"])
-                table = table.append(row, ignore_index=True)
+                row = pd.Series(row, index=["Date", "Home", "Away"], name=len(table)+1)
+                table = table.append(row)
     return table, round(playedNum/totalNum*100,2)
 
 

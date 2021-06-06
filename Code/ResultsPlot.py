@@ -11,8 +11,8 @@ def get_table(team, table):
         opTeam = (match.Home, match.Away)[opTeamIsAway]
         difference = match[3+teamIsAway] - match[3+opTeamIsAway]
         row = [match.Date, opTeam, match[3+teamIsAway], match[3+opTeamIsAway], difference, difference>0]
-        row = pd.Series(row, index = cols)
-        auxTable = auxTable.append(row, ignore_index=True)
+        row = pd.Series(row, index = cols, name=len(auxTable)+1)
+        auxTable = auxTable.append(row)
     return auxTable
 
 

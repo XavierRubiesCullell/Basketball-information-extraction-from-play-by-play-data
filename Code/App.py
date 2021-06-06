@@ -444,6 +444,8 @@ def calendar_menu(season):
         [ sg.Button('Save') ],
         [   sg.Table(values=auxTable.values.tolist(),
             headings=auxTable.columns.tolist(),
+            row_height = 20, 
+            num_rows = 15, 
             alternating_row_color = 'gray') ],
         [ sg.Button('Back') ]
     ]
@@ -466,6 +468,8 @@ def resultsTable_menu(season):
         [ sg.Button('Save') ],
         [   sg.Table(values=auxTable.values.tolist(),
             headings=auxTable.columns.tolist(),
+            row_height = 20, 
+            num_rows = 15, 
             alternating_row_color = 'gray') ],
         [ sg.Button('Back') ]
     ]
