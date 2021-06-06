@@ -62,6 +62,9 @@ print(game.scoring_partial())
 print("\n\ngreatest_streak")
 print(game.scoring_streak())
 
+print(game.match_statistics())
+print(game.match_statistics("1Q:09:03"))
+
 
 # PLAYING TIMES
 print("\n\nplaying_intervals")

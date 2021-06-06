@@ -210,12 +210,7 @@ def matchStatistics_menu(game):
         row_height = 20) ]
     ]
 
-    table2 = pd.DataFrame(np.array((
-        ["Greatest difference"]+list(game.scoring_difference()),
-        ["Greatest partial"]+list(game.scoring_partial()),
-        ["Greatest streak"]+list(game.scoring_streak()),
-        ["Longest drought"]+list(game.scoring_drought())
-        )), columns = ("Statistic", game.home, game.away))
+    table2 = game.match_statistics()
     layout2 = [
         [ sg.Table(values=table2.values.tolist(), headings=table2.columns.tolist(), num_rows=len(table2), hide_vertical_scroll = True, row_height = 20) ]
     ]

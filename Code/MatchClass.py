@@ -206,20 +206,15 @@ class Match():
     def scoring_difference(self, timestamp=None):
         '''
         This function returns the greatest difference in favour of each team
+        - timestamp: match timestamp in case a temporal value is wanted. None is for the greatest value along the match (string)
         Output: list of integers
         '''
         return ScoringDifference_main(self.PbPFile, timestamp)
 
-    def scoring_drought(self, timestamp=None):
-        '''
-        This function returns the longest time for each team without scoring
-        Output: list of strings
-        '''
-        return ScoringDrought_main(self.PbPFile, self.get_lastQ(), timestamp)
-
     def scoring_partial(self, timestamp=None):
         '''
         This function returns the greatest partial (consecutive points without the opponent scoring) for each team
+        - timestamp: match timestamp in case a temporal value is wanted. None is for the greatest value along the match (string)
         Output: list of integers
         '''
         return ScoringPartial_main(self.PbPFile, timestamp)
@@ -227,9 +222,32 @@ class Match():
     def scoring_streak(self, timestamp=None):
         '''
         This function returns the maximum amount of consecutive points without missing for each team
+        - timestamp: match timestamp in case a temporal value is wanted. None is for the greatest value along the match (string)
         Output: list of integers
         '''
         return ScoringStreak_main(self.PbPFile, timestamp)
+    
+    def scoring_drought(self, timestamp=None):
+        '''
+        This function returns the longest time for each team without scoring
+        - timestamp: match timestamp in case a temporal value is wanted. None is for the greatest value along the match (string)
+        Output: list of strings
+        '''
+        return ScoringDrought_main(self.PbPFile, self.get_lastQ(), timestamp)
+
+    def match_statistics(self, timestamp=None):
+        '''
+        This function returns a table with the match statistics (difference, partial, streak and drought)
+        Output: pandas.DataFrame
+        '''
+        table = pd.DataFrame(
+            np.array(( ["Greatest difference"] + list(self.scoring_difference(timestamp)),
+                ["Greatest partial"] + list(self.scoring_partial(timestamp)),
+                ["Greatest streak"] + list(self.scoring_streak(timestamp)),
+                ["Longest drought"] + list(self.scoring_drought(timestamp)) )), 
+            columns = ("Statistic", self.home, self.away)
+        )
+        return table
 
     def get_shooting_table(self, team=None, shots=None):
         '''
