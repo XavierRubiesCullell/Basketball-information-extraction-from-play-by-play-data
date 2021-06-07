@@ -154,8 +154,9 @@ def treat_line(line, prevQ, oncourt, playerIntervals, tempOncourtIntervals, onco
         opTeam = other_team(team)
         check_oncourt(opTeam, receiver, Q, oncourt, tempOncourtIntervals, oncourtIntervals)
     elif len(action) > 3 and action[3] == "F": # there can be either one or two players
-        team, player = int(action[1]), action[2]
-        check_oncourt(team, player, Q, oncourt, tempOncourtIntervals, oncourtIntervals)
+        team, player, kind = int(action[1]), action[2], action[4]
+        if kind != "T":
+            check_oncourt(team, player, Q, oncourt, tempOncourtIntervals, oncourtIntervals)
         if len(action) == 6: # there is a player from the opposite team that receives the foul
             receiver = action[5]
             opTeam = other_team(team)

@@ -113,6 +113,8 @@ def foul(play, outLine):
     outLine.append("F")
     if "Offensive" in play.text:
         outLine.append("O")
+    elif "Technical" in play.text:
+        outLine.append("T")
     else:
         if "Loose ball" in play.text:
             pass

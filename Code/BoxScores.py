@@ -312,11 +312,13 @@ def foul(action, Q, start, end, table, oncourt, plusminus):
     '''
     clock, team, player, kind = action[0], int(action[1]), action[2], action[4]
     clock = time_from_string(clock)
-    check_oncourt(oncourt, team, player, clock, Q, start, end, table, plusminus)
+    if kind != "T":
+        check_oncourt(oncourt, team, player, clock, Q, start, end, table, plusminus)
     
     if start >= clock and clock >= end:
-        check_player(table, team, player)
-        modify_table(table, team, player, 'PF', 1)
+        if kind != "T":
+            check_player(table, team, player)
+            modify_table(table, team, player, 'PF', 1)
         if kind == "O":
             modify_table(table, team, player, 'To', 1)
 
