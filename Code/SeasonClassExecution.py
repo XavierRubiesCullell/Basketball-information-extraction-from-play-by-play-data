@@ -15,6 +15,8 @@ plot.show()
 
 seasonObject.save_results_plot(4)
 
+print(seasonObject.record())
+
 statistic = "greatest streak"
 table = seasonObject.get_statistic_evolution_table(statistic, category=None, player=None)
 print(table)

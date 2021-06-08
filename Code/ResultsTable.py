@@ -1,7 +1,4 @@
-import os
-import datetime
 import pandas as pd
-import altair as alt
 
 from MatchClass import Match
 
@@ -19,15 +16,19 @@ def treat_match(i, row, team, table):
     result = game.result()
     table.loc[i, 'Home score'] = result[0]
     table.loc[i, 'Away score'] = result[1]
+    if result[0] > result[1] and team == home or result[1] > result[0] and team == away:
+        table.loc[i, 'W/L'] = "W"
+    else:
+        table.loc[i, 'W/L'] = "L"
 
 
 def main(team, matchTable):
     '''
-    This function returns the information desired for all the matches of a team during a season
+    This function creates the season results table
     - team: name of the team (string)
     - matchTable: table of matches (pandas.DataFrame)
     '''
-    table = pd.DataFrame(columns=['Date', 'Home', 'Home score', 'Away score', 'Away'])
+    table = pd.DataFrame(columns=['Date', 'Home', 'Home score', 'Away score', 'Away', 'W/L'])
     table['Date'] = matchTable['Date']
     table['Home'] = matchTable['Home']
     table['Away'] = matchTable['Away']

@@ -463,8 +463,10 @@ def results_menu():
     return sg.Window("Statistic Analysis Menu", layout)
 
 def resultsTable_menu(season):
+    record = season.record()
     auxTable = create_table(season.get_results_table(), " ", 5)
     layout = [
+        [ sg.Text("W - L: "), sg.Text(f"{record[0]} - {record[1]}") ],
         [ sg.Button('Save') ],
         [   sg.Table(values=auxTable.values.tolist(),
             headings=auxTable.columns.tolist(),

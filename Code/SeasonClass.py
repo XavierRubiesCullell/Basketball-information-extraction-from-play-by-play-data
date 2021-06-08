@@ -12,6 +12,8 @@ from ShootingStatisticsPlot import main as ShootingStatisticsPlot_main
 from AssistStatisticsMatrixSeason import main as AssistStatisticsMatrixSeason_main
 from AssistStatisticsPlot import main as AssistStatisticsPlot_main
 
+from MatchClass import Match
+
 
 class Season():
     def __init__(self, team, season, fileFolder="Files/"):
@@ -109,6 +111,18 @@ class Season():
             path += "Difference"
         path += ".html"
         plot.save(path)
+
+    def record(self):
+        '''
+        This function returns the W-L record of the season
+        '''
+        record = [0, 0]
+        for match in self.matchTable.itertuples():
+            home, away, date = match.Home, match.Away, match.Date
+            game = Match(home, away, date)
+            record[game.winner() == self.team] += 1
+        return [record[1], record[0]]
+
 
     def get_statistic_evolution_table(self, statistic, category=None, player=None):
         '''
