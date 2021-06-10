@@ -30,6 +30,7 @@ def draw_plotly_court(fig, shots, figWidth=600, margins=0):
     '''
     figHeight = figWidth * (470 + 2 * margins) / (500 + 2 * margins)
     fig.update_layout(title="Shooting accuracy", font_size=10, width=figWidth, height=figHeight)
+    fig.update_layout(width=figWidth+90)
 
     # Set axes ranges
     fig.update_xaxes(range=[-250 - margins, 250 + margins])
@@ -64,11 +65,15 @@ def draw_plotly_court(fig, shots, figWidth=600, margins=0):
         ),
         shapes=[
             # half court
+            # dict(
+            #     type="rect", x0=-250, y0=-52.5, x1=250, y1=417.5,
+            #     line=dict(color=mainLineCol, width=lineWidth),
+            #     # fillcolor='#333333',
+            #     layer='below'
+            # ),
             dict(
-                type="rect", x0=-250, y0=-52.5, x1=250, y1=417.5,
-                line=dict(color=mainLineCol, width=lineWidth),
-                # fillcolor='#333333',
-                layer='below'
+                type="line", x0=-250, y0=-52.5, x1=250, y1=-52.5,
+                line=dict(color=mainLineCol, width=2),
             ),
             # zone
             dict(
@@ -193,56 +198,83 @@ def draw_plotly_court(fig, shots, figWidth=600, margins=0):
             )
         ] + shots
     )
+    fig.update_layout(legend_title_text="Accuracy (%)")
+
     return fig
 
 
 def color_election(acc):
     '''
-    This function returns a colour code given a shooting accuracy
+    This function returns a color code given a shooting accuracy
     - acc: accuracy from a determined distance
     '''
     if acc < 10:
-        return '#DEEDCF'
+        return 0
     if acc < 20:
-        return '#BFE1B0'
+        return 1
     if acc < 30:
-        return '#99D492'
+        return 2
     if acc < 40:
-        return '#74C67A'
+        return 3
     if acc < 50:
-        return '#56B870'
+        return 4
     if acc < 60:
-        return '#39A96B'
+        return 5
     if acc < 70:
-        return '#1D9A6C'
+        return 6
     if acc < 80:
-        return '#0C9462'
+        return 7
     if acc < 90:
-        return '#008B57'
+        return 8
     if acc < 100:
-        return '#007E4B'
-    return '#006C3E'
+        return 9
+    return 10
 
 
-def shot_line(row, total):
+def treat_distance(row, total, shots, colors, accUsed):
     '''
     This function returns the line representing a shooting distance
     - row: row of the shot table, representing the values from a distance (pandas.Series)
     - total: total number of attempted shots (integer)
+    - shots: shooting lines (list)
+    - colors: color map vector (list)
+    - accUsed: list of accuracy intervals, telling whether they are present on the map (list)
     '''
+    colorId = color_election(row[2])
+
     # 22 ft == 237.5
     # 25 ft == 240
     # 22 ft == 220.5
     d = int(row.name)*220.5/22
-    return dict(
+    shots.append(dict(
         type="path",
         path=circumference_arc(r=d, startAngle=0, endAngle=np.pi),
-        # line=dict(color="green", width=1), # same colour and width
-        # line=dict(color="green", width=0.15*row[1]), # same colour
-        # line=dict(color=color_election(row), width=1), # same width
-        line=dict(color=color_election(row[2]), width=np.sqrt(row[1]/total*100)),
+        line=dict(color=colors[colorId], width=np.sqrt(row[1]/total*100)),
         layer='below'
-    )
+    ))
+
+    accUsed[colorId] = True
+
+
+def legend_creation(accUsed, fig, colors, accuracies):
+    '''
+    This function creates the points that generate the legend elements
+    - accUsed: boolean vector stating if the accuracy is on the map (list)
+    - fig: ploty.graph_objects figure
+    - colors: color map vector (list)
+    - accuracies: legend labels (list)
+    '''
+    for i in range(len(accUsed)):
+        if accUsed[i]:
+            fig.add_trace(go.Scatter(
+                x=[1000],
+                y=[1000],
+                marker=dict(
+                    size=0,
+                    color=colors[i],
+                ),
+                name=accuracies[i]
+            ))
 
 
 def main(shotTable):
@@ -250,11 +282,26 @@ def main(shotTable):
     This function returns a plot given a table of records
     - shotTable: table with the shooting records
     '''
+    colors = ('#DEEDCF', '#BFE1B0', '#99D492', '#74C67A', '#56B870', '#39A96B', '#1D9A6C', '#0C9462', '#008B57', '#007E4B', '#006C3E')
+    accUsed = [False]*len(colors)
+    accuracies = (
+        "[0, 10)", "[10, 20)", "[20, 30)", "[30, 40)", "[40, 50)", "[50, 60)", "[60, 70)", "[70, 80)", "[80, 90)", "[90, 100)", "100"
+    )
+
     fig = go.Figure()
     total = shotTable.loc['TOTAL','Shots attempted']
     shotTable = shotTable.drop(index = ['TOTAL'], errors='ignore')
     shots = []
     for _, row in shotTable.iterrows():
-        shots.append(shot_line(row, total))
+        treat_distance(row, total, shots, colors, accUsed)
+
+    legend_creation(accUsed, fig, colors, accuracies)
 
     return draw_plotly_court(fig, shots, figWidth=600, margins=0)
+
+
+# from MatchClass import Match
+# game = Match("Denver", "Dallas", "2021/01/07")
+# shotStats = game.get_shooting_table(team=1)
+# plot = main(shotStats)
+# plot.show()
