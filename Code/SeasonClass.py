@@ -3,6 +3,7 @@ import altair as alt
 
 from Functions import get_team
 from MatchListObtention import main as MatchListObtention_main
+from BoxScoreSeason import main as BoxScoreSeason_main
 from StatisticEvolutionTable import main as StatisticEvolutionTable_main
 from StatisticEvolutionPlot import main as StatisticEvolutionPlot_main
 from ResultsTable import main as ResultsTable_main
@@ -123,6 +124,11 @@ class Season():
             record[game.winner() == self.team] += 1
         return [record[1], record[0]]
 
+    def box_score(self):
+        '''
+        This function returns the season box score
+        '''
+        return BoxScoreSeason_main(self.team, self.matchTable)
 
     def get_statistic_evolution_table(self, statistic, category=None, player=None):
         '''
