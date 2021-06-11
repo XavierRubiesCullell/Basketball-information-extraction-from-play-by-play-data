@@ -298,10 +298,3 @@ def main(shotTable):
     legend_creation(accUsed, fig, colors, accuracies)
 
     return draw_plotly_court(fig, shots, figWidth=600, margins=0)
-
-
-# from MatchClass import Match
-# game = Match("Denver", "Dallas", "2021/01/07")
-# shotStats = game.get_shooting_table(team=1)
-# plot = main(shotStats)
-# plot.show()

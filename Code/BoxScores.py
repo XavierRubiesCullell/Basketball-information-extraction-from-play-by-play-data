@@ -69,13 +69,24 @@ def quarter_end(Q, start, end, table, oncourt, plusminus):
         oncourt[team-1].clear()
 
 
-def pir_computation(box):
+def perc_computation(att, made):
+    '''
+    This function computes the accuracy percentage in shooting statistics
+    '''
+    if att != 0:
+        perc = made/att * 100
+        return round(perc, 1)
+    else:
+        return "-"
+
+
+def PIR_computation(box):
     '''
     This function computes the metric PIR from the box score 'box'
     '''
-    PIR_pos = box['Pts'] + box['TR'] + box['Ast'] + box['St'] + box['Bl'] + box['DF']
-    PIR_neg = (box['FGA'] - box['FGM']) + (box['FTA'] - box['FTM']) + box['To'] + box['PF']
-    return PIR_pos - PIR_neg
+    pirPos = box['Pts'] + box['TR'] + box['Ast'] + box['St'] + box['Bl'] + box['DF']
+    pirNeg = (box['FGA'] - box['FGM']) + (box['FTA'] - box['FTM']) + box['To'] + box['PF']
+    return pirPos - pirNeg
 
 
 def final_computations(table):
@@ -91,34 +102,13 @@ def final_computations(table):
         # deletion of the "0 days" in Mins
         table[team-1]['Mins'] = list(map(lambda x:str(x).split("days ")[1], table[team-1]['Mins']))
         # computation of the dependent categories:
-        for pl, row in table[team-1].iterrows():
-            # computation of FT%:
-            if row['FTA'] != 0:
-                perc = row['FTM']/row['FTA'] * 100
-                table[team-1].loc[pl, 'FT%'] = round(perc, 1)
-            else:
-                table[team-1].loc[pl,'FT%'] = "-"
-            # computation of 2Pt% and 3Pt%:
-            for i in range(2,4):
-                if row[str(i)+'PtA'] != 0:
-                    perc = row[str(i)+'PtM']/row[str(i)+'PtA'] * 100
-                    table[team-1].loc[pl,str(i)+'Pt%'] = round(perc, 1)
-                else:
-                    table[team-1].loc[pl,str(i)+'Pt%'] = "-"
-            # computation of field goal percentage (FG%):
-            if row['2PtA'] + row['3PtA'] != 0:
-                FGM = row['2PtM'] + row['3PtM']
-                FGA = row['2PtA'] + row['3PtA']
-                perc = FGM/FGA * 100
-                table[team-1].loc[pl,'FGM'] = FGM
-                table[team-1].loc[pl,'FGA'] = FGA
-                table[team-1].loc[pl,'FG%'] = round(perc, 1)
-            else:
-                table[team-1].loc[pl,'FGM'] = 0
-                table[team-1].loc[pl,'FGA'] = 0
-                table[team-1].loc[pl,'FG%'] = "-"
-        # computation of PIR:
-        table[team-1]['PIR'] = pir_computation(table[team-1])
+        table[team-1]['FT%'] = table[team-1].apply(lambda x: perc_computation(x['FTA'], x['FTM']), axis=1)
+        table[team-1]['2Pt%'] = table[team-1].apply(lambda x: perc_computation(x['2PtA'], x['2PtM']), axis=1)
+        table[team-1]['3Pt%'] = table[team-1].apply(lambda x: perc_computation(x['3PtA'], x['3PtM']), axis=1)
+        table[team-1]['FGM'] = table[team-1]['2PtM'] + table[team-1]['3PtM']
+        table[team-1]['FGA'] = table[team-1]['2PtA'] + table[team-1]['3PtA']
+        table[team-1]['FG%'] = table[team-1].apply(lambda x: perc_computation(x['FGA'], x['FGM']), axis=1)
+        table[team-1]['PIR'] = PIR_computation(table[team-1])
 
 
 def correct_plusminus(lines, i, table):
