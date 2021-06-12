@@ -10,19 +10,34 @@ import PySimpleGUI as sg
 
 from Functions import *
 
+
+def get_img_data(img, maxsize=(500, 500), first=False):
+    """Generate image data using PIL
+    """
+    img.thumbnail(maxsize)
+    if first:                     # tkinter is inactive the first time
+        bio = io.BytesIO()
+        img.save(bio, format="PNG")
+        del img
+        return bio.getvalue()
+    return PIL.ImageTk.PhotoImage(img)
+
+
 def visualPbP_menu(home, away, imageFolder):
+    image = PIL.Image.open(f"{imageFolder}/Black.png")
     layout = [
         [ sg.Button("Pause", key='Pause/Resume') ],
-        [ sg.Text(key="ActionText", size=(40,1)) ],
-        [ sg.Image(data=convert_to_bytes(f"{imageFolder}/Black.jpg", resize=(400,400)), key="ActionImage") ],
-        [ sg.Text("", size=(10,1), key="Clock"),
+        [ sg.Text(key='ActionText', size=(40,1)) ],
+        [ sg.Image(data=get_img_data(image, first=True), key='ActionImage') ],
+        [ sg.Text("", size=(10,1), key='Clock'),
             sg.Text(home),
-            sg.Text("", size=(3,1), key="Score1"),
+            sg.Text("", size=(3,1), key='Score1'),
             sg.Text(away),
-            sg.Text("", size=(2,1), key="Score2") ],
+            sg.Text("", size=(2,1), key='Score2') ],
         [ sg.Button('Back') ]
     ]
     return sg.Window("Visual PbP", layout)
+
 
 def get_clock(i, lines):
     '''
@@ -34,6 +49,7 @@ def get_clock(i, lines):
     action = lines[i]
     action = action.split(", ")
     return action[0]
+
 
 def interval(tBefore, tNow):
     '''
@@ -47,6 +63,7 @@ def interval(tBefore, tNow):
     diff = diff.seconds
     diff == max(diff, 1)
     return math.exp(-math.pow(diff,2) / (2*math.pow(5,2)))
+
 
 def next_time(t):
     '''
@@ -66,23 +83,6 @@ def next_time(t):
     clock -= datetime.timedelta(seconds=1)
     return quarter + ":" + clock.strftime("%M:%S")
 
-def convert_to_bytes(img, resize=None):
-    '''
-    This function returns an auxiliary image to be shown
-    - img: image file
-    - resize: size of the image if we resize it (tuple of size 2)
-    '''
-    if isinstance(img, str):
-        img = PIL.Image.open(img)
-    if resize:
-        curWidth, curHeight = img.size
-        newWidth, newHeight = resize
-        scale = min(newHeight/curHeight, newWidth/curWidth)
-        img = img.resize((int(curWidth*scale), int(curHeight*scale)), PIL.Image.ANTIALIAS)
-    with io.BytesIO() as bio:
-        img.save(bio, format="PNG")
-        del img
-        return bio.getvalue()
 
 def show_header(t, score, window):
     '''
@@ -98,6 +98,16 @@ def show_header(t, score, window):
         window['Score1'].update(value=score[0])
         window['Score2'].update(value=score[1])
 
+
+def text_on_image(img, position, text, fontSize):
+    img.text(
+        xy=position,
+        text=text,
+        fill=(0, 0, 0),
+        font = PIL.ImageFont.truetype("DejaVuSans.ttf", fontSize)
+    )
+
+
 def show_action(action, prevAction, home, away, window, imageFolder):
     '''
     This function updates the play image and the play description
@@ -108,30 +118,45 @@ def show_action(action, prevAction, home, away, window, imageFolder):
     - window: window where the plays are shown (PySimpleGUI.PySimpleGUI.Window)
     - imageFolder: image directory in case window is True (string)
     '''
-    imageSize = (400, 400)
     if action == "black":
         if window is None:
             print("\n")
         else:
             if prevAction != "black":
                 window['ActionText'].update(str(""))
-                window['ActionImage'].update(data=convert_to_bytes(f"{imageFolder}/Black.jpg", resize=imageSize))
+                image = PIL.Image.open(f"{imageFolder}/Black.png")
+                window['ActionImage'].update(data=get_img_data(image, first=True))
     else:
         if window is None:
             print(action.strip().split(", ")[1:], "\n")
         else:
             action = action.strip().split(", ")
             actionType = action[3]
+
             if actionType == "S":
-                team, player, points = action[1], action[2], int(action[4])
+                team, player, points = int(action[1]), action[2], int(action[4])
                 distGiven = action[5] != "I" and action[5] != "O" # true if it is not I or O, so in this position we have the distance
                 result = action[5+distGiven] #in/out
+                teamName = (home, away)[team-1]
+
                 if len(action) == 8+distGiven and action[6+distGiven] == "A": # there is an assist
-                    window['ActionText'].update(str(action[1:]))
-                    window['ActionImage'].update(data=convert_to_bytes(f"{imageFolder}/Bryant.jpg", resize=imageSize))
+                    image = PIL.Image.open(f"{imageFolder}/Bryant.png")
+                    imageEditable = PIL.ImageDraw.Draw(image)
+                    
+                    passer = action[7+distGiven]
+                    text = f"{points}-pointer"
+                    if distGiven:
+                        text += f" from {action[5]} ft"
+
+                    window['ActionText'].update(text)
+                    window['ActionImage'].update(data=get_img_data(image, first=True))
+
                 else:
+                    image = PIL.Image.open(f"{imageFolder}/Shot.png")
+                    imageEditable = PIL.ImageDraw.Draw(image)
+
                     if points == 1:
-                        text = f"free throw"
+                        text = "Free throw"
                     else:
                         text = f"{points}-pointer"
                         if distGiven:
@@ -140,26 +165,141 @@ def show_action(action, prevAction, home, away, window, imageFolder):
                         text += " that went in"
                     else:
                         text += " that went out"
+
+                    playerPos = (125 - (len(player)-1)*2.5, 320)
+                    teamPos = (110, 355)
+                    text_on_image(imageEditable, playerPos, player, 14)
+                    text_on_image(imageEditable, teamPos, teamName, 30)
+
                     window['ActionText'].update(text)
-                    window['ActionImage'].update(data=convert_to_bytes(f"{imageFolder}/Shot.png", resize=imageSize))
+                    window['ActionImage'].update(data=get_img_data(image, first=True))
+
             elif actionType == "R":
-                window['ActionText'].update(str(action[1:]))
-                window['ActionImage'].update(data=convert_to_bytes(f"{imageFolder}/Rebound.png", resize=imageSize))
+                image = PIL.Image.open(f"{imageFolder}/Rebound.png")
+                imageEditable = PIL.ImageDraw.Draw(image)
+
+                team, player, kind = int(action[1]), action[2], action[4]
+                teamName = (home, away)[team-1]
+                if kind == 'O':
+                    text = "Offensive"
+                else:
+                    text = "Defensive"
+
+                playerPos = (275 - (len(player)-1)*2.5, 365)
+                teamPos = (270, 395)
+                text_on_image(imageEditable, playerPos, player, 12)
+                text_on_image(imageEditable, teamPos, teamName, 30)
+
+                window['ActionText'].update(text)
+                window['ActionImage'].update(data=get_img_data(image, first=True))
+
             elif actionType == "T":
-                window['ActionText'].update(str(action[1:]))
-                window['ActionImage'].update(data=convert_to_bytes(f"{imageFolder}/Bryant.jpg", resize=imageSize))
+                image = PIL.Image.open(f"{imageFolder}/Turnover.png")
+                imageEditable = PIL.ImageDraw.Draw(image)
+
+                team, player = int(action[1]), action[2]
+                teamName = (home, away)[team-1]
+
+                playerPos = (223 - (len(player)-1)*2.5, 152)
+                teamPos = (210, 182)
+                text_on_image(imageEditable, playerPos, player, 11)
+                text_on_image(imageEditable, teamPos, teamName, 20)
+
+                window['ActionText'].update("")
+                window['ActionImage'].update(data=get_img_data(image, first=True))
+
             elif actionType == "St":
-                window['ActionText'].update(str(action[1:]))
-                window['ActionImage'].update(data=convert_to_bytes(f"{imageFolder}/Steal.png", resize=imageSize))
+                image = PIL.Image.open(f"{imageFolder}/Steal.png")
+                imageEditable = PIL.ImageDraw.Draw(image)
+
+                team, player, opPlayer = int(action[1]), action[2], action[4]
+                teamName = (home, away)[team-1]
+                opTeam = other_team(team)
+                opTeamName = (home, away)[opTeam-1]
+
+                playerPos = (322 - (len(player)-1)*2.5, 205)
+                opPlayerPos = (107 - (len(opPlayer)-1)*2.5, 195)
+                teamPos = (310, 235)
+                opTeamPos = (110, 225)
+                text_on_image(imageEditable, playerPos, player, 11)
+                text_on_image(imageEditable, teamPos, teamName, 20)
+                text_on_image(imageEditable, opPlayerPos, opPlayer, 9)
+                text_on_image(imageEditable, opTeamPos, opTeamName, 20)
+
+                window['ActionText'].update("")
+                window['ActionImage'].update(data=get_img_data(image, first=True))
+
             elif actionType == "B":
-                window['ActionText'].update(str(action[1:]))
-                window['ActionImage'].update(data=convert_to_bytes(f"{imageFolder}/Block.png", resize=imageSize))
+                image = PIL.Image.open(f"{imageFolder}/Block.png")
+                imageEditable = PIL.ImageDraw.Draw(image)
+
+                team, player, opPlayer, points = int(action[1]), action[2], action[4], action[5]
+                teamName = (home, away)[team-1]
+                opTeam = other_team(team)
+                opTeamName = (home, away)[opTeam-1]
+
+                playerPos = (251 - (len(player)-1)*2.5, 330)
+                opPlayerPos = (362 - (len(opPlayer)-1)*2.5, 425)
+                teamPos = (235, 357)
+                opTeamPos = (351, 455)
+                text_on_image(imageEditable, playerPos, player, 9)
+                text_on_image(imageEditable, teamPos, teamName, 20)
+                text_on_image(imageEditable, opPlayerPos, opPlayer, 10)
+                text_on_image(imageEditable, opTeamPos, opTeamName, 20)
+
+                text = f"The shot was a {points}-pointer"
+                if len(action) == 7:
+                    text += f" from {action[5]} ft"
+
+                window['ActionText'].update(text)
+                window['ActionImage'].update(data=get_img_data(image, first=True))
+
             elif actionType == "F":
-                window['ActionText'].update(str(action[1:]))
-                window['ActionImage'].update(data=convert_to_bytes(f"{imageFolder}/Foul.png", resize=imageSize))
+                image = PIL.Image.open(f"{imageFolder}/Foul.png")
+                imageEditable = PIL.ImageDraw.Draw(image)
+
+                team, player, kind = int(action[1]), action[2], action[4]
+                teamName = (home, away)[team-1]
+                playerPos = (130 - (len(player)-1)*2.5, 350)
+                teamPos = (117, 380)
+                text_on_image(imageEditable, playerPos, player, 12)
+                text_on_image(imageEditable, teamPos, teamName, 20)
+                if len(action) == 6: # there is a player from the opposite team that receives the foul
+                    opPlayer = action[5]
+                    opTeam = other_team(team)
+                    opTeamName = (home, away)[opTeam-1]
+                    opPlayerPos = (300 - (len(opPlayer)-1)*2.5, 355)
+                    opTeamPos = (287, 385)
+                    text_on_image(imageEditable, opPlayerPos, opPlayer, 12)
+                    text_on_image(imageEditable, opTeamPos, opTeamName, 20)
+                
+                if kind == "O":
+                    text = "Offensive"
+                elif kind == "D":
+                    text = "Defensive"
+                else:
+                    text = "Technical"
+
+                window['ActionText'].update(text)
+                window['ActionImage'].update(data=get_img_data(image, first=True))
+
             elif actionType == "C":
-                window['ActionText'].update(str(action[1:]))
-                window['ActionImage'].update(data=convert_to_bytes(f"{imageFolder}/Change.png", resize=imageSize))
+                image = PIL.Image.open(f"{imageFolder}/Change.png")
+                imageEditable = PIL.ImageDraw.Draw(image)
+
+                team, playerOut, playerIn = int(action[1]), action[2], action[4]
+                teamName = (home, away)[team-1]
+                outPos = (120 - (len(playerOut)-1)*2.5, 150)
+                outTeamPos = (103, 180)
+                inPos = (373 - (len(playerIn)-1)*2.5, 175)
+                inTeamPos = (359, 205)
+                text_on_image(imageEditable, outPos, playerOut, 10)
+                text_on_image(imageEditable, outTeamPos, teamName, 20)
+                text_on_image(imageEditable, inPos, playerIn, 11)
+                text_on_image(imageEditable, inTeamPos, teamName, 20)
+
+                window['ActionText'].update("")
+                window['ActionImage'].update(data=get_img_data(image, first=True))
 
 
 def update_score(line, score):
