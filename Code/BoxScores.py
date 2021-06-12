@@ -265,7 +265,7 @@ def steal(action, Q, start, end, table, oncourt, plusminus):
 def block(action, Q, start, end, table, oncourt, plusminus):
     '''
     Treatment of an action that was detected as a block. It will have the following structure:
-        clock team player "B" receiver points
+        clock team player "B" receiver points [dist]
     - action: studied play (list)
     - Q: current quarter (string)
     - start: starting time of the boxscore compution interval (string)

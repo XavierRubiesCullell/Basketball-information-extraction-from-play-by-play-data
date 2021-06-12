@@ -21,6 +21,11 @@ def shoot(play, outLine):
         outLine.append(players[0].text)
         ind = play.text.index("-pt")
         outLine.append(play.text[ind-1])
+        dist = re.search("(\d+)(?!.*\d).+?(?=ft)", play.text)
+        try:
+            outLine.append(dist.group(1))
+        except AttributeError:
+            pass
 
     else:
         outLine.append(players[0].text)
