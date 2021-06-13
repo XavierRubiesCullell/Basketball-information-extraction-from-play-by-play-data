@@ -289,7 +289,7 @@ def teamElection_menu():
     ]
     return sg.Window("Team election Menu", layout)
 
-def shootingStatisticsTable_menu(game, team, table):
+def shootingStatisticsTable_menu(game, table):
     table = create_table(table, "Distance (ft)", 4)
     layout = [
         [ sg.Button('Save') ],
@@ -757,28 +757,28 @@ def playingTimes(game):
             break
 
 ### 1.4. Shooting statistics
-def shootingStatisticsTable(Event, team, tables):
-    window = shootingStatisticsTable_menu(Event, team, tables[team-1])
+def shootingStatisticsTable(Event, team, table):
+    window = shootingStatisticsTable_menu(Event, table)
     
     while True:
         event, _ = window.read()
         if event == 'Save':
-            Event.save_shooting_table(team, tables[team-1])
+            Event.save_shooting_table(team, table)
             sg.PopupTimed("Table saved", auto_close_duration=1, button_type=5)
         elif event == 'Back':
             window.close()
-            shootingStatistics(Event, tables)
+            shootingStatistics(Event)
             break
         elif event == sg.WIN_CLOSED:
             break
 
 
-def shootingStatisticsPlot(Event, team, tables):
+def shootingStatisticsPlot(Event, team, table):
     window = statisticsPlot_menu()
 
     while True:
         event, _ = window.read()
-        plot = Event.get_shooting_plot(team, tables[team-1])
+        plot = Event.get_shooting_plot(team, table)
 
         if event == 'Show plot':
             plot.show()
@@ -787,13 +787,13 @@ def shootingStatisticsPlot(Event, team, tables):
             sg.PopupTimed("Plot saved", auto_close_duration=1, button_type=5)
         elif event == 'Back':
             window.close()
-            shootingStatistics(Event, tables)
+            shootingStatistics(Event)
             break
         elif event == sg.WIN_CLOSED:
             break
 
 
-def shootingStatistics(Event, tables=[None, None]):
+def shootingStatistics(Event):
     try:
         Event.away
         window = shootingStatisticsMatch_menu()
@@ -806,15 +806,15 @@ def shootingStatistics(Event, tables=[None, None]):
     elif values.get('Visiting', False) or values.get('Opponents', False):
         team = 2
     
-    if tables[team-1] is None:
-        tables[team-1] = Event.get_shooting_table(team)
+    if event != sg.WIN_CLOSED:
+        table = Event.get_shooting_table(team)
 
     if event == 'Shooting statistics table':
         window.close()
-        shootingStatisticsTable(Event, team, tables)
+        shootingStatisticsTable(Event, team, table)
     elif event == 'Shooting statistics plot':
         window.close()
-        shootingStatisticsPlot(Event, team, tables)
+        shootingStatisticsPlot(Event, team, table)
     elif event == 'Back':
         window.close()
         try:
