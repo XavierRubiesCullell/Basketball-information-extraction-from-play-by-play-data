@@ -95,6 +95,8 @@ def final_computations(table):
     - table: box score of the teams (list of pandas.DataFrame)
     '''
     for team in range(1,3):
+        # sort by minutes:
+        table[team-1] = table[team-1].sort_values(by='Mins', ascending=False)
         # computation of the cumulative values:
         table[team-1].loc["TOTAL"] = table[team-1].apply(np.sum)
         # deletion of the team value
@@ -309,8 +311,8 @@ def foul(action, Q, start, end, table, oncourt, plusminus):
         if kind != "T":
             check_player(table, team, player)
             modify_table(table, team, player, 'PF', 1)
-        if kind == "O":
-            modify_table(table, team, player, 'To', 1)
+            if kind == "O":
+                modify_table(table, team, player, 'To', 1)
 
     if len(action) == 6: # there is a player from the opposite team that receives the foul
         opPlayer = action[5]

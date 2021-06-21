@@ -102,7 +102,7 @@ def main(team, matchTable):
 
     boxScore = boxScore.round(1)
     boxScore = boxScore[['GP', 'Mins', '2PtM', '2PtA', '2Pt%', '3PtM', '3PtA', '3Pt%', 'FGM', 'FGA', 'FG%', 'FTM', 'FTA', 'FT%', 'OR', 'DR', 'TR', 'Ast', 'PtsC', 'Bl', 'St', 'To', 'PF', 'DF', 'AstPts', 'Pts', '+/-', 'EFF']]
-    boxScore.sort_index(inplace=True)
+    boxScore = boxScore.sort_values(by='Mins', ascending=False)
     total = boxScore.loc["TOTAL"]
     boxScore = boxScore.drop(index = ["TOTAL"], errors='ignore')
     boxScore.loc["TOTAL"] = total
