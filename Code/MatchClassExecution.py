@@ -9,17 +9,20 @@ print("\n\nget_lastQ")
 print(game.get_lastQ())
 
 
+
 # BOX SCORES
+
 print("\n\nbox_scores")
 
-table = game.box_scores(joint = True)
-game.save_box_score(table, "joint")
+table = game.box_scores(0)
+game.save_box_score(table, "joint", extension="html")
+print(table)
 
-tables = game.box_scores(joint = False)
+tables = game.box_scores()
 print("\nHome team boxscore from BoxScores.py")
 print(tables[0])
 print("\nAway team boxscore from BoxScores.py")
-print(tables[1])
+print(game.box_scores(2))
 
 print("\n\nfilter_by_players")
 players = table.index[:2]
@@ -39,7 +42,9 @@ print("\n\ntop_players")
 print(game.top_players(table, ['Pts', 'TR'], n=5))
 
 
+
 # MATCH STATISTICS
+
 print("\n\nquarter_scorings")
 print(game.quarter_scorings("3Q:10:01"))
 
@@ -66,7 +71,9 @@ print(game.match_statistics())
 print(game.match_statistics("1Q:09:03"))
 
 
+
 # PLAYING TIMES
+
 print("\n\nplaying_intervals")
 playerIntervals, oncourtIntervals = game.playing_intervals()
 for team in range(1,3):
@@ -95,7 +102,9 @@ five = list(oncourtIntervals[1].values())[0]
 print(game.intervals_of_five(2, five))
 
 
+
 # SHOOTING AND ASSIST STATISTICS
+
 print("\n\nshooting statistics")
 shotStats = game.get_shooting_table()
 print("home")
@@ -133,7 +142,9 @@ game.save_assist_plot(1)
 game.save_assist_plot(2, plot)
 
 
+
 # VISUAL PBP
+
 import PySimpleGUI as sg
 layout = [
     [sg.Text(key="ActionText", size=(40,1))],

@@ -687,7 +687,7 @@ def chooseBoxScore(game):
         if end == "":
             end = None
         if values['Local'] and values['Visiting']:
-            table = game.box_scores(start=start, end=end, joint=True)
+            table = game.box_scores(team=0, start=start, end=end)
         else:
             boxScores = game.box_scores(start=start, end=end)
             if values['Local']:

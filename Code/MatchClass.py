@@ -66,11 +66,12 @@ class Match():
             self.lastQ = quarter_from_time(clock)
         return self.lastQ
 
-    def box_scores(self, start=None, end=None, joint = False):
+    def box_scores(self, team = None, start=None, end=None):
         '''
         It returns the box score of the interval introduced
+        - team: team id (None: both [list of tables], 0: joint table, 1: home, 2: away)
         - start, end: time interval where we want the box score to be computed (string)
-        Output: It returns the box scores of both teams (list of pandas.DataFrame)
+        Output: It returns the box score of either one or both teams (pandas.DataFrame or list of pandas.DataFrame)
         '''
         if start is None:
             start = "1Q:12:00"
@@ -78,8 +79,10 @@ class Match():
             end = self.get_lastQ()+":00:00"
         boxs = BoxScores_main(self.PbPFile, start=start, end=end)
 
-        if not joint:
+        if team is None:
             return boxs
+        if team == 1 or team == 2:
+            return boxs[team-1]
         boxs[0]['Team'] = [self.home]*len(boxs[0])
         boxs[1]['Team'] = [self.away]*len(boxs[1])
         table = boxs[0].append(boxs[1])
