@@ -133,7 +133,8 @@ def show_action(action, prevAction, home, away, window, imageFolder):
             action = action.strip().split(", ")
             actionType = action[3]
 
-            if actionType == "S":
+
+            if actionType == "S": # the play is a shot
                 team, player, points = int(action[1]), action[2], int(action[4])
                 distGiven = action[5] != "I" and action[5] != "O" # true if it is not I or O, so in this position we have the distance
                 result = action[5+distGiven] #in/out
@@ -174,7 +175,8 @@ def show_action(action, prevAction, home, away, window, imageFolder):
                     window['ActionText'].update(text)
                     window['ActionImage'].update(data=get_img_data(image, first=True))
 
-            elif actionType == "R":
+
+            elif actionType == "R": # the play is a rebound
                 image = PIL.Image.open(f"{imageFolder}/Rebound.png")
                 imageEditable = PIL.ImageDraw.Draw(image)
 
@@ -193,7 +195,8 @@ def show_action(action, prevAction, home, away, window, imageFolder):
                 window['ActionText'].update(text)
                 window['ActionImage'].update(data=get_img_data(image, first=True))
 
-            elif actionType == "T":
+
+            elif actionType == "T": # the play is a turnover
                 image = PIL.Image.open(f"{imageFolder}/Turnover.png")
                 imageEditable = PIL.ImageDraw.Draw(image)
 
@@ -208,7 +211,8 @@ def show_action(action, prevAction, home, away, window, imageFolder):
                 window['ActionText'].update("")
                 window['ActionImage'].update(data=get_img_data(image, first=True))
 
-            elif actionType == "St":
+
+            elif actionType == "St": # the play is a steal
                 image = PIL.Image.open(f"{imageFolder}/Steal.png")
                 imageEditable = PIL.ImageDraw.Draw(image)
 
@@ -218,8 +222,8 @@ def show_action(action, prevAction, home, away, window, imageFolder):
                 opTeamName = (home, away)[opTeam-1]
 
                 playerPos = (322 - (len(player)-1)*2.5, 205)
-                opPlayerPos = (107 - (len(opPlayer)-1)*2.5, 195)
-                teamPos = (310, 235)
+                opPlayerPos = (108 - (len(opPlayer)-1)*2.5, 195)
+                teamPos = (325, 230)
                 opTeamPos = (110, 225)
                 text_on_image(imageEditable, playerPos, player, 11)
                 text_on_image(imageEditable, teamPos, teamName, 20)
@@ -229,7 +233,8 @@ def show_action(action, prevAction, home, away, window, imageFolder):
                 window['ActionText'].update("")
                 window['ActionImage'].update(data=get_img_data(image, first=True))
 
-            elif actionType == "B":
+
+            elif actionType == "B": # the play is a block
                 image = PIL.Image.open(f"{imageFolder}/Block.png")
                 imageEditable = PIL.ImageDraw.Draw(image)
 
@@ -254,7 +259,8 @@ def show_action(action, prevAction, home, away, window, imageFolder):
                 window['ActionText'].update(text)
                 window['ActionImage'].update(data=get_img_data(image, first=True))
 
-            elif actionType == "F":
+
+            elif actionType == "F": # the play is a foul
                 image = PIL.Image.open(f"{imageFolder}/Foul.png")
                 imageEditable = PIL.ImageDraw.Draw(image)
 
@@ -283,16 +289,17 @@ def show_action(action, prevAction, home, away, window, imageFolder):
                 window['ActionText'].update(text)
                 window['ActionImage'].update(data=get_img_data(image, first=True))
 
-            elif actionType == "C":
-                image = PIL.Image.open(f"{imageFolder}/Change.png")
+
+            elif actionType == "Su": # the play is a substitution
+                image = PIL.Image.open(f"{imageFolder}/Substitution.png")
                 imageEditable = PIL.ImageDraw.Draw(image)
 
                 team, playerOut, playerIn = int(action[1]), action[2], action[4]
                 teamName = (home, away)[team-1]
-                outPos = (120 - (len(playerOut)-1)*2.5, 150)
-                outTeamPos = (103, 180)
-                inPos = (373 - (len(playerIn)-1)*2.5, 175)
-                inTeamPos = (359, 205)
+                outPos = (120 - (len(playerOut)-1)*2.5, 200)
+                outTeamPos = (103, 230)
+                inPos = (373 - (len(playerIn)-1)*2.5, 225)
+                inTeamPos = (359, 255)
                 text_on_image(imageEditable, outPos, playerOut, 10)
                 text_on_image(imageEditable, outTeamPos, teamName, 20)
                 text_on_image(imageEditable, inPos, playerIn, 11)
@@ -300,6 +307,7 @@ def show_action(action, prevAction, home, away, window, imageFolder):
 
                 window['ActionText'].update("")
                 window['ActionImage'].update(data=get_img_data(image, first=True))
+
 
 
 def update_score(line, score):

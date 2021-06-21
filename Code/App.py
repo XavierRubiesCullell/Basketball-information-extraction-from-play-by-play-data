@@ -386,7 +386,7 @@ def helpTextPbP_menu():
         [ sg.Text("St, N. Surname:", size=textSize), sg.Text("Steal, the ball was stolen from N. Surname") ],
         [ sg.Text("B, N. Surname:", size=textSize), sg.Text("Block, N. Surname was its receiver") ],
         [ sg.Text("F, N. Surname:", size=textSize), sg.Text("Foul, drawn by N. Surname") ],
-        [ sg.Text("C, N. Surname:", size=textSize), sg.Text("Change, N. Surname is the one that enters the game") ]
+        [ sg.Text("Su, N. Surname:", size=textSize), sg.Text("Substitution, N. Surname is the player entering the game") ]
     ]
     return sg.Window("Help Menu", layout)
 

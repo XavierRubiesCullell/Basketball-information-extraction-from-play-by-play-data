@@ -132,9 +132,9 @@ def foul(play, outLine):
     return outLine
 
 
-def change(play, outLine):
+def substitution(play, outLine):
     '''
-    This function treats a play consisting on a change
+    This function treats a play consisting on a substitution
     - play: row of the webpage representing an action (bs4.element.Tag)
     - outLine: line being written to add to the PbP file (string)
     Output: line to be added to the PbP file (list)
@@ -142,7 +142,7 @@ def change(play, outLine):
     players = play.find_all("a", href=True)
     playerOut = players[1].text
     playerIn = players[0].text
-    outLine += [playerOut, "C", playerIn]
+    outLine += [playerOut, "Su", playerIn]
     return outLine
 
 
@@ -162,7 +162,7 @@ def treat_play(play, outLine):
     elif "foul" in play.text:
         outLine = foul(play, outLine)
     elif "enters" in play.text:
-        outLine = change(play, outLine)
+        outLine = substitution(play, outLine)
     elif "timeout" in play.text:
         outLine += ["- ", "Timeout"]
     elif "Replay" in play.text:

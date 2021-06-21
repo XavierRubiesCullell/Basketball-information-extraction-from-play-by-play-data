@@ -7,7 +7,7 @@ def add_interval(intervals, interval, five):
     '''
     This functions links a five to an interval adding it to the intervals list
     - intervals: intervals of playing fives (dictionary of {tuple: set})
-    - interval: interval of the game without changes (tuple: (string, string))
+    - interval: interval of the game without substitutions (tuple: (string, string))
     - five: set of players (set)
     '''
     intervals[interval] = five
@@ -21,8 +21,8 @@ def check_oncourt(team, player, Q, oncourt, tempOncourtIntervals, oncourtInterva
     - player: name of the player (string)
     - Q: current quarter (string)
     - oncourt: players on court (list of dictionaries {player: string})
-    - tempOncourtIntervals: players on court for each interval without changes waiting to be completed (dictionary of {tuple: set of strings})
-    - oncourtIntervals: players on court for each interval without changes (dictionary of {tuple: set of strings})
+    - tempOncourtIntervals: players on court for each interval without substitutions waiting to be completed (dictionary of {tuple: set of strings})
+    - oncourtIntervals: players on court for each interval without substitutions (dictionary of {tuple: set of strings})
     '''
     if player != "-":
         # we check the player is in the current playing list:
@@ -42,17 +42,17 @@ def check_oncourt(team, player, Q, oncourt, tempOncourtIntervals, oncourtInterva
                 del tempOncourtIntervals[team-1][interval]
 
 
-def quarter_end(Q, oncourt, playerIntervals, tempOncourtIntervals, oncourtIntervals, lastChange):
+def quarter_end(Q, oncourt, playerIntervals, tempOncourtIntervals, oncourtIntervals, lastSub):
     '''
     This function is launched every time a quarter end is detected.
-    It treats the quarter end as a change, as the five players can be completely new at the next quarter
+    It treats the quarter end as a substitution, as the five players can be completely new at the next quarter
     - Q: quarter that has just ended (string)
     - oncourt: players on court at the time of the action (list of dictionaries {player: string})
     - playersIntervals: playing intervals for every team member (dictionary of {string: list of tuples})
-    - oncourtIntervals: players on court for each interval without changes (dictionary of {tuple: set of strings})
-    - lastChange: time of the last change (string)
+    - oncourtIntervals: players on court for each interval without substitutions (dictionary of {tuple: set of strings})
+    - lastSub: time of the last substitution (string)
     '''
-    # we add the minutes of the players that end the quarter (as it is usually done when they are changed):
+    # we add the minutes of the players that end the quarter (as it is usually done when they are substituted):
     clock = quarter_end_time(Q)
     clock = string_from_time(clock)
     for team in range(1,3):
@@ -63,45 +63,45 @@ def quarter_end(Q, oncourt, playerIntervals, tempOncourtIntervals, oncourtInterv
             if player not in playerIntervals[team-1].keys():
                 playerIntervals[team-1][player] = []
             playerIntervals[team-1][player].append((oncourt[team-1][player], clock))
-        add_interval(oncourtIntervals[team-1], (lastChange[team-1], clock), set(oncourt[team-1]))
+        add_interval(oncourtIntervals[team-1], (lastSub[team-1], clock), set(oncourt[team-1]))
         
         # we delete current variables as the five players can be completely new at the next quarter:
         oncourt[team-1].clear()
         tempOncourtIntervals[team-1].clear()
-        lastChange[team-1] = string_from_time(quarter_start_time(next_quarter(Q)))
+        lastSub[team-1] = string_from_time(quarter_start_time(next_quarter(Q)))
 
 
-def quarter_check(action, prevQ, oncourt, playerIntervals, tempOncourtIntervals, oncourtIntervals, lastChange):
+def quarter_check(action, prevQ, oncourt, playerIntervals, tempOncourtIntervals, oncourtIntervals, lastSub):
     '''
     This function is launched to detect a change of quarter. If it is the case, quarter_end is launched
     - action: play that we are going to study (list)
     - prevQ: quarter of the previous action (string)
     - oncourt: players on court at the time of the action (list of dictionaries {player: string})
     - playersIntervals: playing intervals for every team member (dictionary of {string: list of tuples})
-    - tempOncourtIntervals: players on court for each interval without changes waiting to be completed (dictionary of {tuple: set of strings})
-    - oncourtIntervals: players on court for each interval without changes (dictionary of {tuple: set of strings})
-    - lastChange: time of the last change (string)
+    - tempOncourtIntervals: players on court for each interval without substitutions waiting to be completed (dictionary of {tuple: set of strings})
+    - oncourtIntervals: players on court for each interval without substitutions (dictionary of {tuple: set of strings})
+    - lastSub: time of the last substitution (string)
     Output: quarter of the action (string)
     '''
     clock = action[0]
     Q = quarter_from_time(clock)
     if prevQ != Q:
-        quarter_end(prevQ, oncourt, playerIntervals, tempOncourtIntervals, oncourtIntervals, lastChange)
+        quarter_end(prevQ, oncourt, playerIntervals, tempOncourtIntervals, oncourtIntervals, lastSub)
     return Q
 
 
-def change(action, Q, oncourt, playerIntervals, tempOncourtIntervals, oncourtIntervals, lastChange):
+def substitution(action, Q, oncourt, playerIntervals, tempOncourtIntervals, oncourtIntervals, lastSub):
     '''
-    Treatment of an action that was detected as a change. It will have the following structure:
+    Treatment of an action that was detected as a substitution. It will have the following structure:
         clock team player playerOut playerIn
-    The change will mean the end of a five and the start of another one
+    The substitution will mean the end of a five and the start of another one
     - action: studied play (list)
     - Q: quarter of the action (string)
     - oncourt: players on court at the time of the action (list of dictionaries {player: string})
     - playersIntervals: playing intervals for every team member (dictionary of {string: list of tuples})
-    - tempOncourtIntervals: players on court for each interval without changes waiting to be completed (dictionary of {tuple: set of strings})
-    - oncourtIntervals: players on court for each interval without changes (dictionary of {tuple: set of strings})
-    - lastChange: time of the last change (string)
+    - tempOncourtIntervals: players on court for each interval without substitutions waiting to be completed (dictionary of {tuple: set of strings})
+    - oncourtIntervals: players on court for each interval without substitutions (dictionary of {tuple: set of strings})
+    - lastSub: time of the last substitution (string)
     '''
     clock, team, playerOut, playerIn = action[0], int(action[1]), action[2], action[4]
     check_oncourt(team, playerOut, Q, oncourt, tempOncourtIntervals, oncourtIntervals)
@@ -113,31 +113,31 @@ def change(action, Q, oncourt, playerIntervals, tempOncourtIntervals, oncourtInt
         playerIntervals[team-1][playerOut] = []
     playerIntervals[team-1][playerOut].append((oncourt[team-1][playerOut], clock))
 
-    if clock != lastChange[team-1]: # to avoid adding fives in the middle of consecutive changes
+    if clock != lastSub[team-1]: # to avoid adding fives in the middle of consecutive substitutions
         if len(oncourt[team-1]) == 5: # if the five is complete, we send it to the definitive list
-            add_interval(oncourtIntervals[team-1], (lastChange[team-1], clock), set(oncourt[team-1]))
+            add_interval(oncourtIntervals[team-1], (lastSub[team-1], clock), set(oncourt[team-1]))
         else: # if the five is incomplete, we send it to the temporal list
-            add_interval(tempOncourtIntervals[team-1], (lastChange[team-1], clock), set(oncourt[team-1]))
+            add_interval(tempOncourtIntervals[team-1], (lastSub[team-1], clock), set(oncourt[team-1]))
     del oncourt[team-1][playerOut]
     oncourt[team-1][playerIn] = clock
-    lastChange[team-1] = clock
+    lastSub[team-1] = clock
 
 
-def treat_line(line, prevQ, oncourt, playerIntervals, tempOncourtIntervals, oncourtIntervals, lastChange):
+def treat_line(line, prevQ, oncourt, playerIntervals, tempOncourtIntervals, oncourtIntervals, lastSub):
     '''
     This function is launched to detect the type of play an action is and treat it in case it is a shot
     - line: action that we are going to study (string)
     - prevQ: quarter of the previous action (string)
     - oncourt: players on court at the time of the action (list of dictionaries {player: string})
     - playersIntervals: playing intervals for every team member (dictionary of {string: list of tuples})
-    - tempOncourtIntervals: players on court for each interval without changes waiting to be completed (dictionary of {tuple: set of strings})
-    - oncourtIntervals: players on court for each interval without changes (dictionary of {tuple: set of strings})
-    - lastChange: time of the last change (string)
+    - tempOncourtIntervals: players on court for each interval without substitutions waiting to be completed (dictionary of {tuple: set of strings})
+    - oncourtIntervals: players on court for each interval without substitutions (dictionary of {tuple: set of strings})
+    - lastSub: time of the last substitution (string)
     Output: quarter of the action (string)
     '''
     action = line.split(", ")
 
-    Q = quarter_check(action, prevQ, oncourt, playerIntervals, tempOncourtIntervals, oncourtIntervals, lastChange)
+    Q = quarter_check(action, prevQ, oncourt, playerIntervals, tempOncourtIntervals, oncourtIntervals, lastSub)
     if len(action) > 3 and action[3] == "S": # there can be either one or two players
         team, player = int(action[1]), action[2]
         check_oncourt(team, player, Q, oncourt, tempOncourtIntervals, oncourtIntervals)
@@ -161,8 +161,8 @@ def treat_line(line, prevQ, oncourt, playerIntervals, tempOncourtIntervals, onco
             receiver = action[5]
             opTeam = other_team(team)
             check_oncourt(opTeam, receiver, Q, oncourt, tempOncourtIntervals, oncourtIntervals)
-    elif len(action) > 3 and action[3] == "C":
-        change(action, Q, oncourt, playerIntervals, tempOncourtIntervals, oncourtIntervals, lastChange)
+    elif len(action) > 3 and action[3] == "Su":
+        substitution(action, Q, oncourt, playerIntervals, tempOncourtIntervals, oncourtIntervals, lastSub)
     return Q
 
 
@@ -172,20 +172,20 @@ def main(file):
     - file: play-by-play input file (string)
     Output:
     - playersIntervals: playing intervals for every team member (dictionary of {string: list of tuples})
-    - oncourtIntervals: players on court for each interval without changes (dictionary of {tuple: set of strings})
+    - oncourtIntervals: players on court for each interval without substitutions (dictionary of {tuple: set of strings})
     '''
     playerIntervals = [{}, {}]
     oncourt = [{}, {}]
     tempOncourtIntervals = [{}, {}]
     oncourtIntervals = [{}, {}]
-    lastChange = ["1Q:12:00", "1Q:12:00"]
+    lastSub = ["1Q:12:00", "1Q:12:00"]
     Q = "1Q"
 
     with open(file, encoding="utf-8") as f:
         lines = f.readlines()
     for line in lines:
         line = line.strip()
-        Q = treat_line(line, Q, oncourt, playerIntervals, tempOncourtIntervals, oncourtIntervals, lastChange)
-    quarter_end(Q, oncourt, playerIntervals, tempOncourtIntervals, oncourtIntervals, lastChange)
+        Q = treat_line(line, Q, oncourt, playerIntervals, tempOncourtIntervals, oncourtIntervals, lastSub)
+    quarter_end(Q, oncourt, playerIntervals, tempOncourtIntervals, oncourtIntervals, lastSub)
 
     return playerIntervals, oncourtIntervals

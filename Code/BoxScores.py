@@ -57,7 +57,7 @@ def quarter_end(Q, start, end, table, oncourt, plusminus):
     - plusminus: plusminus value in the current quarter (list of integers)
     '''
     for team in range(1,3):
-        # we add the minutes of the players that end the quarter (as it is usually done when they are changed)
+        # we add the minutes of the players that end the quarter (as it is usually done when they are substituted)
         for player in oncourt[team-1]:
             interval, _, _ = compute_interval(oncourt[team-1][player], quarter_end_time(Q), start, end)
             if interval != datetime.timedelta():
@@ -116,8 +116,8 @@ def final_computations(table):
 def correct_plusminus(lines, i, table):
     '''
     This function is launched when there is a scored free throw,
-    to check whether there was a change after the corresponding foul.
-    In case there was any change, it corrects the +/- of the involving players
+    to check whether there was a substitution after the corresponding foul.
+    In case there was any substitution, it corrects the +/- of the involving players
     - lines: list of the actions in the game (list of strings)
     - i: the index of the free throw action (int)
     - table: box score of the teams (list of pandas.DataFrame)
@@ -127,7 +127,7 @@ def correct_plusminus(lines, i, table):
     j = i - 1
     action = lines[j].strip().split(", ")
     while not (len(action) > 3 and action[3] == "F"): # we determine whether the action is a foul
-        if len(action) > 3 and action[3] == "C": # we determine whether the action is a change
+        if len(action) > 3 and action[3] == "Su": # we determine whether the action is a substitution
             team, playerOut, playerIn = int(action[1]), action[2], action[4]
             points = 2*(team==ftTeam) - 1  #true -> 1, false -> -1
             modify_table(table, team, playerOut, '+/-', points)
@@ -323,10 +323,10 @@ def foul(action, Q, start, end, table, oncourt, plusminus):
             modify_table(table, opTeam, opPlayer, 'DF', 1)
 
 
-def change(action, Q, start, end, table, oncourt, plusminus):
+def substitution(action, Q, start, end, table, oncourt, plusminus):
     '''
-    Treatment of an action that was detected as a change. It will have the following structure:
-        clock team playerOut "C" playerIn
+    Treatment of an action that was detected as a substitution. It will have the following structure:
+        clock team playerOut "Su" playerIn
     - action: studied play (list)
     - Q: current quarter (string)
     - start: starting time of the boxscore compution interval (string)
@@ -385,8 +385,8 @@ def treat_line(lines, i, line, prevQ, start, end, table, oncourt, plusminus, oth
         block(action, Q, start, end, table, oncourt, plusminus)
     elif len(action) > 3 and action[3] == "F":
         foul(action, Q, start, end, table, oncourt, plusminus)
-    elif len(action) > 3 and action[3] == "C":
-        change(action, Q, start, end, table, oncourt, plusminus)
+    elif len(action) > 3 and action[3] == "Su":
+        substitution(action, Q, start, end, table, oncourt, plusminus)
     else:
         clock = time_from_string(clock)
         if start >= clock and clock >= end:
