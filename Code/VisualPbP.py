@@ -200,10 +200,10 @@ def show_action(action, prevAction, home, away, window, imageFolder):
                 team, player = int(action[1]), action[2]
                 teamName = (home, away)[team-1]
 
-                playerPos = (223 - (len(player)-1)*2.5, 152)
-                teamPos = (210, 182)
-                text_on_image(imageEditable, playerPos, player, 11)
-                text_on_image(imageEditable, teamPos, teamName, 20)
+                playerPos = (185 - (len(player)-1)*2.5, 112)
+                teamPos = (172, 155)
+                text_on_image(imageEditable, playerPos, player, 12)
+                text_on_image(imageEditable, teamPos, teamName, 23)
 
                 window['ActionText'].update("")
                 window['ActionImage'].update(data=get_img_data(image, first=True))
