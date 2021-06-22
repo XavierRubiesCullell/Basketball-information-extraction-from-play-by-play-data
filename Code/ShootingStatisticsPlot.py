@@ -240,16 +240,16 @@ def treat_distance(row, total, shots, colors, accUsed):
     - colors: color map vector (list)
     - accUsed: list of accuracy intervals, telling whether they are present on the map (list)
     '''
-    colorId = color_election(row[2])
+    colorId = color_election(row[4])
 
     # 22 ft == 237.5
     # 25 ft == 240
     # 22 ft == 220.5
-    d = int(row.name)*220.5/22
+    d = int(row[0])*220.5/22
     shots.append(dict(
         type="path",
         path=circumference_arc(r=d, startAngle=0, endAngle=np.pi),
-        line=dict(color=colors[colorId], width=np.sqrt(row[1]/total*100)),
+        line=dict(color=colors[colorId], width=np.sqrt(row[3]/total*100)),
         layer='below'
     ))
 

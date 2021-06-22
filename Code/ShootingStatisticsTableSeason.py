@@ -1,7 +1,7 @@
 import pandas as pd
 
 from MatchClass import Match
-
+from ProvaExpectedShooting import main as Shooting_main
 
 def treat_match(row, team, shots):
     '''
@@ -15,9 +15,9 @@ def treat_match(row, team, shots):
     home, away, date = row.Home, row.Away, row.Date
     game = Match(home, away, date)
     if team == home:
-        shots = game.get_shooting_table(shots=shots)
+        shots = Shooting_main(game.PbPFile, shots=shots)
     if team == away:
-        shots1, shots0 = game.get_shooting_table(shots=[shots[1], shots[0]])
+        shots1, shots0 = Shooting_main(game.PbPFile, shots=[shots[1], shots[0]])
         shots = [shots0, shots1]
     return shots
 
@@ -28,15 +28,19 @@ def main(team, matchTable):
     - team: name of the team (string)
     - matchTable: table of matches (pandas.DataFrame)
     '''
-    shots = [ pd.DataFrame(columns=['Shots made', 'Shots attempted', 'Accuracy (%)']) ]*2
-    for iTeam in range(1,3):
-        shots[iTeam-1] = shots[iTeam-1].astype({'Shots made': 'int32', 'Shots attempted': 'int32'})
-        shots[iTeam-1].index.name = 'Distance (ft)'
+    shots = [ pd.DataFrame(columns=['Distance (ft)', 'Points', 'Shots made', 'Shots attempted', 'Accuracy (%)', 'ExpPts']) ]*2
 
     for row in matchTable.itertuples():
         shots = treat_match(row, team, shots)
 
-    shots[0] = shots[0].astype({'Shots made': 'int32', 'Shots attempted': 'int32'})
-    shots[1] = shots[1].astype({'Shots made': 'int32', 'Shots attempted': 'int32'})
+    for team in range(1,3):
+        shots[team-1] = shots[team-1].sort_values(by=['Distance (ft)', 'Points'], ascending=True, ignore_index=True)
+        shots[team-1].loc["TOTAL"] = shots[team-1].apply(sum)
+        shots[team-1]['Accuracy (%)'] = round(shots[team-1]['Shots made']/shots[team-1]['Shots attempted']*100, 2)
+        shots[team-1]['ExpPts'] = [x*y/100 for x,y in zip(shots[team-1]['Accuracy (%)'], shots[team-1]['Points'])]
+        # arrangements for table visualisation:
+        shots[team-1] = shots[team-1].round({'ExpPts': 2})
+        shots[team-1] = shots[team-1].astype({'Distance (ft)': 'int32', 'Points': 'int32', 'Shots made': 'int32', 'Shots attempted': 'int32'})
+        shots[team-1].loc["TOTAL", 'Distance (ft)'] = shots[team-1].loc["TOTAL", 'Points'] = shots[team-1].loc["TOTAL", 'ExpPts'] = "-"
 
     return shots

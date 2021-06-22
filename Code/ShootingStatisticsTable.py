@@ -11,17 +11,17 @@ def treat_line(line, shots):
 
     if len(action) > 3 and action[3] == "S":
         distGiven = action[5] != "I" and action[5] != "O" # true if it is not I or O, so in this position we have the distance
-        if action[4] != "1" and distGiven: # we select only field goals from more than 0 ft
-            team, dist, result = int(action[1]), int(action[5]), action[6]
+        if action[4] != "1" and distGiven:
+            team, points, dist, result = int(action[1]), action[4], action[5], action[6]
 
-            if dist not in shots[team-1].index:
-                newRow = [0]*2
-                newRow = pd.Series(newRow, index=['Shots made', 'Shots attempted'], name=dist)
+            if dist + " " + points not in shots[team-1].index:
+                newRow = [int(dist), int(points), 0, 0]
+                newRow = pd.Series(newRow, index=['Distance (ft)', 'Points', 'Shots made', 'Shots attempted'], name = dist + " " + points)
                 shots[team-1] = shots[team-1].append(newRow)
             
-            shots[team-1].loc[dist, 'Shots attempted'] += 1
+            shots[team-1].loc[dist + " " + points, 'Shots attempted'] += 1
             if result == "I": # the shot was in
-                shots[team-1].loc[dist, 'Shots made'] += 1
+                shots[team-1].loc[dist + " " + points, 'Shots made'] += 1
             
 
 def main(file, shots=None):
@@ -32,21 +32,26 @@ def main(file, shots=None):
     Output: shooting table (pandas.DataFrame)
     '''
     if shots is None:
-        shots = [ pd.DataFrame(columns=['Shots made', 'Shots attempted', 'Accuracy (%)']) ]*2
-        shots[0].index.name = shots[1].index.name = 'Distance (ft)'
+        shots = [ pd.DataFrame(columns=['Distance (ft)', 'Points', 'Shots made', 'Shots attempted', 'Accuracy (%)', 'ExpPts']) ]*2
+        temp = False
     else:
         shots[0] = shots[0].drop(index = ["TOTAL"], errors='ignore')
         shots[1] = shots[1].drop(index = ["TOTAL"], errors='ignore')
+        temp = True
 
     with open(file, encoding="utf-8") as f:
         lines = f.readlines()
     for line in lines:
         line = line.strip()
         treat_line(line, shots)
-    
-    for team in range(1,3):
-        shots[team-1].sort_index(inplace=True)
-        shots[team-1].loc["TOTAL"] = shots[team-1].apply(np.sum)
-        shots[team-1]['Accuracy (%)'] = round(shots[team-1]['Shots made']/shots[team-1]['Shots attempted']*100, 2)
-        shots[team-1] = shots[team-1].astype({'Shots made': 'int32', 'Shots attempted': 'int32'})
+    if not temp: # the table is not a temporal value
+        for team in range(1,3):
+            shots[team-1] = shots[team-1].sort_values(by=['Distance (ft)', 'Points'], ascending=True, ignore_index=True)
+            shots[team-1].loc["TOTAL"] = shots[team-1].apply(sum)
+            shots[team-1]['Accuracy (%)'] = round(shots[team-1]['Shots made']/shots[team-1]['Shots attempted']*100, 2)
+            shots[team-1]['ExpPts'] = [x*y/100 for x,y in zip(shots[team-1]['Accuracy (%)'], shots[team-1]['Points'])]
+            # arrangements for table visualisation:
+            shots[team-1] = shots[team-1].round({'ExpPts': 2})
+            shots[team-1] = shots[team-1].astype({'Distance (ft)': 'int32', 'Points': 'int32', 'Shots made': 'int32', 'Shots attempted': 'int32'})
+            shots[team-1].loc["TOTAL", 'Distance (ft)'] = shots[team-1].loc["TOTAL", 'Points'] = shots[team-1].loc["TOTAL", 'ExpPts'] = "-"
     return shots

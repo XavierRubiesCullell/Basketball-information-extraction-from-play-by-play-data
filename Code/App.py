@@ -290,7 +290,6 @@ def teamElection_menu():
     return sg.Window("Team election Menu", layout)
 
 def shootingStatisticsTable_menu(game, table):
-    table = create_table(table, "Distance (ft)", 4)
     layout = [
         [ sg.Button('Save') ],
         [ sg.Table(values=table.values.tolist(), 
