@@ -1,8 +1,10 @@
 from SeasonClass import Season
 
-team = "Memphis"
+team = "Orlando"
 season = "2020-2021"
 seasonObject = Season(team, season)
+
+
 
 # Calendar and results:
 
@@ -19,9 +21,18 @@ seasonObject.save_results_plot(4)
 
 print(seasonObject.record())
 
+
+
 # Box score: 
 
-print(seasonObject.box_score())
+box = seasonObject.box_score(1)
+print(box)
+
+box = seasonObject.box_score(2)
+path = "D:/Escola/3. Uni/Curs 2020-2021/2n quatrimestre/TFG/Code/Files/Seasons/ORL_2020-2021/BoxScore_PerGame.html"
+box.to_html(path, encoding="utf8")
+
+
 
 # Statistic evolution:
 
@@ -35,7 +46,9 @@ plot = seasonObject.get_statistic_evolution_plot(statistic, table)
 
 seasonObject.save_statistic_evolution_plot(plot, statistic)
 
-# Shooting statistics:
+
+
+Shooting statistics:
 
 print(seasonObject.get_shooting_table(1))
 
@@ -44,6 +57,7 @@ seasonObject.save_shooting_table(2)
 plot = seasonObject.get_shooting_plot(1)
 
 seasonObject.save_shooting_plot(1, plot=plot)
+
 
 # Assist statistics:
 

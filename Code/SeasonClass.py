@@ -124,11 +124,12 @@ class Season():
             record[game.winner() == self.team] += 1
         return [record[1], record[0]]
 
-    def box_score(self):
+    def box_score(self, values=2):
         '''
         This function returns the season box score
+        - values: it defines the box score wanted (integer) 1: total values, 2: values per game, 3: values per minute
         '''
-        return BoxScoreSeason_main(self.team, self.matchTable)
+        return BoxScoreSeason_main(self.team, self.matchTable, values)
 
     def get_statistic_evolution_table(self, statistic, category=None, player=None):
         '''
