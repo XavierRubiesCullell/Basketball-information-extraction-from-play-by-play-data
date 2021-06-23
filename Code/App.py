@@ -120,12 +120,6 @@ def helpAnalyseBoxScore_menu(cols):
         "+/-": "plusminus",
         "PIR": "Performance Index Rating"
     }
-    # word = ""
-    # for cat in cols:
-    #     word += cat + ":" + " "*10 + explanation[cat] + "\n"
-    # layout2 = [
-    #     [sg.Text(word)]
-    # ]
     if cols[0] == 'Team':
         del cols[0]
     if cols[0] == 'Mins':

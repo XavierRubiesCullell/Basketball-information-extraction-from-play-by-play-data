@@ -1,7 +1,6 @@
 import pandas as pd
 
 from MatchClass import Match
-from ProvaExpectedShooting import main as Shooting_main
 
 def treat_match(row, team, shots):
     '''
@@ -15,9 +14,9 @@ def treat_match(row, team, shots):
     home, away, date = row.Home, row.Away, row.Date
     game = Match(home, away, date)
     if team == home:
-        shots = Shooting_main(game.PbPFile, shots=shots)
+        shots = game.get_shooting_table(shots=shots)
     if team == away:
-        shots1, shots0 = Shooting_main(game.PbPFile, shots=[shots[1], shots[0]])
+        shots1, shots0 = game.get_shooting_table(shots=[shots[1], shots[0]])
         shots = [shots0, shots1]
     return shots
 
