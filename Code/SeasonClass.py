@@ -131,6 +131,91 @@ class Season():
         '''
         return BoxScoreSeason_main(self.team, self.matchTable, values)
 
+    def save_box_score(self, table, name="", extension='html', folder=None):
+        '''
+        This function saves the box score
+        - table: box score (pandas.DataFrame)
+        - name: name specification for the file (string)
+        - extension: type of the file where the table will be saved. It can either be csv or html (string)
+        - folder: relative path to the folder where the box score will be saved (string)
+        '''
+        if folder is None:
+            folder = self.path
+        path = folder + self.seasonName + "_BS_" + name
+        if extension == 'csv':
+            path += ".csv"
+            table.to_csv(path, sep = ";", encoding="utf8")
+        elif extension == 'html':
+            path += ".html"
+            table.to_html(path, encoding="utf8")
+        else:
+            raise ValueError(f"Extension {extension} is not correct. It must be csv or html")
+
+    def filter_by_players(self, table, players):
+        '''
+        This function filters the box score values of a list of players
+        - table: box score or a variation (pandas dataframe)
+        - players: list of players as they are represented on the table (list of strings)
+        Output: Box score filtered by the list of players
+        '''
+        for pl in players:
+            if pl not in table.index:
+                return None
+        return table.loc[players,]
+
+    def filter_by_categories(self, table, categories):
+        '''
+        This function filters the box score values of a list of categories
+        - table: box score or a variation (pandas dataframe) or a reference to a team (string)
+        - categories: list of categories or type of categories (list of strings or string)
+        Output: Box score filtered by the list of categories
+        '''
+        if categories == "shooting":
+            categories = ['2PtM', '2PtA', '2Pt%', '3PtM', '3PtA', '3Pt%', 'FGM', 'FGA', 'FG%', 'FTM', 'FTA', 'FT%', 'AstPts', 'Pts']
+        elif categories == "rebounding":
+            categories = ['OR', 'DR', 'TR']
+        elif categories == "simple":
+            categories = ['Mins', 'Pts', 'TR', 'Ast', 'Bl', 'St', 'To', 'PF', '+/-']
+        for cat in categories:
+            if cat not in table.columns:
+                return None
+        if 'Team' in table.columns:
+            categories = ['Team'] + categories
+        return table[categories]
+
+    def filter_by_value(self, table, vars):
+        '''
+        This function filters the box score of the players surpassing the minimum values introduced
+        - table: box score or a variation (pandas dataframe) or a reference to a team (string)
+        - vars: dictionary {category: value}
+        Output: Box score filtered by the values of the categories introduced
+        '''
+        table = table.drop(index = ["TOTAL"], errors='ignore')
+        for cat, val in vars.items():
+            if cat not in table.columns:
+                return None
+            table = table.loc[table[cat] >= val]
+        return table
+
+    def top_players(self, table, categories, n=None, max=True):
+        '''
+        This function returns the top n players having the maximum/minimum value in var
+        - table: box score or a variation (pandas dataframe) or a reference to a box score (string)
+        - categories: category(ies) we are interested in (list)
+        - n: number of players (integer)
+        - max: bool stating if we want the maximum values (true) or the minimum ones (false)
+        Output: Table (series) with the players and the category(ies) value
+        '''
+        for cat in categories:
+            if cat not in table.columns:
+                return None
+        table = table[categories]
+        table = table.drop(index = ["TOTAL"], errors='ignore')
+        table = table.sort_values(by=categories, ascending=not max)
+        if n is not None:
+            table = table[:n]
+        return table
+
     def get_statistic_evolution_table(self, statistic, category=None, player=None):
         '''
         This function returns the table of the evolution of a statistic during the season

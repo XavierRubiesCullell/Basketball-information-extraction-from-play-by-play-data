@@ -111,8 +111,8 @@ class Match():
     def filter_by_players(self, table, players):
         '''
         This function filters the box score values of a list of players
-        - players: list of players as they are represented on the table (list of strings)
         - table: box score or a variation (pandas dataframe)
+        - players: list of players as they are represented on the table (list of strings)
         Output: Box score filtered by the list of players
         '''
         for pl in players:
@@ -123,8 +123,8 @@ class Match():
     def filter_by_categories(self, table, categories):
         '''
         This function filters the box score values of a list of categories
-        - categories: list of categories or type of categories (list of strings or string)
         - table: box score or a variation (pandas dataframe) or a reference to a team (string)
+        - categories: list of categories or type of categories (list of strings or string)
         Output: Box score filtered by the list of categories
         '''
         if categories == "shooting":
@@ -143,12 +143,11 @@ class Match():
     def filter_by_value(self, table, vars):
         '''
         This function filters the box score of the players surpassing the minimum values introduced
-        - vars: dictionary {category: value}
         - table: box score or a variation (pandas dataframe) or a reference to a team (string)
+        - vars: dictionary {category: value}
         Output: Box score filtered by the values of the categories introduced
         '''
-        if "TOTAL" in table.index:
-            table = table.drop(index = ["TOTAL"])
+        table = table.drop(index = ["TOTAL"], errors='ignore')
         for cat, val in vars.items():
             if cat not in table.columns:
                 return None
@@ -158,9 +157,9 @@ class Match():
     def top_players(self, table, categories, n=None, max=True):
         '''
         This function returns the top n players having the maximum/minimum value in var
-        - var: category(ies) we are interested in (string)
-        - n: number of players (integer)
         - table: box score or a variation (pandas dataframe) or a reference to a box score (string)
+        - categories: category(ies) we are interested in (list)
+        - n: number of players (integer)
         - max: bool stating if we want the maximum values (true) or the minimum ones (false)
         Output: Table (series) with the players and the category(ies) value
         '''
@@ -168,8 +167,7 @@ class Match():
             if cat not in table.columns:
                 return None
         table = table[categories]
-        if "TOTAL" in table.index:
-            table = table.drop(index = ["TOTAL"])
+        table = table.drop(index = ["TOTAL"], errors='ignore')
         table = table.sort_values(by=categories, ascending=not max)
         if n is not None:
             table = table[:n]
