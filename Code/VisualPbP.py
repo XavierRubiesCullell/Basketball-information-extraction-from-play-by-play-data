@@ -149,6 +149,15 @@ def show_action(action, prevAction, home, away, window, imageFolder):
                     if distGiven:
                         text += f" from {action[5]} ft"
 
+                    playerPos = (309 - (len(player)-1)*2.5, 285)
+                    passerPos = (108 - (len(passer)-1)*2.5, 350)
+                    teamPos = (290, 305)
+                    opTeamPos = (90, 375)
+                    text_on_image(imageEditable, playerPos, player, 7)
+                    text_on_image(imageEditable, teamPos, teamName, 15)
+                    text_on_image(imageEditable, passerPos, passer, 8)
+                    text_on_image(imageEditable, opTeamPos, teamName, 15)
+
                     window['ActionText'].update(text)
                     window['ActionImage'].update(data=get_img_data(image, first=True))
 
