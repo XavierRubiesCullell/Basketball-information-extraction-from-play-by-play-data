@@ -18,8 +18,8 @@ def treat_matches(team, matchList):
     - team: name of the team (string)
     - matchList: web object with the matches (bs4.element.ResultSet)
     Output:
-    - table: table with played matches
-    - percentage: played percentage of the projected season
+    - table: table with played matches (pandas.DataFrame)
+    - percentage: played percentage of the projected season (float)
     '''
     table = pd.DataFrame(columns=['Date', 'Home', 'Away'])
     totalNum = 0
@@ -54,6 +54,9 @@ def main(team, season):
     This function returns the played matches of a season of a team
     - team: short name of a team (string)
     - season: season name (string)
+    Output:
+    - table: table with played matches (pandas.DataFrame)
+    - percentage: played percentage of the projected season (float)
     '''
     season = season.split("-")[1]
     webpage = f"https://www.basketball-reference.com/teams/{team}/{season}_games.html"

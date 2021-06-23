@@ -1,5 +1,6 @@
 import os
 import altair as alt
+import pandas
 
 from Functions import get_team
 from MatchListObtention import main as MatchListObtention_main
@@ -17,6 +18,19 @@ from MatchClass import Match
 
 
 class Season():
+    team: str
+    '''Short name of the team'''
+    season: str
+    '''Season year in YYYY-YYYY format'''
+    seasonName: str
+    '''Name of the season by the team, to be internally used'''
+    path: str
+    '''Path where the outputs of the instance will be saved'''
+    matchTable: pandas.DataFrame
+    '''Table with the played matches (pandas.DataFrame)'''
+    progress: float
+    '''Played percentage of the projected season (float)'''
+
     def __init__(self, team, season, fileFolder="Files/"):
         '''
         - team: name of the team. It can be the city, the club name or a combination (string)
@@ -54,6 +68,8 @@ class Season():
     def get_results_table(self):
         '''
         This function creates the season results table
+
+        Output: pandas.DataFrame
         '''
         return ResultsTable_main(self.team, self.matchTable)
 
@@ -80,10 +96,12 @@ class Season():
         '''
         This function creates the season results plot
         - plotId: Type of the plot we want:
-          · 1: team
-          · 2: opponent team
-          · 3: both teams
-          · 4: difference
+            - 1: team
+            - 2: opponent team
+            - 3: both teams
+            - 4: difference
+
+        Output: line chart (altair.vegalite.v4.api.LayerChart)
         '''
         table = self.get_results_table()
         return ResultsPlot_main(self.team, self.season, table, plotId)
@@ -92,10 +110,10 @@ class Season():
         '''
         This function creates the season results plot
         - plotId: Type of the plot we want:
-          · 1: team
-          · 2: opponent team
-          · 3: both teams
-          · 4: difference
+            - 1: team
+            - 2: opponent team
+            - 3: both teams
+            - 4: difference
         - folder: directory where to save the plot (string)
         '''
         if folder is None:
@@ -116,6 +134,8 @@ class Season():
     def record(self):
         '''
         This function returns the W-L record of the season
+
+        Output: list
         '''
         record = [0, 0]
         for match in self.matchTable.itertuples():
@@ -127,7 +147,12 @@ class Season():
     def box_score(self, values=2):
         '''
         This function returns the season box score
-        - values: it defines the box score wanted (integer) 1: total values, 2: values per game, 3: values per minute
+        - values: it defines the box score wanted (integer):
+            - 1: total values
+            - 2: values per game
+            - 3: values per minute
+
+        Output: pandas.DataFrame
         '''
         return BoxScoreSeason_main(self.team, self.matchTable, values)
 
@@ -156,7 +181,8 @@ class Season():
         This function filters the box score values of a list of players
         - table: box score or a variation (pandas dataframe)
         - players: list of players as they are represented on the table (list of strings)
-        Output: Box score filtered by the list of players
+
+        Output: Box score filtered by the list of players (pandas.DataFrame)
         '''
         for pl in players:
             if pl not in table.index:
@@ -168,7 +194,8 @@ class Season():
         This function filters the box score values of a list of categories
         - table: box score or a variation (pandas dataframe) or a reference to a team (string)
         - categories: list of categories or type of categories (list of strings or string)
-        Output: Box score filtered by the list of categories
+
+        Output: Box score filtered by the list of categories (pandas.DataFrame)
         '''
         if categories == "shooting":
             categories = ['2PtM', '2PtA', '2Pt%', '3PtM', '3PtA', '3Pt%', 'FGM', 'FGA', 'FG%', 'FTM', 'FTA', 'FT%', 'AstPts', 'Pts']
@@ -188,7 +215,8 @@ class Season():
         This function filters the box score of the players surpassing the minimum values introduced
         - table: box score or a variation (pandas dataframe) or a reference to a team (string)
         - vars: dictionary {category: value}
-        Output: Box score filtered by the values of the categories introduced
+
+        Output: Box score filtered by the values of the categories introduced (pandas.DataFrame)
         '''
         table = table.drop(index = ["TOTAL"], errors='ignore')
         for cat, val in vars.items():
@@ -204,7 +232,8 @@ class Season():
         - categories: category(ies) we are interested in (list)
         - n: number of players (integer)
         - max: bool stating if we want the maximum values (true) or the minimum ones (false)
-        Output: Table (series) with the players and the category(ies) value
+
+        Output: Table with the players and the category(ies) value (pandas.DataFrame)
         '''
         for cat in categories:
             if cat not in table.columns:
@@ -222,14 +251,17 @@ class Season():
         - statistic: statistic that we want to study (string)
         - category: category we want to study in case the statistic is "box score" (string)
         - player: player we want to study in case the statistic is "box score" (string)
+
+        Output: pandas.DataFrame
         '''
         return StatisticEvolutionTable_main(self.team, self.matchTable, statistic, category, player)
 
     def save_statistic_evolution_table(self, table, name, extension='html', folder=None):
         '''
-        This function saves the table 'table'. This function has the argument table instead of calling get_evolution_table.
-        This is due to the fact that get_evolution_table can be very slow. In case we already executed, we can simply use the result
-        sending it to this function instead of calling it once again
+        This function saves the table 'table'.
+        It has the argument table instead of calling get_evolution_table.
+        This is because get_evolution_table can be very slow. In case we already executed, 
+        we can simply use the result sending it to this function instead of calling it once again
         - table: data table (pandas.DataFrame)
         - name: name we want for the file (string). The table will be saved in Team_Season_name
         - extension: type of the file where the table will be saved. It can either be csv or html (string)
@@ -251,9 +283,11 @@ class Season():
         '''
         This function returns the plot of the evolution of a statistic during the season
         - statistic: statistic that we want to plot, in order to use it as an axis name (string)
-        - category: category we want to study in case the statistic is "box score" (string)
-        - player: player we want to study in case the statistic is "box score" (string)
+        - category: category we want to study in case statistic is "box score" (string)
+        - player: player we want to study in case statistic is "box score" (string)
         - table: values we want to plat (pandas.DataFrame)
+
+        Output: line chart (altair.vegalite.v4.api.LayerChart)
         '''
         if table is None:
             table = self.get_statistic_evolution_table(statistic, category, player)
@@ -274,8 +308,9 @@ class Season():
     def get_shooting_table(self, team=None):
         '''
         This function returns the table with the shots for every distance from hoop for the team and the opponents
-        - team: team id (either 1: own or 2: opponents, integer) or None
-        Output: pandas.DataFrame or list of size 2 of pandas.DataFrame
+        - team: team id (either 1: own or 2: opponents, integer) or None (both teams)
+
+        Output: pandas.DataFrame or list of 2 pandas.DataFrame
         '''
         if team is None:
             return ShootingStatisticsTableSeason_main(self.team, self.matchTable)
@@ -311,9 +346,10 @@ class Season():
     def get_shooting_plot(self, team, table=None):
         '''
         This function returns the plot with the shots for every distance from hoop of the desired team (either own or opponents)
-        - team: team id (either 1: own or 2: opponents, integer)
+        - team: team id (either 1: own, or 2: opponents, integer)
         - table: table can be inputted in order to avoid recomputation (pandas.DataFrame)
-        Output: altair plot
+
+        Output: plotly.graph_objs._figure.Figure
         '''
         if table is None:
             table = self.get_shooting_table(team)
@@ -344,6 +380,7 @@ class Season():
     def get_assist_matrix(self):
         '''
         This function returns the matrices describing the relation between passers and receivers
+
         Output: pandas.DataFrame
         '''
         return AssistStatisticsMatrixSeason_main(self.team, self.matchTable)
@@ -373,6 +410,8 @@ class Season():
         '''
         This function returns the plot with the assist statistics
         - matrix: matrix can be inputted in order to avoid recomputation (pandas.DataFrame)
+
+        Output: heatmap (altair.vegalite.v4.api.LayerChart)
         '''
         if matrix is None:
             matrix = self.get_assist_matrix()

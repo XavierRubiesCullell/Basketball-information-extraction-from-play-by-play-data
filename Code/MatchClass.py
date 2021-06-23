@@ -28,6 +28,21 @@ def convert_date_match(date):
     return date.strftime("%Y%m%d")
 
 class Match():
+    home: str
+    '''Short name of the home team'''
+    away: str
+    '''Short name of the away team'''
+    date: str
+    '''Match date in in YYYY/MM/DD format'''
+    matchName: str
+    '''Name of the match, to be internally used'''
+    path: str
+    '''Path where the outputs of the instance will be saved'''
+    PbPFile: str
+    '''Path of the file with the play-by-play data'''
+    lastQ: str
+    '''Last quarter of the match'''
+
     def __init__(self, home, away, date, fileFolder="Files/"):
         '''
         - home: name of the local team. It can be the city, the club name or a combination (string)
@@ -69,8 +84,13 @@ class Match():
     def box_scores(self, team = None, start=None, end=None):
         '''
         It returns the box score of the interval introduced
-        - team: team id (None: both [list of tables], 0: joint table, 1: home, 2: away)
+        - team: team id:
+            - None: both (list of tables is desired)
+            - 0: joint table
+            - 1: home
+            - 2: away
         - start, end: time interval where we want the box score to be computed (string)
+
         Output: It returns the box score of either one or both teams (pandas.DataFrame or list of pandas.DataFrame)
         '''
         if start is None:
@@ -113,7 +133,8 @@ class Match():
         This function filters the box score values of a list of players
         - table: box score or a variation (pandas dataframe)
         - players: list of players as they are represented on the table (list of strings)
-        Output: Box score filtered by the list of players
+
+        Output: Box score filtered by the list of players (pandas.DataFrame)
         '''
         for pl in players:
             if pl not in table.index:
@@ -125,7 +146,8 @@ class Match():
         This function filters the box score values of a list of categories
         - table: box score or a variation (pandas dataframe) or a reference to a team (string)
         - categories: list of categories or type of categories (list of strings or string)
-        Output: Box score filtered by the list of categories
+        
+        Output: Box score filtered by the list of categories (pandas.DataFrame)
         '''
         if categories == "shooting":
             categories = ['2PtM', '2PtA', '2Pt%', '3PtM', '3PtA', '3Pt%', 'FGM', 'FGA', 'FG%', 'FTM', 'FTA', 'FT%', 'AstPts', 'Pts']
@@ -145,7 +167,8 @@ class Match():
         This function filters the box score of the players surpassing the minimum values introduced
         - table: box score or a variation (pandas dataframe) or a reference to a team (string)
         - vars: dictionary {category: value}
-        Output: Box score filtered by the values of the categories introduced
+
+        Output: Box score filtered by the values of the categories introduced (pandas.DataFrame)
         '''
         table = table.drop(index = ["TOTAL"], errors='ignore')
         for cat, val in vars.items():
@@ -161,7 +184,8 @@ class Match():
         - categories: category(ies) we are interested in (list)
         - n: number of players (integer)
         - max: bool stating if we want the maximum values (true) or the minimum ones (false)
-        Output: Table (series) with the players and the category(ies) value
+
+        Output: Table with the players and the category(ies) value (pandas.DataFrame)
         '''
         for cat in categories:
             if cat not in table.columns:
@@ -177,6 +201,7 @@ class Match():
         '''
         This function returns the scoring at each quarter end until time reaches 'end'
         - end: stopping time to compute the scoring (string)
+
         Output: pandas.DataFrame
         '''
         if end is None:
@@ -186,6 +211,7 @@ class Match():
     def result(self):
         '''
         This function returns the result of the match
+
         Output: list
         '''
         quarterScorings = self.quarter_scorings()
@@ -196,6 +222,7 @@ class Match():
         '''
         This function returns the winner of the match
         - id: Bool stating whether the id or the name of the winner is desired
+
         Output: either string (id=False) or integer (else)
         '''
         score = self.result()
@@ -207,7 +234,10 @@ class Match():
     def scoring_difference(self, timestamp=None):
         '''
         This function returns the greatest difference in favour of each team
-        - timestamp: match timestamp in case a temporal value is wanted. None is for the greatest value along the match (string)
+        - timestamp:
+            - None in case the greatest value along the match
+            - match timestamp in case a temporal value is wanted (string)
+
         Output: list of integers
         '''
         return ScoringDifference_main(self.PbPFile, timestamp)
@@ -215,7 +245,10 @@ class Match():
     def scoring_partial(self, timestamp=None):
         '''
         This function returns the greatest partial (consecutive points without the opponent scoring) for each team
-        - timestamp: match timestamp in case a temporal value is wanted. None is for the greatest value along the match (string)
+        - timestamp:
+            - None in case the greatest value along the match
+            - match timestamp in case a temporal value is wanted (string)
+
         Output: list of integers
         '''
         return ScoringPartial_main(self.PbPFile, timestamp)
@@ -223,7 +256,10 @@ class Match():
     def scoring_streak(self, timestamp=None):
         '''
         This function returns the maximum amount of consecutive points without missing for each team
-        - timestamp: match timestamp in case a temporal value is wanted. None is for the greatest value along the match (string)
+        - timestamp:
+            - None in case the greatest value along the match
+            - match timestamp in case a temporal value is wanted (string)
+
         Output: list of integers
         '''
         return ScoringStreak_main(self.PbPFile, timestamp)
@@ -231,7 +267,10 @@ class Match():
     def scoring_drought(self, timestamp=None):
         '''
         This function returns the longest time for each team without scoring
-        - timestamp: match timestamp in case a temporal value is wanted. None is for the greatest value along the match (string)
+        - timestamp:
+            - None in case the greatest value along the match
+            - match timestamp in case a temporal value is wanted (string)
+
         Output: list of strings
         '''
         return ScoringDrought_main(self.PbPFile, self.get_lastQ(), timestamp)
@@ -239,6 +278,10 @@ class Match():
     def match_statistics(self, timestamp=None):
         '''
         This function returns a table with the match statistics (difference, partial, streak and drought)
+        - timestamp:
+            - None in case the greatest value along the match
+            - match timestamp in case a temporal value is wanted (string)
+
         Output: pandas.DataFrame
         '''
         table = pd.DataFrame(
@@ -254,8 +297,12 @@ class Match():
     def get_shooting_table(self, team=None, shots=None):
         '''
         This function returns the table with the shots for every distance from hoop for each team
-        - team: team id (either 1 or 2, integer)
+        - team: team id:
+            - None: both (list of tables is desired)
+            - 1: home
+            - 2: away
         - shots: shooting table in case the shooting values are meant to be added to it (pandas.DataFrame)
+
         Output: list of pandas.DataFrame
         '''
         if team is None:
@@ -294,6 +341,8 @@ class Match():
         This function returns the plot with the shots for every distance from hoop of the desired team
         - team: team id (either 1 or 2, integer)
         - table: table can be inputted in order to avoid recomputation (pandas.DataFrame)
+
+        Output: plotly.graph_objs._figure.Figure
         '''
         if table is None:
             table = self.get_shooting_table(team)
@@ -323,8 +372,12 @@ class Match():
     def get_assist_matrix(self, team=None, assists=None):
         '''
         This function draws the assists between each team members
-        - team: team id (either 1 or 2, integer)
+        - team: team id:
+            - None: both (list of matrices is desired)
+            - 1: home
+            - 2: away
         - assists: assist table in case the assist values are meant to be added to it (pandas.DataFrame)
+
         Output: assist matrix (list of pandas.DataFrame). M[i][j] indicates the number of assists from player i to player j
         '''
         if team is None:
@@ -363,7 +416,8 @@ class Match():
         This function returns the assist statistics plot of the desired team
         - team: team id (either 1 or 2, integer)
         - matrix: matrix can be inputted in order to avoid recomputation (pandas.DataFrame)
-        Output: altair plot
+
+        Output: heatmap (altair.vegalite.v4.api.LayerChart)
         '''
         if matrix is None:
             matrix = self.get_assist_matrix(team)
@@ -397,6 +451,7 @@ class Match():
     def playing_intervals(self):
         '''
         This function returns the playing intervals for each player and the 5 on court for each interval
+
         Output:
         - playersintervals: playing intervals for each team member (list [dictionary of {string: list of tuples}])
         - oncourtintervals: players on court for each interval without changes (list [dictionary of {tuple: set of strings}])
@@ -407,6 +462,7 @@ class Match():
         '''
         This function returns the players on court at a given time
         - clock: timestamp (string)
+
         Output: either one five or two fives (list: [set or list of sets])
         '''
         return FiveOnCourt_main(self.playing_intervals()[1], clock)
@@ -416,6 +472,7 @@ class Match():
         This function returns the intervals an introduced player played
         - team: five's team id (either 1 or 2, integer)
         - five: list of players (list)
+
         Output: list of the intervals (list: [(start, end)])
         '''
         playerIntervals = self.playing_intervals()[0][team-1]
@@ -426,6 +483,7 @@ class Match():
         This function returns the intervals an introduced five played
         - team: five's team id (either 1 or 2, integer)
         - five: list of players (list)
+
         Output: list of the intervals (list: [(start, end)])
         '''
         oncourtintervals = self.playing_intervals()[1][team-1]
