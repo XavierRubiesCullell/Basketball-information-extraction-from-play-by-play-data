@@ -31,7 +31,7 @@ def get_value(game, statistic, team, category, player):
         value = game.scoring_drought()[team-1]
         return treat_drought(value)
     if statistic == "box score":
-        boxScore = game.box_scores()[team-1]
+        boxScore = game.get_box_scores()[team-1]
         value = game.filter_by_categories(boxScore, [category])
         if value is None:
             return None

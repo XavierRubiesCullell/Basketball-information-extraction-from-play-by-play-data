@@ -35,9 +35,9 @@ def treat_match(row, team, boxScore):
     home, away, date = row.Home, row.Away, row.Date
     game = Match(home, away, date)
     if team == home:
-        BS, _ = game.box_scores()
+        BS, _ = game.get_box_scores()
     elif team == away:
-        _, BS = game.box_scores()
+        _, BS = game.get_box_scores()
 
     BS['Mins'] = list(map(lambda x:to_timedelta(x), BS['Mins']))
     
