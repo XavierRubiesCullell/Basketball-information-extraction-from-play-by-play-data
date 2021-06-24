@@ -93,7 +93,7 @@ class Match():
         return self.lastQ
 
 
-    def box_scores(self, team = None, start=None, end=None):
+    def get_box_scores(self, team = None, start=None, end=None):
         '''
         It returns the box score of the interval introduced
         - team: team id:

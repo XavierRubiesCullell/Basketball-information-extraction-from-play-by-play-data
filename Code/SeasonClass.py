@@ -163,7 +163,7 @@ class Season():
         return [record[1], record[0]]
 
 
-    def box_score(self, values=2):
+    def get_box_score(self, values=2):
         '''
         This function returns the season box score
         - values: it defines the box score wanted (integer):

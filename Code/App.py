@@ -711,9 +711,9 @@ def matchChooseBoxScore(game):
         if end == "":
             end = None
         if values['Local'] and values['Visiting']:
-            table = game.box_scores(team=0, start=start, end=end)
+            table = game.get_box_scores(team=0, start=start, end=end)
         else:
-            boxScores = game.box_scores(start=start, end=end)
+            boxScores = game.get_box_scores(start=start, end=end)
             if values['Local']:
                 table = boxScores[0]
             elif values['Visiting']:
@@ -1287,15 +1287,15 @@ def seasonChooseBoxScore(season):
     event, _ = window.read()
 
     if event == 'Total values':
-        table = season.box_score(1)
+        table = season.get_box_score(1)
         window.close()
         seasonAnalyseBoxScore(season, table)
     elif event == 'Per game values':
-        table = season.box_score(2)
+        table = season.get_box_score(2)
         window.close()
         seasonAnalyseBoxScore(season, table)
     elif event == 'Per 36 minutes values':
-        table = season.box_score(3)
+        table = season.get_box_score(3)
         window.close()
         seasonAnalyseBoxScore(season, table)
     elif event == 'Back':
