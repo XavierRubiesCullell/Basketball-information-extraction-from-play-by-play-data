@@ -433,6 +433,8 @@ def analyseSeason_menu():
         [ sg.Button('Shooting statistics', size = buttonSize) ],
         [ sg.Button('Assist statistics', size = buttonSize) ],
         [ sg.Text("")],
+        [ sg.Text("*Please take into consideration that some calculations might be slow")],
+        [ sg.Text("")],
         [ sg.Button('Back')]
     ]
     return sg.Window("Analyse Season Menu", layout)
