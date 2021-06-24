@@ -224,7 +224,7 @@ class Season():
         elif categories == "rebounding":
             categories = ['OR', 'DR', 'TR']
         elif categories == "simple":
-            categories = ['Mins', 'Pts', 'TR', 'Ast', 'Bl', 'St', 'To', 'PF', '+/-']
+            categories = ['GP', 'Mins', 'Pts', 'TR', 'Ast', 'Bl', 'St', 'To', 'PF', '+/-']
         for cat in categories:
             if cat not in table.columns:
                 return None

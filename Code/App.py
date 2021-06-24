@@ -74,7 +74,7 @@ def analyseMatch_menu():
     return sg.Window("Analyse Match Menu", layout)
 
 ### 1.1. Box score
-def chooseBoxScore_menu():
+def matchChooseBoxScore_menu():
     buttonSize = (5,1)
     inputSize = (15,1)
     layout = [
@@ -82,7 +82,6 @@ def chooseBoxScore_menu():
         [ sg.Input(key='Start', size=inputSize, tooltip="Introduce the time in format quarter:MM:SS\nquarter can be '1Q','2Q','3Q','4Q','xOT\nIf nothing is written, the beginning of the match will be considered"),
          sg.Input(key='End', size=inputSize, tooltip="Introduce the time in format quarter:MM:SS\nquarter can be '1Q','2Q','3Q','4Q','xOT\nIf nothing is written, the end of the match will be considered")],
         [ sg.Text("Choose the box score you desire:") ],
-        #[ sg.Button('Local'), sg.Button('Visiting'), sg.Button('Both')],
         [ sg.Checkbox("Local", default = True, key = 'Local'), sg.Checkbox("Visiting", default = True, key = 'Visiting')],
         [ sg.Button('OK', size=buttonSize)],
         [ sg.Text("")],
@@ -93,6 +92,7 @@ def chooseBoxScore_menu():
 def helpAnalyseBoxScore_menu(cols):
     textSize = (9, 1)
     explanation = {
+        "GP": "Games played",
         "2PtM": "2-point shots made",
         "2PtA": "2-point shots attempted",
         "2Pt%": "2-point shots percentage",
@@ -120,16 +120,21 @@ def helpAnalyseBoxScore_menu(cols):
         "+/-": "plusminus",
         "PIR": "Performance Index Rating"
     }
-    if cols[0] == 'Team':
-        del cols[0]
-    if cols[0] == 'Mins':
+    if cols[1] == 'Mins':
+        del cols[1]
+    if cols[0] == 'Team' or cols[0] == 'Mins':
         del cols[0]
     layout = [
         [sg.Text(cat, size=textSize), sg.Text(explanation[cat])] for cat in cols
     ]
     return sg.Window("Help Menu", layout)
 
-def analyseBoxScore_menu(game, table):
+def analyseBoxScore_menu(Event, table):
+    try:
+        Event.home
+        savingText = "The box score will be saved in: " + Event.home + "_" + Event.away + "_" + convert_date_match(Event.date) + "_BS_"
+    except:
+        savingText = "The box score will be saved in: " + Event.team + "_" + Event.season + "_BS_"
     auxTable = create_table(table, "Player", 4)
     indentation = (1,1)
     layout = [
@@ -148,7 +153,7 @@ def analyseBoxScore_menu(game, table):
         [ sg.Text("Save:") ],
         [
             sg.Text("", size=indentation),
-            sg.Text("The box score will be saved in: " + game.home + "_" + game.away + "_" + convert_date_match(game.date) + "_BS_"),
+            sg.Text(savingText),
             sg.Input(key='SaveFile', size = (15,1)),
             sg.Text(".html"),
             sg.Button('Save')
@@ -157,28 +162,28 @@ def analyseBoxScore_menu(game, table):
     ]
     return sg.Window("Box score menu", layout)
 
-def filterByPlayers_menu(game, table):
+def filterByPlayers_menu(table):
     layout = [
         [ sg.Text("List of players") ],
         [ sg.Input(key='Filter condition', tooltip="Format: player1, player2, player3, ..."), sg.Button('Filter') ]
     ]
     return sg.Window("Filter by players Menu", layout)
 
-def filterByCategories_menu(game, table):
+def filterByCategories_menu(table):
     layout = [
         [ sg.Text("List of categories") ],
         [ sg.Input(key='Filter condition', tooltip="Format: category1, category2, category3, ..."), sg.Button('Filter') ]
     ]
     return sg.Window("Filter by categories Menu", layout)
 
-def filterByValues_menu(game, table):
+def filterByValues_menu(table):
     layout = [
         [ sg.Text("List of categories and their corresponding values") ],
         [ sg.Input(key='Filter condition', tooltip="Format: category1: value1, category2: value2, category3: value3, ..."), sg.Button('Filter') ]
     ]
     return sg.Window("Filter by values Menu", layout)
 
-def filterByTop_menu(game, table):
+def filterByTop_menu(table):
     layout = [
         [ sg.Text("Returns the n players with the maximum/minimum values in the introduced categories") ],
         [ sg.Text("List of categories"),
@@ -423,6 +428,7 @@ def analyseSeason_menu():
         [ sg.Text("Season analysis menu") ],
         [ sg.Button('See calendar', size = buttonSize) ],
         [ sg.Button('See results', size = buttonSize) ],
+        [ sg.Button('Box score', size = buttonSize) ],
         [ sg.Button('Statistic evolution', size = buttonSize) ],
         [ sg.Button('Shooting statistics', size = buttonSize) ],
         [ sg.Button('Assist statistics', size = buttonSize) ],
@@ -480,6 +486,18 @@ def resultsPlot_menu():
         [ sg.Button('Back') ]
     ]
     return sg.Window("Results plot Menu", layout)
+
+def seasonChooseBoxScore_menu():
+    buttonSize = (20,1)
+    layout = [
+        [ sg.Text("Choose the box score you desire:") ],
+        [ sg.Button('Total values', size=buttonSize)],
+        [ sg.Button('Per game values', size=buttonSize)],
+        [ sg.Button('Per 36 minutes values', size=buttonSize)],
+        [ sg.Text("")],
+        [ sg.Button('Back', size=(5,1))]
+    ]
+    return sg.Window("Box score election menu", layout)
 
 def statisticElection_menu():
     buttonSize = (5,1)
@@ -554,8 +572,8 @@ def assistStatisticsSeason_menu():
 # INTERACTIVE FUNCTIONS
 
 ### 1.1. Box score
-def filterByPlayers(game, table, BSWindow):
-    filterWindow = filterByPlayers_menu(game, table)
+def matchFilterByPlayers(game, table, BSWindow):
+    filterWindow = filterByPlayers_menu(table)
     event, values = filterWindow.read()
     if event == 'Filter':
         players = values['Filter condition']
@@ -566,15 +584,18 @@ def filterByPlayers(game, table, BSWindow):
             sg.PopupTimed("There are no records that meet the introduced conditions", auto_close_duration=3, button_type=5)
             filterWindow.close()
             BSWindow.close()
-            analyseBoxScore(game, table)
+            matchAnalyseBoxScore(game, table)
         else:
             filterWindow.close()
             BSWindow.close()
-            analyseBoxScore(game, newTable)
+            matchAnalyseBoxScore(game, newTable)
+    elif event == sg.WIN_CLOSED:
+        BSWindow.close()
+        matchAnalyseBoxScore(game, table)
 
 
-def filterByCategories(game, table, BSWindow):
-    filterWindow = filterByCategories_menu(game, table)
+def matchFilterByCategories(game, table, BSWindow):
+    filterWindow = filterByCategories_menu(table)
     event, values = filterWindow.read()
     if event == 'Filter':
         cats = values['Filter condition']
@@ -582,20 +603,22 @@ def filterByCategories(game, table, BSWindow):
             cats = cats.split(", ")
 
         newTable = game.filter_by_categories(table, cats)
-
         if newTable is None or len(newTable) == 0:
             sg.PopupTimed("There are no records that meet the introduced conditions", auto_close_duration=3, button_type=5)
             filterWindow.close()
             BSWindow.close()
-            analyseBoxScore(game, table)
+            matchAnalyseBoxScore(game, table)
         else:
             filterWindow.close()
             BSWindow.close()
-            analyseBoxScore(game, newTable)
+            matchAnalyseBoxScore(game, newTable)
+    elif event == sg.WIN_CLOSED:
+        BSWindow.close()
+        matchAnalyseBoxScore(game, table)
 
 
-def filterByValues(game, table, BSWindow):
-    filterWindow = filterByValues_menu(game, table)
+def matchFilterByValues(game, table, BSWindow):
+    filterWindow = filterByValues_menu(table)
     event, values = filterWindow.read()
     if event == 'Filter':
         cats = values['Filter condition']
@@ -610,15 +633,18 @@ def filterByValues(game, table, BSWindow):
             sg.PopupTimed("There are no records that meet the introduced conditions", auto_close_duration=3, button_type=5)
             filterWindow.close()
             BSWindow.close()
-            analyseBoxScore(game, table)
+            matchAnalyseBoxScore(game, table)
         else:
             filterWindow.close()
             BSWindow.close()
-            analyseBoxScore(game, newTable)
+            matchAnalyseBoxScore(game, newTable)
+    elif event == sg.WIN_CLOSED:
+        BSWindow.close()
+        matchAnalyseBoxScore(game, table)
 
 
-def filterByTop(game, table, BSWindow):
-    filterWindow = filterByTop_menu(game, table)
+def matchFilterByTop(game, table, BSWindow):
+    filterWindow = filterByTop_menu(table)
     event, values = filterWindow.read()
     if event == 'Filter':
         cats = values['Filter condition']
@@ -629,14 +655,17 @@ def filterByTop(game, table, BSWindow):
             sg.PopupTimed("There are no records that meet the introduced conditions", auto_close_duration=3, button_type=5)
             filterWindow.close()
             BSWindow.close()
-            analyseBoxScore(game, table)
+            matchAnalyseBoxScore(game, table)
         else:
             filterWindow.close()
             BSWindow.close()
-            analyseBoxScore(game, newTable)
+            matchAnalyseBoxScore(game, newTable)
+    elif event == sg.WIN_CLOSED:
+        BSWindow.close()
+        matchAnalyseBoxScore(game, table)
 
 
-def analyseBoxScore(game, table):
+def matchAnalyseBoxScore(game, table):
     window = analyseBoxScore_menu(game, table)
 
     while True:
@@ -645,16 +674,16 @@ def analyseBoxScore(game, table):
             helpWindow = helpAnalyseBoxScore_menu(table.columns.tolist())
             _, _ = helpWindow.read()
         elif event == 'Filter by players':
-            filterByPlayers(game, table, window)
+            matchFilterByPlayers(game, table, window)
             break
         elif event == 'Filter by categories':
-            filterByCategories(game, table, window)
+            matchFilterByCategories(game, table, window)
             break
         elif event == 'Filter by values':
-            filterByValues(game, table, window)
+            matchFilterByValues(game, table, window)
             break
         elif event == 'Get top players':
-            filterByTop(game, table, window)
+            matchFilterByTop(game, table, window)
             break
         elif event == 'Save':
             game.save_box_score(table, name=values['SaveFile'])
@@ -662,14 +691,14 @@ def analyseBoxScore(game, table):
             window.FindElement('SaveFile').Update('')
         elif event == 'Back':
             window.close()
-            chooseBoxScore(game)
+            matchChooseBoxScore(game)
             break
         elif event == sg.WIN_CLOSED:
             break
 
 
-def chooseBoxScore(game):
-    window = chooseBoxScore_menu()
+def matchChooseBoxScore(game):
+    window = matchChooseBoxScore_menu()
     event, values = window.read()
 
     if event == 'OK':
@@ -688,7 +717,7 @@ def chooseBoxScore(game):
             elif values['Visiting']:
                 table = boxScores[1]
         window.close()
-        analyseBoxScore(game, table)
+        matchAnalyseBoxScore(game, table)
     elif event == 'Back':
         window.close()
         analyseMatch(game)
@@ -788,7 +817,7 @@ def shootingStatisticsPlot(Event, team, table):
 
 def shootingStatistics(Event):
     try:
-        Event.away
+        Event.home
         window = shootingStatisticsMatch_menu()
     except:
         window = shootingStatisticsSeason_menu()
@@ -811,7 +840,7 @@ def shootingStatistics(Event):
     elif event == 'Back':
         window.close()
         try:
-            Event.away
+            Event.home
             analyseMatch(Event)
         except:
             analyseSeason(Event)
@@ -828,7 +857,7 @@ def assistStatisticsMatrix(game, team):
             sg.PopupTimed("Table saved", auto_close_duration=1, button_type=5)
         elif event == 'Back':
             window.close()
-            assistStatistics(game)
+            matchAssistStatistics(game)
             break
         elif event == sg.WIN_CLOSED:
             break
@@ -848,13 +877,13 @@ def assistStatisticsPlot(game, team):
             sg.PopupTimed("Plot saved", auto_close_duration=1, button_type=5)
         elif event == 'Back':
             window.close()
-            assistStatistics(game)
+            matchAssistStatistics(game)
             break
         elif event == sg.WIN_CLOSED:
             break
 
 
-def assistStatistics(game):
+def matchAssistStatistics(game):
     window = assistStatistics_menu()
     event, values = window.read()
 
@@ -917,7 +946,7 @@ def analyseMatch(game):
 
     if event == 'Box scores':
         window.close()
-        chooseBoxScore(game)
+        matchChooseBoxScore(game)
     elif event == 'Match statistics':
         window.close()
         matchStatistics(game)
@@ -929,7 +958,7 @@ def analyseMatch(game):
         shootingStatistics(game)
     elif event == 'Assist statistics':
         window.close()
-        assistStatistics(game)
+        matchAssistStatistics(game)
     elif event == 'See play-by-play':
         window.close()
         seePbP(game)
@@ -1126,6 +1155,152 @@ def results(season):
         analyseSeason(season)
 
 
+def seasonFilterByPlayers(season, table, BSWindow):
+    filterWindow = filterByPlayers_menu(table)
+    event, values = filterWindow.read()
+    if event == 'Filter':
+        players = values['Filter condition']
+        players = players.split(", ")
+
+        newTable = season.filter_by_players(table, players)
+        if newTable is None or len(newTable) == 0:
+            sg.PopupTimed("There are no records that meet the introduced conditions", auto_close_duration=3, button_type=5)
+            filterWindow.close()
+            BSWindow.close()
+            seasonAnalyseBoxScore(season, table)
+        else:
+            filterWindow.close()
+            BSWindow.close()
+            seasonAnalyseBoxScore(season, newTable)
+    elif event == sg.WIN_CLOSED:
+        BSWindow.close()
+        seasonAnalyseBoxScore(season, table)
+
+
+def seasonFilterByCategories(season, table, BSWindow):
+    filterWindow = filterByCategories_menu(table)
+    event, values = filterWindow.read()
+    if event == 'Filter':
+        cats = values['Filter condition']
+        if not (isinstance(cats,str) and cats in ("simple", "shooting", "rebounding")):
+            cats = cats.split(", ")
+
+        newTable = season.filter_by_categories(table, cats)
+        if newTable is None or len(newTable) == 0:
+            sg.PopupTimed("There are no records that meet the introduced conditions", auto_close_duration=3, button_type=5)
+            filterWindow.close()
+            BSWindow.close()
+            seasonAnalyseBoxScore(season, table)
+        else:
+            filterWindow.close()
+            BSWindow.close()
+            seasonAnalyseBoxScore(season, newTable)
+    elif event == sg.WIN_CLOSED:
+        BSWindow.close()
+        seasonAnalyseBoxScore(season, table)
+
+
+def seasonFilterByValues(season, table, BSWindow):
+    filterWindow = filterByValues_menu(table)
+    event, values = filterWindow.read()
+    if event == 'Filter':
+        cats = values['Filter condition']
+        auxCats = cats.split(", ")
+        auxCats = list(map(lambda x: x.split(": "), auxCats))
+        cats = {}
+        for cat in auxCats:
+            cats[cat[0]] = float(cat[1])
+
+        newTable = season.filter_by_value(table, cats)
+        if newTable is None or len(newTable) == 0:
+            sg.PopupTimed("There are no records that meet the introduced conditions", auto_close_duration=3, button_type=5)
+            filterWindow.close()
+            BSWindow.close()
+            seasonAnalyseBoxScore(season, table)
+        else:
+            filterWindow.close()
+            BSWindow.close()
+            seasonAnalyseBoxScore(season, newTable)
+    elif event == sg.WIN_CLOSED:
+        BSWindow.close()
+        seasonAnalyseBoxScore(season, table)
+
+
+def seasonFilterByTop(season, table, BSWindow):
+    filterWindow = filterByTop_menu(table)
+    event, values = filterWindow.read()
+    if event == 'Filter':
+        cats = values['Filter condition']
+        cats = cats.split(", ")
+
+        newTable = season.top_players(table, cats, n=int(values['n']), max=values['Condition']=="maximum")
+        if newTable is None or len(newTable) == 0:
+            sg.PopupTimed("There are no records that meet the introduced conditions", auto_close_duration=3, button_type=5)
+            filterWindow.close()
+            BSWindow.close()
+            seasonAnalyseBoxScore(season, table)
+        else:
+            filterWindow.close()
+            BSWindow.close()
+            seasonAnalyseBoxScore(season, newTable)
+    elif event == sg.WIN_CLOSED:
+        BSWindow.close()
+        seasonAnalyseBoxScore(season, table)
+
+
+def seasonAnalyseBoxScore(season, table):
+    window = analyseBoxScore_menu(season, table)
+
+    while True:
+        event, values = window.read()
+        if event == 'Help':
+            helpWindow = helpAnalyseBoxScore_menu(table.columns.tolist())
+            _, _ = helpWindow.read()
+        elif event == 'Filter by players':
+            seasonFilterByPlayers(season, table, window)
+            break
+        elif event == 'Filter by categories':
+            seasonFilterByCategories(season, table, window)
+            break
+        elif event == 'Filter by values':
+            seasonFilterByValues(season, table, window)
+            break
+        elif event == 'Get top players':
+            seasonFilterByTop(season, table, window)
+            break
+        elif event == 'Save':
+            season.save_box_score(table, name=values['SaveFile'])
+            sg.PopupTimed("Table saved", auto_close_duration=1, button_type=5)
+            window.FindElement('SaveFile').Update('')
+        elif event == 'Back':
+            window.close()
+            seasonChooseBoxScore(season)
+            break
+        elif event == sg.WIN_CLOSED:
+            break
+
+
+def seasonChooseBoxScore(season):
+    window = seasonChooseBoxScore_menu()
+    event, _ = window.read()
+
+    if event == 'Total values':
+        table = season.box_score(1)
+        window.close()
+        seasonAnalyseBoxScore(season, table)
+    elif event == 'Per game values':
+        table = season.box_score(2)
+        window.close()
+        seasonAnalyseBoxScore(season, table)
+    elif event == 'Per 36 minutes values':
+        table = season.box_score(3)
+        window.close()
+        seasonAnalyseBoxScore(season, table)
+    elif event == 'Back':
+        window.close()
+        analyseSeason(season)
+
+
 def assistStatisticsMatrixSeason(season, matrix):
     window = assistStatisticsMatrixSeason_menu(matrix)
 
@@ -1137,13 +1312,13 @@ def assistStatisticsMatrixSeason(season, matrix):
             sg.PopupTimed("Table saved", auto_close_duration=1, button_type=5)
         elif event == 'Back':
             window.close()
-            assistStatisticsSeason(season, matrix)
+            seasonAssistStatistics(season, matrix)
             break
         elif event == sg.WIN_CLOSED:
             break
 
 
-def assistStatisticsSeason(season, matrix):
+def seasonAssistStatistics(season, matrix):
     window = assistStatisticsSeason_menu()
 
     while True:
@@ -1172,22 +1347,25 @@ def analyseSeason(season):
     window = analyseSeason_menu()
     event, _ = window.read()
 
-    if event == 'Statistic evolution':
-        window.close()
-        statisticElection(season)
-    elif event == 'See calendar':
+    if event == 'See calendar':
         window.close()
         calendar(season)
     elif event == 'See results':
         window.close()
         results(season)
+    elif event == 'Box score':
+        window.close()
+        seasonChooseBoxScore(season)
+    if event == 'Statistic evolution':
+        window.close()
+        statisticElection(season)
     elif event == 'Shooting statistics':
         window.close()
         shootingStatistics(season)
     elif event == 'Assist statistics':
         assists = season.get_assist_matrix()
         window.close()
-        assistStatisticsSeason(season, assists)
+        seasonAssistStatistics(season, assists)
     elif event == 'Back':
         window.close()
         defineSeason()
