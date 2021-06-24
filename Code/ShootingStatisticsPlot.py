@@ -29,7 +29,7 @@ def draw_plotly_court(fig, shots, figWidth=600, margins=0):
     - margins: defines the amount of padding around the sidelines (integer)
     '''
     figHeight = figWidth * (470 + 2 * margins) / (500 + 2 * margins)
-    fig.update_layout(title="Shooting accuracy", font_size=10, width=figWidth, height=figHeight)
+    fig.update_layout(title="Shooting accuracy", title_x=0.425, font_size=10, width=figWidth, height=figHeight)
     fig.update_layout(width=figWidth+90)
 
     # Set axes ranges
@@ -44,7 +44,7 @@ def draw_plotly_court(fig, shots, figWidth=600, margins=0):
         # Line Horizontal
         margin=dict(l=20, r=20, t=20, b=20),
         paper_bgcolor="white",
-        plot_bgcolor="#ffd699",
+        plot_bgcolor="#ffb366", # background color
         yaxis=dict(
             scaleanchor="x",
             scaleratio=1,
@@ -73,7 +73,7 @@ def draw_plotly_court(fig, shots, figWidth=600, margins=0):
             # ),
             dict(
                 type="line", x0=-250, y0=-52.5, x1=250, y1=-52.5,
-                line=dict(color=mainLineCol, width=2),
+                line=dict(color=mainLineCol, width=lineWidth),
             ),
             # zone
             dict(
@@ -208,27 +208,17 @@ def color_election(acc):
     This function returns a color code given a shooting accuracy
     - acc: accuracy from a determined distance
     '''
-    if acc < 10:
-        return 0
     if acc < 20:
-        return 1
-    if acc < 30:
-        return 2
+        return 0
     if acc < 40:
-        return 3
-    if acc < 50:
-        return 4
+        return 1
     if acc < 60:
-        return 5
-    if acc < 70:
-        return 6
+        return 2
     if acc < 80:
-        return 7
-    if acc < 90:
-        return 8
-    if acc < 100:
-        return 9
-    return 10
+        return 3
+    if acc < 95:
+        return 4
+    return 5
 
 
 def treat_distance(row, total, shots, colors, accUsed):
@@ -242,14 +232,12 @@ def treat_distance(row, total, shots, colors, accUsed):
     '''
     colorId = color_election(row[4])
 
-    # 22 ft == 237.5
-    # 25 ft == 240
     # 22 ft == 220.5
     d = int(row[0])*220.5/22
     shots.append(dict(
         type="path",
         path=circumference_arc(r=d, startAngle=0, endAngle=np.pi),
-        line=dict(color=colors[colorId], width=np.sqrt(row[3]/total*100)),
+        line=dict( color=colors[colorId], width=max(np.sqrt(row[3]/total*100), 0.2) ),
         layer='below'
     ))
 
@@ -282,10 +270,10 @@ def main(shotTable):
     This function returns a plot given a table of records
     - shotTable: table with the shooting records
     '''
-    colors = ('#DEEDCF', '#BFE1B0', '#99D492', '#74C67A', '#56B870', '#39A96B', '#1D9A6C', '#0C9462', '#008B57', '#007E4B', '#006C3E')
+    colors = ('#B1E1AE', '#63C07D', '#1D9A6C', '#157F7A', '#1F6C55', '#23584B')
     accUsed = [False]*len(colors)
     accuracies = (
-        "[0, 10)", "[10, 20)", "[20, 30)", "[30, 40)", "[40, 50)", "[50, 60)", "[60, 70)", "[70, 80)", "[80, 90)", "[90, 100)", "100"
+        "[0, 20)", "[20, 40)", "[40, 60)", "[60, 80)", "[80, 95)", "[95, 100)"
     )
 
     fig = go.Figure()
