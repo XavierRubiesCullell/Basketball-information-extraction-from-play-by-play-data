@@ -43,22 +43,32 @@ class Match():
     lastQ: str
     '''Last quarter of the match'''
 
-    def __init__(self, home, away, date, fileDir="Files/"):
+    def __init__(self, home, away, date, path=None):
         '''
         - home: name of the local team. It can be the city, the club name or a combination (string)
         - away: name of the visiting team. It can be the city, the club name or a combination (string)
         - date: date of the match (string in YYYY/MM/DD format)
         - fileDir: directory where the Matches directory is/will be located (string)
         '''
-        os.chdir(os.path.dirname(__file__))
         self.home = get_team(home)
         self.away = get_team(away)
         self.date = date
         self.matchName = self.home + "_" + self.away + "_" + convert_date_match(self.date)
-        path = os.getcwd()
-        self.path = path + "/" + fileDir + "Matches/" + self.matchName + "/"
-        if not os.path.isdir(self.path):
-            os.mkdir(self.path)
+
+        if path is None: # path will be ../Files/Matches/self.matchName
+            os.chdir(os.path.dirname(__file__))
+            currentPath = os.getcwd()
+            fileDir = currentPath + "/../Files"
+            if not os.path.isdir(fileDir):
+                os.mkdir(fileDir)
+            matchesDir = fileDir + "/Matches"
+            if not os.path.isdir(matchesDir):
+                os.mkdir(matchesDir)
+            path = matchesDir + "/"+ self.matchName + "/"
+            if not os.path.isdir(path):
+                os.mkdir(path)
+        self.path = path
+
         self.PbPFile = self.path + "/" + self.matchName + "_StandardPbP.txt"
         if not os.path.exists(self.PbPFile):
             try:
@@ -66,7 +76,8 @@ class Match():
             except:
                 os.rmdir(self.path)
                 raise Exception("Match does not exist")
-    
+
+
     def get_lastQ(self):
         '''
         This function returns the last quarter of the match (string)
@@ -80,6 +91,7 @@ class Match():
             clock = lastLine[0]
             self.lastQ = quarter_from_time(clock)
         return self.lastQ
+
 
     def box_scores(self, team = None, start=None, end=None):
         '''
@@ -107,14 +119,15 @@ class Match():
         boxs[1]['Team'] = [self.away]*len(boxs[1])
         table = boxs[0].append(boxs[1])
         return table[['Team'] + table.columns.tolist()[:-1]]
-    
+
+
     def save_box_score(self, table, name="", extension='html', directory=None):
         '''
         This function saves the box score
         - table: box score (pandas.DataFrame)
         - name: name specification for the file (string)
         - extension: type of the file where the table will be saved. It can either be csv or html (string)
-        - directory: relative path to the directory where the box score will be saved (string)
+        - directory: directory where to save the box score, in case self.path is not desired (string)
         '''
         if directory is None:
             directory = self.path
@@ -128,6 +141,7 @@ class Match():
         else:
             raise ValueError(f"Extension {extension} is not correct. It must be csv or html")
 
+
     def filter_by_players(self, table, players):
         '''
         This function filters the box score values of a list of players
@@ -140,6 +154,7 @@ class Match():
             if pl not in table.index:
                 return None
         return table.loc[players,]
+
 
     def filter_by_categories(self, table, categories):
         '''
@@ -162,6 +177,7 @@ class Match():
             categories = ['Team'] + categories
         return table[categories]
 
+
     def filter_by_value(self, table, vars):
         '''
         This function filters the box score of the players surpassing the minimum values introduced
@@ -176,6 +192,7 @@ class Match():
                 return None
             table = table.loc[table[cat] >= val]
         return table
+
 
     def top_players(self, table, categories, n=None, max=True):
         '''
@@ -197,6 +214,7 @@ class Match():
             table = table[:n]
         return table
 
+
     def quarter_scorings(self, end=None):
         '''
         This function returns the scoring at each quarter end until time reaches 'end'
@@ -208,6 +226,7 @@ class Match():
             end = self.get_lastQ()+":00:00"
         return QuarterScorings_main(self.PbPFile, self.home, self.away, end)
 
+
     def result(self):
         '''
         This function returns the result of the match
@@ -217,6 +236,7 @@ class Match():
         quarterScorings = self.quarter_scorings()
         finalScore = quarterScorings["T"]
         return finalScore.tolist()
+
 
     def winner(self, id=False):
         '''
@@ -231,6 +251,7 @@ class Match():
             return winner
         return (self.home, self.away)[winner-1]
 
+
     def scoring_difference(self, timestamp=None):
         '''
         This function returns the greatest difference in favour of each team
@@ -242,6 +263,7 @@ class Match():
         '''
         return ScoringDifference_main(self.PbPFile, timestamp)
 
+
     def scoring_partial(self, timestamp=None):
         '''
         This function returns the greatest partial (consecutive points without the opponent scoring) for each team
@@ -252,7 +274,8 @@ class Match():
         Output: list of integers
         '''
         return ScoringPartial_main(self.PbPFile, timestamp)
-    
+
+
     def scoring_streak(self, timestamp=None):
         '''
         This function returns the maximum amount of consecutive points without missing for each team
@@ -263,7 +286,8 @@ class Match():
         Output: list of integers
         '''
         return ScoringStreak_main(self.PbPFile, timestamp)
-    
+
+
     def scoring_drought(self, timestamp=None):
         '''
         This function returns the longest time for each team without scoring
@@ -274,6 +298,7 @@ class Match():
         Output: list of strings
         '''
         return ScoringDrought_main(self.PbPFile, self.get_lastQ(), timestamp)
+
 
     def match_statistics(self, timestamp=None):
         '''
@@ -294,6 +319,7 @@ class Match():
         )
         return table
 
+
     def get_shooting_table(self, team=None, shots=None):
         '''
         This function returns the table with the shots for every distance from hoop for each team
@@ -310,13 +336,14 @@ class Match():
         else:
             return ShootingStatisticsTable_main(self.PbPFile, shots)[team-1]
 
+
     def save_shooting_table(self, team, table=None, extension='html', directory=None):
         '''
         This function saves the shooting statistics table of the desired team
         - team: team id (either 1 or 2, integer)
         - table: table can be inputted in order to avoid recomputation (pandas.DataFrame)
         - extension: type of the file where the table will be saved. It can either be csv or html (string)
-        - directory: directory where the table will be saved (string)
+        - directory: directory where to save the table, in case self.path is not desired (string)
         '''
         if table is None:
             table = self.get_shooting_table(team)
@@ -336,6 +363,7 @@ class Match():
         else:
             raise ValueError(f"Extension {extension} is not correct. It must be csv or html")
 
+
     def get_shooting_plot(self, team, table=None):
         '''
         This function returns the plot with the shots for every distance from hoop of the desired team
@@ -347,13 +375,14 @@ class Match():
         if table is None:
             table = self.get_shooting_table(team)
         return ShootingStatisticsPlot_main(table)
-    
+
+
     def save_shooting_plot(self, team, plot=None, extension='svg', directory=None):
         '''
         This function saves the shooting statistics plot of the desired team
         - team: team id (either 1 or 2, integer)
         - extension: type of the file where the plot will be saved. It can be svg or pdf (vector), or png, jpeg or webp (raster)  (string)
-        - directory: directory where the plot will be saved (string)
+        - directory: directory where to save the plot, in case self.path is not desired (string)
         '''
         if plot is None:
             plot = self.get_shooting_plot(team)
@@ -368,6 +397,7 @@ class Match():
             plot.write_image(path)
         else:
             raise ValueError(f"Extension {extension} is not correct. It must be svg, pdf, png, jpeg or webp")
+
 
     def get_assist_matrix(self, team=None, assists=None):
         '''
@@ -384,14 +414,15 @@ class Match():
             return AssistStatisticsMatrix_main(self.PbPFile, assists)
         else:
             return AssistStatisticsMatrix_main(self.PbPFile, assists)[team-1]
-    
+
+
     def save_assist_matrix(self, team, matrix=None, extension='html', directory=None):
         '''
         This function saves the assist statistics matrix of the desired team
         - team: team id (either 1 or 2, integer)
         - matrix: matrix can be inputted in order to avoid recomputation (pandas.DataFrame)
         - extension: type of the file where the table will be saved. It can either be csv or html (string)
-        - directory: directory where the table will be saved (string)
+        - directory: directory where to save the matrix, in case self.path is not desired (string)
         '''
         if matrix is None:
             matrix = self.get_assist_matrix(team)
@@ -411,6 +442,7 @@ class Match():
         else:
             raise ValueError(f"Extension {extension} is not correct. It must be csv or html")
 
+
     def get_assist_plot(self, team, matrix=None):
         '''
         This function returns the assist statistics plot of the desired team
@@ -429,12 +461,13 @@ class Match():
             teamName = self.away
         return alt.layer(plot, title = teamName + " assists")
 
+
     def save_assist_plot(self, team, plot=None, directory=None):
         '''
         This function saves the assist statistics plot of the desired team
         - team: team id (either 1 or 2, integer)
         - plot: plot can be inputted in order to avoid recomputation
-        - directory: directory where the plot will be saved (string)
+        - directory: directory where to save the plot, in case self.path is not desired (string)
         '''
         if plot is None:
             plot = self.get_assist_plot(team)
@@ -448,6 +481,7 @@ class Match():
         path = directory + self.matchName + "_AssistPlot_" + teamName + ".html"
         plot.save(path)
 
+
     def playing_intervals(self):
         '''
         This function returns the playing intervals for each player and the 5 on court for each interval
@@ -457,7 +491,8 @@ class Match():
         - oncourtintervals: players on court for each interval without changes (list [dictionary of {tuple: set of strings}])
         '''
         return PlayingIntervals_main(self.PbPFile)
-    
+
+
     def five_on_court(self, clock):
         '''
         This function returns the players on court at a given time
@@ -466,6 +501,7 @@ class Match():
         Output: either one five or two fives (list: [set or list of sets])
         '''
         return FiveOnCourt_main(self.playing_intervals()[1], clock)
+
 
     def intervals_of_player(self, team, player):
         '''
@@ -477,7 +513,8 @@ class Match():
         '''
         playerIntervals = self.playing_intervals()[0][team-1]
         return playerIntervals.get(player, [])
-    
+
+
     def intervals_of_five(self, team, five):
         '''
         This function returns the intervals an introduced five played
@@ -493,7 +530,8 @@ class Match():
             if oncourtintervals[interval] == five:
                 intervals.append(interval)
         return intervals
-    
+
+
     def visual_PbP(self, window=False):
         '''
         This function executes the dynamic reproduction of the play-by-play

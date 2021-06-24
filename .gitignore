@@ -1,8 +1,5 @@
 __pycache__/
-Code/Files/Seasons/*
-!Code/Files/Seasons/.gitkeep
-Code/Files/Matches/*
-!Code/Files/Matches/.gitkeep
+Files/
 Code/Prova*
 Organisation/Report images/
 Organisation/~$*
