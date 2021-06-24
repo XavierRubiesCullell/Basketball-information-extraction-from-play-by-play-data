@@ -4,7 +4,6 @@ import math
 import PIL.Image
 import PIL.ImageDraw
 import PIL.ImageFont
-import base64
 import io
 import PySimpleGUI as sg
 

@@ -43,12 +43,12 @@ class Match():
     lastQ: str
     '''Last quarter of the match'''
 
-    def __init__(self, home, away, date, fileFolder="Files/"):
+    def __init__(self, home, away, date, fileDir="Files/"):
         '''
         - home: name of the local team. It can be the city, the club name or a combination (string)
         - away: name of the visiting team. It can be the city, the club name or a combination (string)
         - date: date of the match (string in YYYY/MM/DD format)
-        - fileFolder: directory where the Matches folder is/will be located (string)
+        - fileDir: directory where the Matches directory is/will be located (string)
         '''
         os.chdir(os.path.dirname(__file__))
         self.home = get_team(home)
@@ -56,7 +56,7 @@ class Match():
         self.date = date
         self.matchName = self.home + "_" + self.away + "_" + convert_date_match(self.date)
         path = os.getcwd()
-        self.path = path + "/" + fileFolder + "Matches/" + self.matchName + "/"
+        self.path = path + "/" + fileDir + "Matches/" + self.matchName + "/"
         if not os.path.isdir(self.path):
             os.mkdir(self.path)
         self.PbPFile = self.path + "/" + self.matchName + "_StandardPbP.txt"
@@ -108,17 +108,17 @@ class Match():
         table = boxs[0].append(boxs[1])
         return table[['Team'] + table.columns.tolist()[:-1]]
     
-    def save_box_score(self, table, name="", extension='html', folder=None):
+    def save_box_score(self, table, name="", extension='html', directory=None):
         '''
         This function saves the box score
         - table: box score (pandas.DataFrame)
         - name: name specification for the file (string)
         - extension: type of the file where the table will be saved. It can either be csv or html (string)
-        - folder: relative path to the folder where the box score will be saved (string)
+        - directory: relative path to the directory where the box score will be saved (string)
         '''
-        if folder is None:
-            folder = self.path
-        path = folder + self.matchName + "_BS_" + name
+        if directory is None:
+            directory = self.path
+        path = directory + self.matchName + "_BS_" + name
         if extension == 'csv':
             path += ".csv"
             table.to_csv(path, sep = ";", encoding="utf8")
@@ -310,23 +310,23 @@ class Match():
         else:
             return ShootingStatisticsTable_main(self.PbPFile, shots)[team-1]
 
-    def save_shooting_table(self, team, table=None, extension='html', folder=None):
+    def save_shooting_table(self, team, table=None, extension='html', directory=None):
         '''
         This function saves the shooting statistics table of the desired team
         - team: team id (either 1 or 2, integer)
         - table: table can be inputted in order to avoid recomputation (pandas.DataFrame)
         - extension: type of the file where the table will be saved. It can either be csv or html (string)
-        - folder: folder where the table will be saved (string)
+        - directory: directory where the table will be saved (string)
         '''
         if table is None:
             table = self.get_shooting_table(team)
-        if folder is None:
-            folder = self.path
+        if directory is None:
+            directory = self.path
         if team == 1:
             teamName = self.home
         else:
             teamName = self.away
-        path = folder + self.matchName + "_ShootingTable_" + teamName
+        path = directory + self.matchName + "_ShootingTable_" + teamName
         if extension == 'csv':
             path += ".csv"
             table.to_csv(path, sep = ";", encoding="utf8")
@@ -348,23 +348,23 @@ class Match():
             table = self.get_shooting_table(team)
         return ShootingStatisticsPlot_main(table)
     
-    def save_shooting_plot(self, team, plot=None, extension='svg', folder=None):
+    def save_shooting_plot(self, team, plot=None, extension='svg', directory=None):
         '''
         This function saves the shooting statistics plot of the desired team
         - team: team id (either 1 or 2, integer)
         - extension: type of the file where the plot will be saved. It can be svg or pdf (vector), or png, jpeg or webp (raster)  (string)
-        - folder: folder where the plot will be saved (string)
+        - directory: directory where the plot will be saved (string)
         '''
         if plot is None:
             plot = self.get_shooting_plot(team)
-        if folder is None:
-            folder = self.path
+        if directory is None:
+            directory = self.path
         if team == 1:
             teamName = self.home
         else:
             teamName = self.away
         if extension in ('svg', 'pdf', 'png', 'jpeg', 'webp'):
-            path = folder + self.matchName + "_ShootingPlot_" + teamName + "." + extension
+            path = directory + self.matchName + "_ShootingPlot_" + teamName + "." + extension
             plot.write_image(path)
         else:
             raise ValueError(f"Extension {extension} is not correct. It must be svg, pdf, png, jpeg or webp")
@@ -385,23 +385,23 @@ class Match():
         else:
             return AssistStatisticsMatrix_main(self.PbPFile, assists)[team-1]
     
-    def save_assist_matrix(self, team, matrix=None, extension='html', folder=None):
+    def save_assist_matrix(self, team, matrix=None, extension='html', directory=None):
         '''
         This function saves the assist statistics matrix of the desired team
         - team: team id (either 1 or 2, integer)
         - matrix: matrix can be inputted in order to avoid recomputation (pandas.DataFrame)
         - extension: type of the file where the table will be saved. It can either be csv or html (string)
-        - folder: folder where the table will be saved (string)
+        - directory: directory where the table will be saved (string)
         '''
         if matrix is None:
             matrix = self.get_assist_matrix(team)
-        if folder is None:
-            folder = self.path
+        if directory is None:
+            directory = self.path
         if team == 1:
             teamName = self.home
         else:
             teamName = self.away
-        path = folder + self.matchName + "_AssistMatrix_" + teamName
+        path = directory + self.matchName + "_AssistMatrix_" + teamName
         if extension == 'csv':
             path += ".csv"
             matrix.to_csv(path, sep = ";", encoding="utf8")
@@ -429,23 +429,23 @@ class Match():
             teamName = self.away
         return alt.layer(plot, title = teamName + " assists")
 
-    def save_assist_plot(self, team, plot=None, folder=None):
+    def save_assist_plot(self, team, plot=None, directory=None):
         '''
         This function saves the assist statistics plot of the desired team
         - team: team id (either 1 or 2, integer)
         - plot: plot can be inputted in order to avoid recomputation
-        - folder: folder where the plot will be saved (string)
+        - directory: directory where the plot will be saved (string)
         '''
         if plot is None:
             plot = self.get_assist_plot(team)
-        if folder is None:
-            folder = self.path
+        if directory is None:
+            directory = self.path
         if team == 1:
             teamName = self.home
         else:
             teamName = self.away
 
-        path = folder + self.matchName + "_AssistPlot_" + teamName + ".html"
+        path = directory + self.matchName + "_AssistPlot_" + teamName + ".html"
         plot.save(path)
 
     def playing_intervals(self):
