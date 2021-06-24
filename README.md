@@ -2,7 +2,7 @@
 
 
 
-![File structure scheme](structure_scheme.png)
+![File structure scheme](Documentation/structure_scheme.png)
 
 
 
