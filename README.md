@@ -1,5 +1,11 @@
 # Instructions to use the API
 
+
+
+![File structure scheme](structure_scheme.png)
+
+
+
 Follow the next steps to execute the application:
 
 1. Create an environment:
