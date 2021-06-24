@@ -140,7 +140,7 @@ def show_action(action, prevAction, home, away, window, imageFolder):
                 teamName = (home, away)[team-1]
 
                 if len(action) == 8+distGiven and action[6+distGiven] == "A": # there is an assist
-                    image = PIL.Image.open(f"{imageFolder}/Bryant.png")
+                    image = PIL.Image.open(f"{imageFolder}/AssistedShot.png")
                     imageEditable = PIL.ImageDraw.Draw(image)
                     
                     passer = action[7+distGiven]
