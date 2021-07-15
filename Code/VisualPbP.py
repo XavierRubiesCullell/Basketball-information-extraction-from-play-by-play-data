@@ -436,7 +436,7 @@ def main(file, home, away, lastQ, window=False, imageFolder="VisualPbPImages"):
     action = "black"
 
     if window:
-        window = visualPbP_menu("DEN", "DAL", imageFolder="VisualPbPImages")
+        window = visualPbP_menu(home, away, imageFolder="VisualPbPImages")
     else:
         window = None
 

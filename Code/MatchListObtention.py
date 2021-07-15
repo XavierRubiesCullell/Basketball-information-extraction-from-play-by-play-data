@@ -26,13 +26,14 @@ def treat_matches(team, matchList):
     playedNum = 0
     for row in matchList:
         cols = row.find_all('td')
-        if len(cols) == 14:
+        if len(cols) >= 13: # to be changed
+            withTime = len(cols) == 14
             totalNum += 1
             date = cols[0].text
-            played = cols[3].text == "Box Score"
-            location = cols[4].text
-            opTeam = get_team(cols[5].text)
-
+            played = cols[2+withTime].text == "Box Score"
+            location = cols[3+withTime].text
+            opTeam = get_team(cols[4+withTime].text)
+            
             if played:
                 playedNum += 1
                 date = convert_date_season(date)
