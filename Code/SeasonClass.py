@@ -33,14 +33,18 @@ class Season():
 
     def __init__(self, team, season, path=None):
         '''
-        - team: name of the team. It can be the city, the club name or a combination (string)
-        - season: season we are interested in (string)
+        - team: name of the team (string)
+            - Location
+            - Club name
+            - The combination of the previous options <br>
+        The third option is preferred, in order to avoid ambiguations in case the location/club name is not unique
+        - season: season we are interested in (string). It must be from 1996-1997 season to present
         - path: directory where the output files will be saved:
             - String: Absolute path to an existing directory
             - None: Output files will be saved in ../Files/Seasons/self.seasonName  
                     In case it does not exist, it will be created
         '''
-        self.team = get_team(team)
+        self.team = get_team(team, season)
         self.season = season
         self.seasonName = self.team + "_" + self.season
         self.matchTable, self.progress = MatchListObtention_main(self.team, self.season)

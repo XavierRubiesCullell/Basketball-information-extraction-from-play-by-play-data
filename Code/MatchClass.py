@@ -2,6 +2,7 @@ import os
 import pandas as pd
 import altair as alt
 import numpy as np
+import urllib.request
 
 from Functions import *
 from StandardPbPObtention import main as StandardPbPObtention_main
@@ -45,13 +46,16 @@ class Match():
 
     def __init__(self, home, away, date, path=None):
         '''
-        - home: name of the local team. It can be the city, the club name or a combination (string)
-        - away: name of the visiting team. It can be the city, the club name or a combination (string)
-        - date: date of the match (string in YYYY/MM/DD format)
+        - home, away: name of the local/away team (string). They can be:
+            - Location
+            - Club name
+            - The combination of the previous options <br>
+        The third option is preferred, in order to avoid ambiguations in case the location/club name is not unique
+        - date: date of the match (string in YYYY/MM/DD format). It must be from 1996-1997 season to present
         - fileDir: directory where the Matches directory is/will be located (string)
         '''
-        self.home = get_team(home)
-        self.away = get_team(away)
+        self.home = get_team(home, date)
+        self.away = get_team(away, date)
         self.date = date
         self.matchName = self.home + "_" + self.away + "_" + convert_date_match(self.date)
 
@@ -71,11 +75,19 @@ class Match():
 
         self.PbPFile = self.path + "/" + self.matchName + "_StandardPbP.txt"
         if not os.path.exists(self.PbPFile):
+            head = "https://www.basketball-reference.com/boxscores/"
+            matchUrl = convert_date_match(date)+"0"+self.home+".html"
             try:
-                self.lastQ = StandardPbPObtention_main('https://www.basketball-reference.com/boxscores/pbp/'+convert_date_match(date)+'0'+self.home+'.html', outFile = self.PbPFile)
-            except:
+                _ = urllib.request.urlopen(head+matchUrl)
+            except urllib.error.HTTPError: # non-existence of the built match url
                 os.rmdir(self.path)
-                raise Exception("Match does not exist")
+                raise Exception("Match does not exist. Teams, location or date are wrong")
+            else:
+                try:
+                    self.lastQ = StandardPbPObtention_main(head+"pbp/"+matchUrl, outFile = self.PbPFile)
+                except urllib.error.HTTPError: # the built match url exists, but pbp is missing
+                    os.rmdir(self.path)
+                    raise Exception("Play-by-play data not available")
 
 
     def get_lastQ(self):

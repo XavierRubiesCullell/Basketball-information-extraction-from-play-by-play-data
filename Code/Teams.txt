@@ -1,30 +1,60 @@
-Atlanta, Hawks, Atlanta Hawks, ATL
-Boston, Celtics, Boston Celtics, BOS
-Brooklyn, Nets, Brooklyn Nets, BRK
-Charlotte, Hornets, Charlotte Hornets, CHO
-Chicago, Bulls, Chicago Bulls, CHI
-Cleveland, Cavaliers, Cleveland Cavaliers, CLE
-Dallas, Mavericks, Dallas Mavericks, DAL
-Denver, Nuggets, Denver Nuggets, DEN
-Detroit, Pistons, Detroit Pistons, DET
-Golden State, Warriors, Golden State Warriors, GSW
-Houston, Rockets, Houston Rockets, HOU
-Indiana, Pacers, Indiana Pacers, IND
-LA Clippers, Clippers, Los Angeles Clippers, LAC
-LA Lakers, Lakers, Los Angeles Lakers, LAL
-Memphis, Grizzlies, Memphis Grizzlies, MEM
-Miami, Heat, Miami Heat, MIA
-Milwaukee, Bucks, Milwaukee Bucks, MIL
-Minnesota, Timberwolves, Minnesota Timberwolves, MIN
-New Orleans, Pelicans, New Orleans Pelicans, NOP
-New York, Knicks, New York Knicks, NYK
-Oklahoma City, Thunder, Oklahoma City Thunder, OKC
-Orlando, Magic, Orlando Magic, ORL
-Philadelphia, Sixers, 76ers, Philadelphia 76ers, PHI
-Phoenix, Suns, Phoenix Suns, PHO
-Portland, Blazers, Trail Blazers, Portland Trail Blazers, POR
-Sacramento, Kings, Sacramento Kings, SAC
-San Antonio, Spurs, San Antonio Spurs, SAS
-Toronto, Raptors, Toronto Raptors, TOR
-Utah, Jazz, Utah Jazz, UTA
-Washington, Wizards, Washington Wizards, WAS
+ATL, Atlanta, Hawks, Atlanta Hawks; 1968 - 
+BOS, Boston, Celtics, Boston Celtics; 1946 - 
+BRK, Brooklyn, Nets, Brooklyn Nets; 2012 - 
+CHI, Chicago, Bulls, Chicago Bulls; 1966 - 
+CHO, Charlotte, Hornets, Charlotte Hornets; 2014 - 
+CLE, Cleveland, Cavaliers, Cleveland Cavaliers; 1970 - 
+DAL, Dallas, Mavericks, Dallas Mavericks; 1980 - 
+DEN, Denver, Nuggets, Denver Nuggets; 1976 - 
+DET, Detroit, Pistons, Detroit Pistons; 1957 - 
+GSW, Golden State, Warriors, Golden State Warriors; 1971 - 
+HOU, Houston, Rockets, Houston Rockets; 1971 - 
+IND, Indiana, Pacers, Indiana Pacers; 1976 - 
+LAC, LA Clippers, Clippers, Los Angeles Clippers; 1984 - 
+LAL, LA Lakers, Lakers, Los Angeles Lakers; 1960 - 
+MEM, Memphis, Grizzlies, Memphis Grizzlies; 2001 - 
+MIA, Miami, Heat, Miami Heat; 1988 - 
+MIL, Milwaukee, Bucks, Milwaukee Bucks; 1968 - 
+MIN, Minnesota, Timberwolves, Minnesota Timberwolves; 1989 - 
+NOP, New Orleans, Pelicans, New Orleans Pelicans; 2013 - 
+NYK, New York, Knicks, New York Knicks; 1946 - 
+OKC, Oklahoma City, Thunder, Oklahoma City Thunder; 2008 - 
+ORL, Orlando, Magic, Orlando Magic; 1989 - 
+PHI, Philadelphia, Sixers, 76ers, Philadelphia 76ers; 1963 - 
+PHO, Phoenix, Suns, Phoenix Suns; 1968 - 
+POR, Portland, Blazers, Trail Blazers, Portland Trail Blazers; 1970 - 
+SAC, Sacramento, Kings, Sacramento Kings; 1985 - 
+SAS, San Antonio, Spurs, San Antonio Spurs; 1976 - 
+TOR, Toronto, Raptors, Toronto Raptors; 1995 - 
+UTA, Utah, Jazz, Utah Jazz; 1979 - 
+WAS, Washington, Wizards, Washington Wizards; 1998 - 
+BAL, Baltimore, Bullets, Baltimore Bullets; 1963 - 1973
+BUF, Buffalo, Braves, Buffalo Braves; 1970 - 1978
+CAP, Capital, Bullets, Capital Bullets; 1973 - 1974
+CHA, Charlotte, Bobcats, Charlotte Bobcats; 2004 - 2014
+CHH, Charlotte, Hornets, Charlotte Hornets; 1988 - 2002
+CHP, Chicago, Packers, Chicago Packers; 1961 - 1962
+CHZ, Chicago, Zephyrs, Chicago Zephyrs; 1962 - 1963
+CIN, Cincinnati, Royals, Cincinnati Royals; 1957 - 1972
+FTW, Fort Wayne, Pistons, Fort Wayne Pistons; 1948 - 1957
+KCK, Kansas City, Kings, Kansas City Kings; 1975 - 1985
+KCO, Kansas City-Omaha, Kings, Kansas City-Omaha Kings; 1972 - 1975
+MLH, Milwaukee, Hawks, Milwaukee Hawks; 1951 - 1955
+MNL, Minneapolis, Lakers, Minneapolis Lakers; 1948 - 1960
+NJN, New Jersey, Nets, New Jersey Nets; 1977 - 2012
+NOH, New Orleans, Hornets, New Orleans Hornets; 2002 - 2005
+NOH, New Orleans, Hornets, New Orleans Hornets; 2007 - 2013
+NOJ, New Orleans, Jazz, New Orleans Jazz; 1974 - 1979
+NOK, New Orleans/Oklahoma City, Hornets, New Orleans/Oklahoma City Hornets; 2005 - 2007
+NYA, New York, Nets, New York Nets; 1976 - 1977
+PHW, Philadelphia, Warriors, Philadelphia Warriors; 1946 - 1962
+ROC, Rochester, Royals, Rochester Royals; 1948 - 1957
+SDC, San Diego, Clippers, San Diego Clippers; 1978 - 1984
+SDR, San Diego, Rockets, San Diego Rockets; 1967 - 1971
+SEA, Seattle, SuperSonics, Seattle SuperSonics; 1967 - 2008
+SFW, San Francisco, Warriors, San Francisco Warriors; 1962 - 1971
+STL, St. Louis, Hawks, St. Louis Hawks; 1955 - 1968
+SYR, Syracuse, Nationals, Syracuse Nationals; 1949 - 1963
+TRI, Tri-Cities, Blackhawks, Tri-Cities Blackhawks; 1949 - 1951
+VAN, Vancouver, Grizzlies, Vancouver Grizzlies; 1995 - 2001
+WSB, Washington, Bullets, Washington Bullets; 1974 - 1998

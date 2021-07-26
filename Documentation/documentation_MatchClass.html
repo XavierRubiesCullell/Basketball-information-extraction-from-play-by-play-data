@@ -203,8 +203,11 @@ MatchClass    </h1>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">home</span><span class="p">,</span> <span class="n">away</span><span class="p">,</span> <span class="n">date</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">'''</span>
-<span class="sd">        - home: name of the local team. It can be the city, the club name or a combination (string)</span>
-<span class="sd">        - away: name of the visiting team. It can be the city, the club name or a combination (string)</span>
+<span class="sd">        - home, away: name of the local/away team (string). They can be:</span>
+<span class="sd">            - Location</span>
+<span class="sd">            - Club name</span>
+<span class="sd">            - The combination of the previous options &lt;br&gt;</span>
+<span class="sd">        The third option is preferred, in order to avoid ambiguations in case the location/club name is not unique</span>
 <span class="sd">        - date: date of the match (string in YYYY/MM/DD format)</span>
 <span class="sd">        - fileDir: directory where the Matches directory is/will be located (string)</span>
 <span class="sd">        '''</span>
@@ -755,8 +758,11 @@ MatchClass    </h1>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">home</span><span class="p">,</span> <span class="n">away</span><span class="p">,</span> <span class="n">date</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">'''</span>
-<span class="sd">        - home: name of the local team. It can be the city, the club name or a combination (string)</span>
-<span class="sd">        - away: name of the visiting team. It can be the city, the club name or a combination (string)</span>
+<span class="sd">        - home, away: name of the local/away team (string). They can be:</span>
+<span class="sd">            - Location</span>
+<span class="sd">            - Club name</span>
+<span class="sd">            - The combination of the previous options &lt;br&gt;</span>
+<span class="sd">        The third option is preferred, in order to avoid ambiguations in case the location/club name is not unique</span>
 <span class="sd">        - date: date of the match (string in YYYY/MM/DD format)</span>
 <span class="sd">        - fileDir: directory where the Matches directory is/will be located (string)</span>
 <span class="sd">        '''</span>
@@ -1265,8 +1271,11 @@ MatchClass    </h1>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">home</span><span class="p">,</span> <span class="n">away</span><span class="p">,</span> <span class="n">date</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">'''</span>
-<span class="sd">        - home: name of the local team. It can be the city, the club name or a combination (string)</span>
-<span class="sd">        - away: name of the visiting team. It can be the city, the club name or a combination (string)</span>
+<span class="sd">        - home, away: name of the local/away team (string). They can be:</span>
+<span class="sd">            - Location</span>
+<span class="sd">            - Club name</span>
+<span class="sd">            - The combination of the previous options &lt;br&gt;</span>
+<span class="sd">        The third option is preferred, in order to avoid ambiguations in case the location/club name is not unique</span>
 <span class="sd">        - date: date of the match (string in YYYY/MM/DD format)</span>
 <span class="sd">        - fileDir: directory where the Matches directory is/will be located (string)</span>
 <span class="sd">        '''</span>
@@ -1301,8 +1310,13 @@ MatchClass    </h1>
         </details>
 
             <div class="docstring"><ul>
-<li>home: name of the local team. It can be the city, the club name or a combination (string)</li>
-<li>away: name of the visiting team. It can be the city, the club name or a combination (string)</li>
+<li>home, away: name of the local/away team (string). They can be:
+<ul>
+<li>Location</li>
+<li>Club name</li>
+<li>The combination of the previous options <br>
+The third option is preferred, in order to avoid ambiguations in case the location/club name is not unique</li>
+</ul></li>
 <li>date: date of the match (string in YYYY/MM/DD format)</li>
 <li>fileDir: directory where the Matches directory is/will be located (string)</li>
 </ul>
@@ -2536,5 +2550,4 @@ MatchClass    </h1>
                             </div>
                 </section>
     </main>
-
 </body></html>

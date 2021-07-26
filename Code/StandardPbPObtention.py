@@ -220,7 +220,7 @@ def treat_line(row, Q, prevClock):
                 Q = next_quarter(Q)
             neutralActions.append(row)
 
-        else:
+        elif len(cols) > 2:
             treat_action(row, Q)
 
     return Q, clock
@@ -256,10 +256,8 @@ def main(webpage, outFile):
     nonActions = []
     Q = "1Q"
     clock = "12:00.0"
-    try:
-        response = urllib.request.urlopen(webpage)
-    except:
-        raise Exception("Match does not exist")
+    
+    response = urllib.request.urlopen(webpage)
     htmlDoc = response.read()
     soup = BeautifulSoup(htmlDoc, 'html.parser')
     res = soup.find_all('tr')

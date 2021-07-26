@@ -173,7 +173,11 @@ SeasonClass    </h1>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">team</span><span class="p">,</span> <span class="n">season</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">'''</span>
-<span class="sd">        - team: name of the team. It can be the city, the club name or a combination (string)</span>
+<span class="sd">        - team: name of the team (string)</span>
+<span class="sd">            - Location</span>
+<span class="sd">            - Club name</span>
+<span class="sd">            - The combination of the previous options &lt;br&gt;</span>
+<span class="sd">        The third option is preferred, in order to avoid ambiguations in case the location/club name is not unique</span>
 <span class="sd">        - season: season we are interested in (string)</span>
 <span class="sd">        - path: directory where the output files will be saved:</span>
 <span class="sd">            - String: Absolute path to an existing directory</span>
@@ -639,7 +643,11 @@ SeasonClass    </h1>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">team</span><span class="p">,</span> <span class="n">season</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">'''</span>
-<span class="sd">        - team: name of the team. It can be the city, the club name or a combination (string)</span>
+<span class="sd">        - team: name of the team (string)</span>
+<span class="sd">            - Location</span>
+<span class="sd">            - Club name</span>
+<span class="sd">            - The combination of the previous options &lt;br&gt;</span>
+<span class="sd">        The third option is preferred, in order to avoid ambiguations in case the location/club name is not unique</span>
 <span class="sd">        - season: season we are interested in (string)</span>
 <span class="sd">        - path: directory where the output files will be saved:</span>
 <span class="sd">            - String: Absolute path to an existing directory</span>
@@ -1090,7 +1098,11 @@ SeasonClass    </h1>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">team</span><span class="p">,</span> <span class="n">season</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">'''</span>
-<span class="sd">        - team: name of the team. It can be the city, the club name or a combination (string)</span>
+<span class="sd">        - team: name of the team (string)</span>
+<span class="sd">            - Location</span>
+<span class="sd">            - Club name</span>
+<span class="sd">            - The combination of the previous options &lt;br&gt;</span>
+<span class="sd">        The third option is preferred, in order to avoid ambiguations in case the location/club name is not unique</span>
 <span class="sd">        - season: season we are interested in (string)</span>
 <span class="sd">        - path: directory where the output files will be saved:</span>
 <span class="sd">            - String: Absolute path to an existing directory</span>
@@ -1120,7 +1132,13 @@ SeasonClass    </h1>
         </details>
 
             <div class="docstring"><ul>
-<li>team: name of the team. It can be the city, the club name or a combination (string)</li>
+<li>team: name of the team (string)
+<ul>
+<li>Location</li>
+<li>Club name</li>
+<li>The combination of the previous options <br>
+The third option is preferred, in order to avoid ambiguations in case the location/club name is not unique</li>
+</ul></li>
 <li>season: season we are interested in (string)</li>
 <li>path: directory where the output files will be saved:
 <ul>
@@ -2182,5 +2200,4 @@ we can simply use the result sending it to this function instead of calling it o
                             </div>
                 </section>
     </main>
-
 </body></html>

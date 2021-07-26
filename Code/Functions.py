@@ -1,22 +1,37 @@
 import datetime
 import os
 
-def get_team(team):
+def get_team(team, date):
     '''
     This functions returns the codification of the team name, which is needed to access to the website
     As information is stored by using it, it also grants unicity in the database
-    - team: Team name in whatever variant is desired: city, club name or both (string)
+    - team: name of the team (string)
+        - Location
+        - Club name
+        - The combination of the previous options 
+    - date: date of the match/season (string)
     Output: 3-letter representation of the team, which are often the first 3 letters of the city (string)
     '''
+    if "/" in date: # match
+        year, month, _ = date.split("/")
+        year, month = int(year), int(month)
+        if month < 9:
+            season1, season2 = year-1, year
+        else:
+            season1, season2 = year, year+1
+    else: # season
+        season1, season2 = date.split("-")
+        season1, season2 = int(season1), int(season2)
+    
     os.chdir(os.path.dirname(__file__))
     f = open('./Teams.txt', 'r')
     lines = f.readlines()
     for line in lines:
-        line = line.strip().split(', ')
-        n = len(line)
-        for i in range(n):
-            if line[i] == team:
-                return line[n-1]
+        names, interval = line.strip("\n").split("; ")
+        names, interval = names.split(", "), interval.split(" - ")
+        for name in names:
+            if name == team and int(interval[0]) <= season1 and (interval[1] == "" or season2 <= int(interval[1])):
+                return names[0]
     return None
 
 def other_team(team):
